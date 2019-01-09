@@ -1,0 +1,61 @@
+{
+  "name": "3d-mahjong",
+  "version": "1.0.0",
+  "description": "3D Mahjong client written with TypeScript",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --config webpack.config.js --progress --colors",
+    "build-min": "webpack --config webpack.config.min.js --progress --colors",
+    "server": "webpack-dev-server --config webpack.config.js --open"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BlackKite0206233/3D-Mahjong.git"
+  },
+  "keywords": [
+    "HTML5",
+    "TypeScript",
+    "Mahjong",
+    "WebGL"
+  ],
+  "author": "SamuelYeh",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/BlackKite0206233/3D-Mahjong/issues"
+  },
+  "homepage": "https://github.com/BlackKite0206233/3D-Mahjong#readme",
+  "dependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.2.3",
+    "@robotlegsjs/signals": "^1.0.0",
+    "@types/node": "^10.12.18",
+    "@types/socket.io-client": "^1.4.32",
+    "@types/three": "^0.93.15",
+    "@types/uuid": "^3.4.4",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^8.0.5",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-env": "^1.7.0",
+    "css-loader": "^2.1.0",
+    "expose-loader": "^0.7.5",
+    "file-loader": "^3.0.1",
+    "image-webpack-loader": "^4.6.0",
+    "json-loader": "^0.5.7",
+    "optimize-js-plugin": "0.0.4",
+    "screenfull": "^4.0.0",
+    "socket.io-client": "^2.2.0",
+    "style-loader": "^0.23.1",
+    "svg-inline-loader": "^0.8.0",
+    "three": "^0.100.0",
+    "three.interaction": "^0.2.2",
+    "ts-loader": "^5.3.3",
+    "tslint": "^5.12.0",
+    "tslint-loader": "^3.5.4",
+    "typescript": "^3.2.2",
+    "uuid": "^3.3.2",
+    "webpack": "^4.28.1",
+    "webpack-cli": "^3.2.1",
+    "webpack-dev-server": "^3.1.14",
+    "webpack-obfuscator": "^0.18.0"
+  }
+}
