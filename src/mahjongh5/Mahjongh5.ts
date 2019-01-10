@@ -1,4 +1,3 @@
-import * as Three from "three";
 import Game from "./Game";
 
 export function StartGame(config: (game: Game) => void, display: string) {

@@ -1,17 +1,23 @@
 import * as Three from "three";
 import { Signal } from "@robotlegsjs/signals";
+import Game from "./Game";
+import { Loadable } from "./load/LoadState";
 
-export default class State {
+export default class State implements Loadable {
 
     public scene:  Three.Scene;
     public camera: Three.PerspectiveCamera;
+
+    public game: Game;
+
+    public loadMessage = "Loading Scene...";
 
     private initSignal?:    Signal;
     private preloadSignal?: Signal;
     private createSignal?:  Signal;
 
-    constructor() {
-
+    constructor(game: Game) {
+        this.game = game;
     }
 
     public get onInit(): Signal {

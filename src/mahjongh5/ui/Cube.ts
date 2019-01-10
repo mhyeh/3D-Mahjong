@@ -1,6 +1,6 @@
 import * as Three from "three";
 
-export default class Cube extends Three.Object3D {
+export default class Cube extends Three.Mesh {
     private box: THREE.Box3;
 
     public get width(): number {
