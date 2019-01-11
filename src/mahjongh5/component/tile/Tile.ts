@@ -2,6 +2,7 @@ import * as Three from "three";
 import { Signal } from "@robotlegsjs/signals";
 import TileTable from "./TileTable";
 import Button from "mahjongh5/ui/Button";
+import Game from "mahjongh5/Game";
 
 export default abstract class Tlie<TileTableType extends TileTable = TileTable> extends Button {
     public isClick = false;
@@ -20,10 +21,6 @@ export default abstract class Tlie<TileTableType extends TileTable = TileTable> 
         this.OnIDChangedHandler();
     }
 
-    public abstract get tileWidth():  number;
-
-    public abstract get tileHeight(): number;
-
     public get onIDChanged(): Signal {
         if (!this.idChangedSignal) {
             this.idChangedSignal = new Signal();
@@ -31,8 +28,8 @@ export default abstract class Tlie<TileTableType extends TileTable = TileTable> 
         return this.idChangedSignal;
     }
 
-    constructor(tileTable: TileTableType, key?: string) {
-        super();
+    constructor(game: Game, geometry: Three.Geometry | Three.BufferGeometry, material: Three.Material | Three.Material[], tileTable: TileTableType, x?: number, y?: number, z?: number, key?: string) {
+        super(game, geometry, material, x, y, z);
         this.tileTable = tileTable;
     }
 

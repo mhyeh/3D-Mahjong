@@ -1,29 +1,13 @@
 import * as Three from "three";
 import Tile from "./Tile";
 import ImageTileTable from "./ImageTileTable";
+import Game from "mahjongh5/Game";
 
 export default class ImageTile extends Tile<ImageTileTable> {
     // protected symbolTable: MultiLayerStyleSymbolTable;
-    private tileSize: Three.Vector3;
 
-    public get tileWidth(): number {
-        return this.tileSize.x;
-    }
-
-    public get tileHeight(): number {
-        return this.tileSize.y;
-    }
-
-    public get imageWidth(): number {
-        return this.width;
-    }
-
-    public get imageHeight(): number {
-        return this.height;
-    }
-
-    constructor(tileTable: ImageTileTable) {
-        super(tileTable, tileTable.spriteKey);
+    constructor(game: Game, geometry: Three.Geometry | Three.BufferGeometry, material: Three.Material | Three.Material[], tileTable: ImageTileTable, x?: number, y?: number, z?: number) {
+        super(game, geometry, material, tileTable, x, y, z, tileTable.spriteKey);
         this.tileTable = tileTable;
 
         // this.tileSize = new Three.Vector3(tileTable.tileWidth || this.width, tileTable.tileHeight || this.height);
@@ -40,7 +24,7 @@ export default class ImageTile extends Tile<ImageTileTable> {
             this.scale = scale.clone();
         }
         if (position) {
-            this.position = position.clone();
+            this.position.set(position.x, position.y, position.z);
         }
     }
 
@@ -60,11 +44,9 @@ export default class ImageTile extends Tile<ImageTileTable> {
     private UpdateImages(): void {
         const spriteNumber = this.tileTable.GetSprite(this.ID);
         if (typeof spriteNumber === "string") {
-            // this.frameName = spriteNumber;
-            this.setFrames(spriteNumber, spriteNumber, spriteNumber, spriteNumber);
+            this.setFrames(spriteNumber);
         } else if (typeof spriteNumber === "number") {
-            // this.frame = spriteNumber;
-            this.setFrames(spriteNumber, spriteNumber, spriteNumber, spriteNumber);
+            this.setFrames(spriteNumber);
         }
         this.visible = spriteNumber !== null;
     }

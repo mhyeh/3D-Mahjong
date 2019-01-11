@@ -1,27 +1,25 @@
 import * as Three from "three";
 
 export default class Cube extends Three.Mesh {
-    private box: THREE.Box3;
+    private size: Three.Vector3;
 
     public get width(): number {
-        const t = new Three.Vector3();
-        this.box.getSize(t);
-        return t.x;
+        new Three.Box3().setFromObject(this).getSize(this.size);
+        return this.size.x;
     }
 
     public get height(): number {
-        const t = new Three.Vector3();
-        this.box.getSize(t);
-        return t.y;
+        new Three.Box3().setFromObject(this).getSize(this.size);
+        return this.size.y;
     }
 
     public get depth(): number {
-        const t = new Three.Vector3();
-        this.box.getSize(t);
-        return t.z;
+        new Three.Box3().setFromObject(this).getSize(this.size);
+        return this.size.z;
     }
 
-    constructor() {
-        super();
+    constructor(geometry: Three.Geometry | Three.BufferGeometry, material: Three.Material | Three.Material[], x: number = 0, y: number = 0, z: number = 0) {
+        super(geometry, material);
+        this.position.set(x, y, z);
     }
 }
