@@ -1,36 +1,29 @@
+import * as Three from "three";
 import { Signal } from "@robotlegsjs/signals";
-import Sound from "../component/Sound";
+import Sound from "./Sound";
 import Game from "../Game";
 import Cube from "./Cube";
 
 export interface ButtonEvent {
-    onInputUp: Signal;
-    onInputDown: Signal;
+    onInputUp:    Signal;
+    onInputDown:  Signal;
     onInputOver?: Signal;
-    onInputOut?: Signal;
-}
-
-export interface ButtonFrame {
-    overFrame?: string | number;
-    outFrame?: string | number;
-    downFrame?: string | number;
-    upFrame?: string | number;
-    disableFrame?: string | number;
+    onInputOut?:  Signal;
 }
 
 export interface ButtonTint {
-    over?: number;
-    out: number;
-    down?: number;
-    up?: number;
+    over?:    number;
+    out:      number;
+    down?:    number;
+    up?:      number;
     disable?: number;
 }
 
 export interface ButtonSound {
     overSound?: Sound;
-    outSound?: Sound;
+    outSound?:  Sound;
     downSound?: Sound;
-    upSound?: Sound;
+    upSound?:   Sound;
 }
 
 export default class Button extends Cube implements ButtonEvent {
@@ -42,54 +35,52 @@ export default class Button extends Cube implements ButtonEvent {
 
     public stateTint: ButtonTint = { out: 0xFFFFFF };
 
-    private stateFrame: ButtonFrame;
     private enableValue: boolean = true;
     private stateChangeSignal?: Signal;
 
-    constructor(x?: number, y?: number, key?: string, callback?: () => void, callbackContext?: any, overFrame?: string | number, outFrame?: string | number, downFrame?: string | number, upFrame?: string | number, disableFrame?: string | number) {
-        super();
+    constructor(game: Game, geometry: Three.Geometry | Three.BufferGeometry, material: Three.Material | Three.Material[], x?: number, y?: number, z?: number, key?: string, callback?: () => void, callbackContext?: any, overFrame?: string | number, outFrame?: string | number, downFrame?: string | number, upFrame?: string | number, disableFrame?: string | number) {
+        super(geometry, material, x, y, z);
 
-        this.stateFrame = { overFrame, outFrame, downFrame, upFrame, disableFrame };
+        // TODO: set frame
+
         this.onInputDown.add(() => {
             if (this.stateTint.down && this.enable) {
-                // this.tint = this.stateTint.down;
+                this.setButtonTint(material, this.stateTint.down);
             }
             this.StateChangeHandler();
         });
         this.onInputUp.add(() => {
             if (this.stateTint.up && this.enable) {
-                // this.tint = this.stateTint.up;
+                this.setButtonTint(material, this.stateTint.up);
             }
             this.StateChangeHandler();
         });
         this.onInputOver.add(() => {
             if (this.stateTint.over && this.enable) {
-                // this.tint = this.stateTint.over;
+                this.setButtonTint(material, this.stateTint.over);
             }
             this.StateChangeHandler();
         });
         this.onInputOut.add(() => {
             if (this.stateTint.out && this.enable) {
-                // this.tint = this.stateTint.out;
+                this.setButtonTint(material, this.stateTint.out);
             }
             this.StateChangeHandler();
         });
         this.onEnableChange.add((enable: boolean) => {
-            // if (enable) {
-            //     if (this.input.pointerDown() && this.stateTint.down) {
-            //         this.tint = this.stateTint.down;
-            //     } else if (this.input.pointerOver() && this.stateTint.over) {
-            //         this.tint = this.stateTint.over;
-            //     } else {
-            //         this.tint = this.stateTint.out;
-            //     }
-            // } else if (this.stateTint.disable) {
-            //     this.tint = this.stateTint.disable;
-            // } else {
-            //     this.tint = this.stateTint.out;
-            // }
+            if (enable) {
+                this.setButtonTint(material, this.stateTint.out);
+            } else if (this.stateTint.disable) {
+                this.setButtonTint(material, this.stateTint.disable);
+            } else {
+                this.setButtonTint(material, this.stateTint.out);
+            }
             this.StateChangeHandler();
         });
+        game.domevent.addEventListener(this, "mousedown", this.onInputDown.dispatch(), false);
+        game.domevent.addEventListener(this, "mouseup",   this.onInputUp.dispatch(),   false);
+        game.domevent.addEventListener(this, "mouseout",  this.onInputOut.dispatch(),  false);
+        game.domevent.addEventListener(this, "mousemove", this.onInputOver.dispatch(), false);
     }
 
     public get onStateChange(): Signal {
@@ -99,54 +90,12 @@ export default class Button extends Cube implements ButtonEvent {
         return this.stateChangeSignal;
     }
 
-    public get outFrame(): string | number {
-        return this.stateFrame.outFrame === undefined ? 0 : this.stateFrame.outFrame;
-    }
-    public set outFrame(value: string | number | undefined) {
-        this.stateFrame.outFrame = value;
-    }
-
-    public get overFrame(): string | number {
-        return this.stateFrame.overFrame === undefined ? this.outFrame : this.stateFrame.overFrame;
-    }
-    public set overFrame(value: string | number | undefined) {
-        this.stateFrame.overFrame = value;
-    }
-
-    public get downFrame(): string | number {
-        return this.stateFrame.downFrame === undefined ? this.outFrame : this.stateFrame.downFrame;
-    }
-    public set downFrame(value: string | number | undefined) {
-        this.stateFrame.downFrame = value;
-    }
-
-    public get upFrame(): string | number {
-        return this.stateFrame.upFrame === undefined ? this.outFrame : this.stateFrame.upFrame;
-    }
-    public set upFrame(value: string | number | undefined) {
-        this.stateFrame.upFrame = value;
-    }
-
-    public get disableFrame(): string | number {
-        return this.stateFrame.disableFrame === undefined ? this.outFrame : this.stateFrame.disableFrame;
-    }
-    public set disableFrame(value: string | number | undefined) {
-        this.stateFrame.disableFrame = value;
-    }
-
     public get enable(): boolean {
         return this.enableValue;
     }
     public set enable(value: boolean) {
         if (this.enableValue !== value) {
             this.enableValue = value;
-            // this.input.enabled = value;
-            // this.freezeFrames = !value;
-            if (value) {
-                this.setFrames(this.stateFrame);
-            } else {
-                this.frame = this.disableFrame;
-            }
             this.onEnableChange.dispatch(value);
         }
     }
@@ -162,20 +111,22 @@ export default class Button extends Cube implements ButtonEvent {
         // }
     }
 
-    public setFrames(buttonFrame: ButtonFrame): void;
-    public setFrames(overFrame?: string | number, outFrame?: string | number, downFrame?: string | number, upFrame?: string | number, disableFrame?: string | number): void;
-    public setFrames(overFrame?: string | number | ButtonFrame, outFrame?: string | number, downFrame?: string | number, upFrame?: string | number, disableFrame?: string | number): void {
-        // this.stateFrame = (typeof overFrame === "object") ? overFrame : { overFrame, outFrame, downFrame, upFrame, disableFrame };
-        // super.setFrames(this.stateFrame.overFrame, this.stateFrame.outFrame, this.stateFrame.downFrame, this.stateFrame.upFrame);
-        // this.frame = this.outFrame;
-        // if (!this.enable) {
-        //     this.frame = this.disableFrame;
-        // }
+    public setFrames(buttonFrame: string | number): void {
+        this.frame = buttonFrame;
     }
 
     private StateChangeHandler() {
         if (this.stateChangeSignal) {
             this.stateChangeSignal.dispatch();
+        }
+    }
+
+    private setButtonTint(material: Three.Material | Three.Material[], tint: number) {
+        if (material instanceof Array) {
+            material.forEach((m) => this.setButtonTint(m, tint));
+        } else if (material instanceof Three.MeshBasicMaterial    || material instanceof Three.MeshLambertMaterial ||
+                   material instanceof Three.MeshStandardMaterial || material instanceof Three.MeshPhongMaterial) {
+            material.color.set(tint);
         }
     }
 }
