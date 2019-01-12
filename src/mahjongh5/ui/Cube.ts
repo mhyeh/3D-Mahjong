@@ -21,5 +21,6 @@ export default class Cube extends Three.Mesh {
     constructor(geometry: Three.Geometry | Three.BufferGeometry, material: Three.Material | Three.Material[], x: number = 0, y: number = 0, z: number = 0) {
         super(geometry, material);
         this.position.set(x, y, z);
+        this.size = new Three.Vector3();
     }
 }

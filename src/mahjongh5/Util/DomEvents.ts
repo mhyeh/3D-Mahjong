@@ -44,8 +44,9 @@ export default class DomEvents {
         this._raycaster  = new Three.Raycaster();
         this._selected	 = null;
         this._boundObjs	 = {};
-
+        // Bind dom event for mouse and touch
         const _this	= this;
+
         this._$onClick		 = function() { _this._onClick.apply(_this,       arguments as any); };
         this._$onDblClick	 = function() { _this._onDblClick.apply(_this,    arguments as any); };
         this._$onMouseMove	 = function() { _this._onMouseMove.apply(_this,   arguments as any); };
@@ -55,7 +56,6 @@ export default class DomEvents {
         this._$onTouchStart	 = function() { _this._onTouchStart.apply(_this,  arguments as any); };
         this._$onTouchEnd	 = function() { _this._onTouchEnd.apply(_this,    arguments as any); };
         this._$onContextmenu = function() { _this._onContextmenu.apply(_this, arguments as any); };
-
         this._domElement.addEventListener("click",       this._$onClick,       false);
         this._domElement.addEventListener("dblclick",    this._$onDblClick,    false);
         this._domElement.addEventListener("mousemove",   this._$onMouseMove,   false);
@@ -80,7 +80,7 @@ export default class DomEvents {
     }
 
     public addEventListener(object3d: any, eventName: string, _callback: any, _useCapture: boolean) {
-        console.assert(this.eventNames.indexOf(eventName) !== -1, "not available events:" + eventName);
+        console.assert( this.eventNames.indexOf(eventName) !== -1, "not available events:" + eventName );
 
         if (!this._objectCtxIsInit(object3d)) {
             this._objectCtxInit(object3d);
@@ -103,7 +103,7 @@ export default class DomEvents {
     }
 
     public removeEventListener(object3d: any, eventName: string, callback: any, useCapture: boolean) {
-        console.assert(this.eventNames.indexOf(eventName) !== -1, "not available events:" + eventName);
+        console.assert( this.eventNames.indexOf(eventName) !== -1, "not available events:" + eventName );
 
         if (!this._objectCtxIsInit(object3d)) {
             this._objectCtxInit(object3d);
@@ -127,7 +127,7 @@ export default class DomEvents {
             break;
         }
         const index	= this._boundObjs[eventName].indexOf(object3d);
-        console.assert(index !== -1);
+        console.assert( index !== -1 );
         this._boundObjs[eventName].splice(index, 1);
     }
 
@@ -137,7 +137,7 @@ export default class DomEvents {
             element = element.parentNode;
         }
 
-        const elPosition = { x : 0, y : 0 };
+        const elPosition = { x : 0 , y : 0};
         let   tmpElement = element;
 
         let style = getComputedStyle(tmpElement, null);
@@ -149,12 +149,12 @@ export default class DomEvents {
             elPosition.y += tmpElement.offsetTop;
             style = getComputedStyle(tmpElement, null);
 
-            elPosition.x   += parseInt(style.getPropertyValue("border-left-width"), 10);
-            elPosition.y   += parseInt(style.getPropertyValue("border-top-width"), 10);
+            elPosition.x	+= parseInt(style.getPropertyValue("border-left-width"), 10);
+            elPosition.y	+= parseInt(style.getPropertyValue("border-top-width"), 10);
         } while (tmpElement = tmpElement.offsetParent);
 
         const elDimension = {
-            width	: (element === window) ? window.innerWidth  : element.offsetWidth,
+            width	: (element === window) ? window.innerWidth	: element.offsetWidth,
             height	: (element === window) ? window.innerHeight	: element.offsetHeight,
         };
 

@@ -85,6 +85,9 @@ export default class AssetLoadTask implements Loadable {
     /** 目前寫法在一個LoadState中有很多個AssetLoadTask會造成混亂 */
     public LoadStart(progressCallback?: (progress: number) => void): Promise<void> {
         return new Promise<void>((resolve, reject) => {
+            if (this.assetInfos.length === 0) {
+                resolve();
+            }
             this.AddToLoader();
             const onFileErrorHandler = (url: string) => reject(new Error(`[${url}]: error`));
             let onFileCompleteHandler: ((item: any, loaded: number, total: number) => void) | undefined;

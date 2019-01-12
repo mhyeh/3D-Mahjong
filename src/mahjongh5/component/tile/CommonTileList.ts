@@ -5,6 +5,7 @@ import ImageTile from "./ImageTile";
 import ImageTileTable from "./ImageTileTable";
 import Input from "mahjongh5/input/Input";
 import Game from "mahjongh5/Game";
+import RoundEdgedBox from "mahjongh5/Util/RoundBoxGeometry";
 
 export default class CommonTileList extends TileList<ImageTile> {
     private tileTable:    ImageTileTable;
@@ -16,7 +17,7 @@ export default class CommonTileList extends TileList<ImageTile> {
 
     private game: Game;
 
-    private geometry: Three.BoxGeometry;
+    private geometry: Three.Geometry;
 
     public get TileAnchor(): Three.Vector3 {
         return this.tileAnchor;
@@ -56,18 +57,19 @@ export default class CommonTileList extends TileList<ImageTile> {
         this.game = game;
 
         this.tileTable = tileTable;
-        this.geometry  = new Three.BoxGeometry(tileW, tileH, tileD);
+        this.geometry  = RoundEdgedBox(tileW, tileH, tileD, 6, 1, 1, 1, 6);
 
         for (let i = 0; i < tileCount; i++) {
-            const material = new Three.MeshLambertMaterial({ });
+            const material = new Three.MeshLambertMaterial({ color: 0xDBDBDB });
             this.tiles.push(new ImageTile(game, this.geometry, material, tileTable));
             if (clickable) {
-                this.tiles[this.tiles.length - 1].setTint(0x707070, 0x707070);
+                this.tiles[i].setTint(0x707070, 0x707070, 0xDBDBDB, 0xDBDBDB, 0xDBDBDB);
             } else {
-                this.tiles[this.tiles.length - 1].enable = false;
+                this.tiles[i].enable = false;
             }
+            this.add(this.tiles[i]);
         }
-        this.add(...this.tiles);
+        this.AdjustAllTile();
 
         this.sortable = sortable;
     }
@@ -102,7 +104,7 @@ export default class CommonTileList extends TileList<ImageTile> {
         this.tiles[index].uuid   = v4();
         this.tiles[index].AdjustTile(this.tileAnchor, this.tileScale, this.tilePosition);
         if (this.clickable) {
-            this.tiles[index].setTint(0x707070, 0x707070);
+            this.tiles[index].setTint(0x707070, 0x707070, 0xDBDBDB, 0xDBDBDB, 0xDBDBDB);
             this.Input.AddButton(this.tiles[index], Input.key.Throw, undefined, this.tiles[index].uuid);
         } else {
             this.tiles[index].enable = false;
@@ -136,8 +138,8 @@ export default class CommonTileList extends TileList<ImageTile> {
 
     private ArrangeTile() {
         for (const [i, tile] of this.tiles.entries()) {
-            tile.position.x = (tile.width  + 5) * (i % this.MaxLen);
-            tile.position.y = (tile.height + 5) * ~~(i / this.MaxLen);
+            tile.position.x = (tile.width  + 5)  *   (i % this.MaxLen);
+            tile.position.y = -(tile.height + 5) * ~~(i / this.MaxLen);
         }
     }
 }

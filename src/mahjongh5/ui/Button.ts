@@ -77,10 +77,10 @@ export default class Button extends Cube implements ButtonEvent {
             }
             this.StateChangeHandler();
         });
-        game.domevent.addEventListener(this, "mousedown", this.onInputDown.dispatch(), false);
-        game.domevent.addEventListener(this, "mouseup",   this.onInputUp.dispatch(),   false);
-        game.domevent.addEventListener(this, "mouseout",  this.onInputOut.dispatch(),  false);
-        game.domevent.addEventListener(this, "mousemove", this.onInputOver.dispatch(), false);
+        game.domevent.addEventListener(this, "mousedown", this.onInputDown.dispatch.bind(this.onInputDown), false);
+        game.domevent.addEventListener(this, "mouseup",   this.onInputUp.dispatch.bind(this.onInputUp),     false);
+        game.domevent.addEventListener(this, "mouseout",  this.onInputOut.dispatch.bind(this.onInputOut),   false);
+        game.domevent.addEventListener(this, "mousemove", this.onInputOver.dispatch.bind(this.onInputOver), false);
     }
 
     public get onStateChange(): Signal {

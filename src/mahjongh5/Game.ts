@@ -3,7 +3,7 @@ import State from "./State";
 import LoadState from "./load/LoadState";
 import * as Assets from "./Assets";
 import Loader from "./load/Loader";
-import DomEvents from "../Util/DomEvents";
+import DomEvents from "./Util/DomEvents";
 
 export default class Game {
     public assets: typeof Assets | Array<typeof Assets> = Assets;
@@ -38,6 +38,7 @@ export default class Game {
     }
 
     constructor(display: string) {
+        this.load = new Loader();
         this.renderer.setSize(this.sceneWidth, this.sceneWidth);
         document.getElementById(display).appendChild(this.renderer.domElement);
         this.domevent = new DomEvents(this.renderer.domElement);
@@ -72,10 +73,11 @@ export default class Game {
     }
 
     public async SwitchScene(state: State) {
+        console.log(state);
         await state.create();
         this.renderer.setSize(this.sceneWidth, this.sceneHeight);
+        this.domevent.camera = state.camera;
         this.renderState     = state;
-        this.domevent.camera = this.renderState.camera;
     }
 
     public render() {
