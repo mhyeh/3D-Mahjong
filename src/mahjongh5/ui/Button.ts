@@ -1,6 +1,5 @@
 import * as Three from "three";
 import { Signal } from "@robotlegsjs/signals";
-import Sound from "./Sound";
 import Game from "../Game";
 import Cube from "./Cube";
 
@@ -20,10 +19,10 @@ export interface ButtonTint {
 }
 
 export interface ButtonSound {
-    overSound?: Sound;
-    outSound?:  Sound;
-    downSound?: Sound;
-    upSound?:   Sound;
+    overSound?: Three.Audio;
+    outSound?:  Three.Audio;
+    downSound?: Three.Audio;
+    upSound?:   Three.Audio;
 }
 
 export default class Button extends Cube implements ButtonEvent {

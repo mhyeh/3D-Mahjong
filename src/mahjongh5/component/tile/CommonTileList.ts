@@ -8,48 +8,20 @@ import Game from "mahjongh5/Game";
 import RoundEdgedBox from "mahjongh5/Util/RoundBoxGeometry";
 
 export default class CommonTileList extends TileList<ImageTile> {
-    private tileTable:    ImageTileTable;
-    private tileAnchor:   Three.Vector3;
-    private tileScale:    Three.Vector3;
-    private tilePosition: Three.Vector3;
+    protected game: Game;
+
+    protected tileTable: ImageTileTable;
+
+    private geometry: Three.Geometry;
+    private material: Three.Material;
 
     private sortable: boolean;
 
-    private game: Game;
-
-    private geometry: Three.Geometry;
-
-    public get TileAnchor(): Three.Vector3 {
-        return this.tileAnchor;
+    public get Geometry(): Three.Geometry {
+        return this.geometry.clone();
     }
-    public set TileAnchor(value: Three.Vector3) {
-        this.tileAnchor = value;
-        for (const tile of this.tiles) {
-            tile.AdjustTile(value);
-        }
-        this.ArrangeTile();
-    }
-
-    public get TileScale(): Three.Vector3 {
-        return this.tileScale;
-    }
-    public set TileScale(value: Three.Vector3) {
-        this.tileScale = value;
-        for (const tile of this.tiles) {
-            tile.AdjustTile(undefined, value);
-        }
-        this.ArrangeTile();
-    }
-
-    public get TilePosition(): Three.Vector3 {
-        return this.tilePosition;
-    }
-    public set TilePosition(value: Three.Vector3) {
-        this.tilePosition = value;
-        for (const tile of this.tiles) {
-            tile.AdjustTile(undefined, undefined, value);
-        }
-        this.ArrangeTile();
+    public get Material(): Three.Material {
+        return this.material.clone();
     }
 
     constructor(game: Game, tileCount: number, tileTable: ImageTileTable, tileW: number, tileH: number, tileD: number, clickable: boolean = false, maxLen = -1, sortable = true) {
@@ -58,10 +30,10 @@ export default class CommonTileList extends TileList<ImageTile> {
 
         this.tileTable = tileTable;
         this.geometry  = RoundEdgedBox(tileW, tileH, tileD, 6, 1, 1, 1, 6);
+        this.material = new Three.MeshLambertMaterial({ color: 0xDBDBDB });
 
         for (let i = 0; i < tileCount; i++) {
-            const material = new Three.MeshLambertMaterial({ color: 0xDBDBDB });
-            this.tiles.push(new ImageTile(game, this.geometry, material, tileTable));
+            this.tiles.push(new ImageTile(game, this.Geometry, this.Material, tileTable));
             if (clickable) {
                 this.tiles[i].setTint(0x707070, 0x707070, 0xDBDBDB, 0xDBDBDB, 0xDBDBDB);
             } else {
@@ -82,10 +54,10 @@ export default class CommonTileList extends TileList<ImageTile> {
     }
 
     public AddTile(ID: string) {
-        let index = 0;
         const map: {[key: string]: number} = {c: 0, d: 1, b: 2};
-        const material = new Three.MeshLambertMaterial({ });
+        const newTile = new ImageTile(this.game, this.Geometry, this.Material, this.tileTable);
         if (this.sortable) {
+            let index = 0;
             for (index = 0; index < this.tileCount; index++) {
                 const t1 = this.tiles[index].ID;
                 const t2 = ID;
@@ -93,21 +65,19 @@ export default class CommonTileList extends TileList<ImageTile> {
                     break;
                 }
             }
-            this.tiles.splice(index, 0, new ImageTile(this.game, this.geometry, material, this.tileTable));
+            this.tiles.splice(index, 0, newTile);
         } else {
-            this.tiles.push(new ImageTile(this.game, this.geometry, material, this.tileTable));
-            index = this.tiles.length - 1;
+            this.tiles.push(newTile);
         }
-        this.add(this.tiles[index]);
-        this.tiles[index].ID     = ID;
-        this.tiles[index].color  = ID.slice(0, 1);
-        this.tiles[index].uuid   = v4();
-        this.tiles[index].AdjustTile(this.tileAnchor, this.tileScale, this.tilePosition);
+        this.add(newTile);
+        newTile.ID    = ID;
+        newTile.color = ID.slice(0, 1);
+        newTile.uuid  = v4();
         if (this.clickable) {
-            this.tiles[index].setTint(0x707070, 0x707070, 0xDBDBDB, 0xDBDBDB, 0xDBDBDB);
-            this.Input.AddButton(this.tiles[index], Input.key.Throw, undefined, this.tiles[index].uuid);
+            newTile.setTint(0x707070, 0x707070, 0xDBDBDB, 0xDBDBDB, 0xDBDBDB);
+            this.Input.AddButton(newTile, Input.key.Throw, undefined, newTile.uuid);
         } else {
-            this.tiles[index].enable = false;
+            newTile.enable = false;
         }
         this.ArrangeTile();
     }
@@ -138,7 +108,7 @@ export default class CommonTileList extends TileList<ImageTile> {
 
     private ArrangeTile() {
         for (const [i, tile] of this.tiles.entries()) {
-            tile.position.x = (tile.width  + 5)  *   (i % this.MaxLen);
+            tile.position.x =  (tile.width  + 5) *   (i % this.MaxLen);
             tile.position.y = -(tile.height + 5) * ~~(i / this.MaxLen);
         }
     }

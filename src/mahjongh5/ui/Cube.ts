@@ -4,17 +4,14 @@ export default class Cube extends Three.Mesh {
     private size: Three.Vector3;
 
     public get width(): number {
-        new Three.Box3().setFromObject(this).getSize(this.size);
         return this.size.x;
     }
 
     public get height(): number {
-        new Three.Box3().setFromObject(this).getSize(this.size);
         return this.size.y;
     }
 
     public get depth(): number {
-        new Three.Box3().setFromObject(this).getSize(this.size);
         return this.size.z;
     }
 
@@ -22,5 +19,6 @@ export default class Cube extends Three.Mesh {
         super(geometry, material);
         this.position.set(x, y, z);
         this.size = new Three.Vector3();
+        new Three.Box3().setFromObject(this).getSize(this.size);
     }
 }

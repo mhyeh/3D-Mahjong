@@ -15,9 +15,9 @@ export default class Game {
 
     public renderer = new Three.WebGLRenderer();
 
-    private loadStateValue?: LoadState;
+    public renderState: State;
 
-    private renderState: State;
+    private loadStateValue?: LoadState;
 
     public get loadState(): LoadState {
         if (!this.loadStateValue) {
