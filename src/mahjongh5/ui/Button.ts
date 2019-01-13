@@ -25,6 +25,13 @@ export interface ButtonSound {
     upSound?:   Three.Audio;
 }
 
+enum MouseState {
+    up   = 0,
+    down = 1,
+    out  = 2,
+    over = 3,
+}
+
 export default class Button extends Cube implements ButtonEvent {
     public onEnableChange: Signal = new Signal();
     public onInputDown:    Signal = new Signal();
@@ -32,13 +39,28 @@ export default class Button extends Cube implements ButtonEvent {
     public onInputOver:    Signal = new Signal();
     public onInputOut:     Signal = new Signal();
 
-    public stateTint: ButtonTint = { out: 0xFFFFFF };
+    public stateTint: ButtonTint = {
+                                    over:    0xFFFFFF,
+                                    out:     0xFFFFFF,
+                                    down:    0xFFFFFF,
+                                    up:      0xFFFFFF,
+                                    disable: 0xFFFFFF,
+                                };
 
     private enableValue: boolean = true;
+
     private stateChangeSignal?: Signal;
+
+    private _color: Three.Color;
+
+    private mouseState: MouseState = MouseState.out;
 
     constructor(game: Game, geometry: Three.Geometry | Three.BufferGeometry, material: Three.Material | Three.Material[], x?: number, y?: number, z?: number, key?: string, callback?: () => void, callbackContext?: any, overFrame?: string | number, outFrame?: string | number, downFrame?: string | number, upFrame?: string | number, disableFrame?: string | number) {
         super(geometry, material, x, y, z);
+        if (material instanceof Three.MeshBasicMaterial    || material instanceof Three.MeshLambertMaterial ||
+            material instanceof Three.MeshStandardMaterial || material instanceof Three.MeshPhongMaterial) {
+                this._color = material.color.clone();
+            }
 
         // TODO: set frame
 
@@ -76,10 +98,29 @@ export default class Button extends Cube implements ButtonEvent {
             }
             this.StateChangeHandler();
         });
-        game.domevent.addEventListener(this, "mousedown", this.onInputDown.dispatch.bind(this.onInputDown), false);
-        game.domevent.addEventListener(this, "mouseup",   this.onInputUp.dispatch.bind(this.onInputUp),     false);
-        game.domevent.addEventListener(this, "mouseout",  this.onInputOut.dispatch.bind(this.onInputOut),   false);
-        game.domevent.addEventListener(this, "mousemove", this.onInputOver.dispatch.bind(this.onInputOver), false);
+        game.domevent.addEventListener(this, "mousedown", () => {
+            if (this.mouseState === MouseState.over || this.mouseState === MouseState.up) {
+                this.mouseState = MouseState.down;
+                this.onInputDown.dispatch();
+            }
+        }, false);
+        game.domevent.addEventListener(this, "mouseup", () => {
+            if (this.mouseState === MouseState.down) {
+                this.mouseState = MouseState.up;
+                this.onInputUp.dispatch();
+            }
+        }, false);
+        game.domevent.addEventListener(this, "mouseout", () => {
+            this.mouseState = MouseState.out;
+            this.mouseState = MouseState.over;
+            this.onInputOut.dispatch();
+        }, false);
+        game.domevent.addEventListener(this, "mousemove", () => {
+            if (this.mouseState === MouseState.out) {
+                this.mouseState = MouseState.over;
+                this.onInputOver.dispatch();
+            }
+        }, false);
     }
 
     public get onStateChange(): Signal {
@@ -125,7 +166,8 @@ export default class Button extends Cube implements ButtonEvent {
             material.forEach((m) => this.setButtonTint(m, tint));
         } else if (material instanceof Three.MeshBasicMaterial    || material instanceof Three.MeshLambertMaterial ||
                    material instanceof Three.MeshStandardMaterial || material instanceof Three.MeshPhongMaterial) {
-            material.color.set(tint);
+            const color = this._color.clone();
+            material.color.set(color.multiply(new Three.Color(tint)));
         }
     }
 }

@@ -35,7 +35,7 @@ export default class CommonTileList extends TileList<ImageTile> {
         for (let i = 0; i < tileCount; i++) {
             this.tiles.push(new ImageTile(game, this.Geometry, this.Material, tileTable));
             if (clickable) {
-                this.tiles[i].setTint(0x707070, 0x707070, 0xDBDBDB, 0xDBDBDB, 0xDBDBDB);
+                this.tiles[i].setTint(0x707070, 0x707070);
             } else {
                 this.tiles[i].enable = false;
             }
@@ -74,7 +74,7 @@ export default class CommonTileList extends TileList<ImageTile> {
         newTile.color = ID.slice(0, 1);
         newTile.uuid  = v4();
         if (this.clickable) {
-            newTile.setTint(0x707070, 0x707070, 0xDBDBDB, 0xDBDBDB, 0xDBDBDB);
+            newTile.setTint(0x707070, 0x707070);
             this.Input.AddButton(newTile, Input.key.Throw, undefined, newTile.uuid);
         } else {
             newTile.enable = false;
