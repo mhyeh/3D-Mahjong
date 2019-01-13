@@ -10,30 +10,24 @@ export default class ChoseLackDialog extends Dialog {
     public dot:    Button;
     public text:   Text;
 
-    public windowGroup: Three.Group;
-
-    public background: Three.Mesh;
-
     constructor(game: Game, onCreate: (dialog: ChoseLackDialog) => void, show: boolean = false) {
         super(game, onCreate);
         // 強制回應、點擊背景等於按下取消、視窗關閉時不銷毀(可重用)
         this.backgroundCancel = false;
         this.destoryOnHide    = false;
 
-        this.windowGroup = new Three.Group();
-        // this.background  = new Graphics(game, 0, 0);
-        // this.background.beginFill(0x000000, 0.6);
-        // this.background.drawRoundedRect(0, 0, 300, 80, 5);
-        // this.background.endFill();
-        this.windowGroup.add(this.background);
-        this.windowGroup.add(this.bamboo);
-        this.windowGroup.add(this.char);
-        this.windowGroup.add(this.dot);
-        this.windowGroup.add(this.text);
+        this.CreateBG(500, 100, 10, 0.6);
+        this.add(this.backgroundGraphics);
+        this.add(this.bamboo);
+        this.add(this.char);
+        this.add(this.dot);
+        // this.windowGroup.add(this.text);
     }
 
     public Show(): Promise<DialogResult> {
-        this.windowGroup.visible = true;
+        // this.rotation.setFromVector3(this.game.renderState.camera.rotation.toVector3());
+        // console.log(this.game.renderState.camera.rotation, this.rotation);
+        this.visible = true;
         // 設定dialog物件的值
         return super.Show()
             .then((result) => {
@@ -42,7 +36,7 @@ export default class ChoseLackDialog extends Dialog {
     }
 
     public Hide() {
-        this.windowGroup.visible = false;
+        this.visible = false;
         super.Hide();
     }
 

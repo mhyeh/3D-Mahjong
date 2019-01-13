@@ -11,8 +11,6 @@ export default class CommandDialog extends Dialog {
     public pongon: Button;
     public ongon:  Button;
 
-    public windowGroup: Three.Group;
-
     constructor(game: Game, onCreate: (dialog: CommandDialog) => void, show: boolean = false) {
         super(game, onCreate);
         // 強制回應、點擊背景等於按下取消、視窗關閉時不銷毀(可重用)
@@ -20,23 +18,24 @@ export default class CommandDialog extends Dialog {
         this.backgroundCancel = false;
         this.destoryOnHide    = false;
 
-        this.windowGroup = new Three.Group();
-        this.windowGroup.add(this.pon);
-        this.windowGroup.add(this.gon);
-        this.windowGroup.add(this.hu);
-        this.windowGroup.add(this.none);
-        this.windowGroup.add(this.pongon);
-        this.windowGroup.add(this.ongon);
+        this.CreateBG(670, 120, 10, 0.7);
+        this.add(this.backgroundGraphics);
+        this.add(this.pon);
+        this.add(this.gon);
+        this.add(this.hu);
+        this.add(this.none);
+        this.add(this.pongon);
+        this.add(this.ongon);
     }
 
     public Show(): Promise<DialogResult> {
-        this.windowGroup.visible = true;
-        this.pon.enable          = false;
-        this.hu.enable           = false;
-        this.gon.enable          = false;
-        this.pongon.visible      = false;
-        this.ongon.visible       = false;
-        this.none.enable         = true;
+        this.visible        = true;
+        this.pon.enable     = false;
+        this.hu.enable      = false;
+        this.gon.enable     = false;
+        this.pongon.visible = false;
+        this.ongon.visible  = false;
+        this.none.enable    = true;
         // 設定dialog物件的值
         return super.Show()
             .then((result) => {
@@ -45,7 +44,7 @@ export default class CommandDialog extends Dialog {
     }
 
     public Hide() {
-        this.windowGroup.visible = false;
+        this.visible = false;
         super.Hide();
     }
 

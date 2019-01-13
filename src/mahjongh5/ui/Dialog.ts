@@ -2,6 +2,8 @@ import * as Three from "three";
 import { Signal } from "@robotlegsjs/signals";
 import { ButtonEvent } from "./Button";
 import Game from "../Game";
+import RoundEdgedBox from "../Util/RoundBoxGeometry";
+
 /**
  * 參考Windows Form DialogResult
  * https://msdn.microsoft.com/zh-tw/library/system.windows.forms.dialogresult(v=vs.110).aspx
@@ -28,11 +30,11 @@ export default class Dialog extends Three.Group {
 
     public game: Game;
 
+    protected backgroundGraphics: Three.Mesh;
+
     private showSignal: Signal;
     private hideSignal: Signal;
     private replySignal: Signal = new Signal();
-    // private backgroundGraphics: Graphics;
-    private bgEnable: boolean;
 
     public get onShow(): Signal {
         if (!this.showSignal) {
@@ -50,6 +52,7 @@ export default class Dialog extends Three.Group {
 
     constructor(game: Game, onCreate?: (dialog: any) => void) {
         super();
+        this.game    = game;
         this.visible = false;
         if (onCreate) {
             onCreate(this);
@@ -58,6 +61,7 @@ export default class Dialog extends Three.Group {
     }
 
     public Show(): Promise<DialogResult> {
+        this.rotation.setFromVector3(this.game.renderState.camera.rotation.toVector3());
         if (this.backgroundCancel) {
             this.game.domevent.addEventListener(this.game.renderState.scene, "click", this.Hide.bind(this), false);
         }
@@ -91,5 +95,9 @@ export default class Dialog extends Three.Group {
     }
 
     protected Create() {
+    }
+
+    protected CreateBG(w: number, h: number, r: number, alpha: number) {
+        this.backgroundGraphics = new Three.Mesh(RoundEdgedBox(w, h, 1, r, 1, 1, 1, 8), new Three.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: alpha }));
     }
 }
