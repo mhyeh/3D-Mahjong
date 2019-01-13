@@ -19,6 +19,8 @@ export default class Game {
 
     private loadStateValue?: LoadState;
 
+    private aspect: number = 1.628;
+
     public get loadState(): LoadState {
         if (!this.loadStateValue) {
             this.loadStateValue = new LoadState(this);
@@ -30,11 +32,11 @@ export default class Game {
     }
 
     public get sceneWidth(): number {
-        return window.innerWidth;
+        return Math.min(window.innerWidth, window.innerHeight * this.aspect);
     }
 
     public get sceneHeight(): number {
-        return window.innerHeight;
+        return this.sceneWidth / this.aspect;
     }
 
     constructor(display: string) {

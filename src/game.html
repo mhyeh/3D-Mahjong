@@ -10,9 +10,33 @@
 	<title>mahjongh5</title>
 	<script src="library.bundle.js"></script>
 	<script src="app.js"></script>
+	<style>
+		body {
+			margin: 0 auto;
+			background-color: black;
+			text-align: center;
+			height: 100vh;
+			width: 100vw;
+		}
+		body::before {
+			content: "";
+			display: inline-block;
+			vertical-align: middle;
+			width: 0;
+			margin-right: -.25em;
+			height: 100%; 
+		}
+		#game {
+			display: inline-block;
+			vertical-align: middle;
+		}
+		canvas {
+			vertical-align: bottom;
+		}
+	</style>
 </head>
 
-<body style="margin:0;background-color:black;">
+<body>
 	<div id="game"></div>
 	<script>
 		if (/Android/.test(navigator.userAgent)) {
