@@ -37,7 +37,7 @@ export default class MahjongGame extends State {
     // public remainTile: Text;
 
     // public timer: Timer;
-    // public arrow: Image[];
+    public arrow: Three.Mesh[];
 
     public socket: SocketIOClient.Socket;
 
@@ -83,9 +83,10 @@ export default class MahjongGame extends State {
 
     public async create() {
         super.create();
-        // this.ui.Input.AddButton(this.choseLackDialog.char,   Input.key.lack, undefined, 0);
-        // this.ui.Input.AddButton(this.choseLackDialog.dot,    Input.key.lack, undefined, 1);
-        // this.ui.Input.AddButton(this.choseLackDialog.bamboo, Input.key.lack, undefined, 2);
+
+        this.ui.Input.AddButton(this.choseLackDialog.char,   Input.key.lack, undefined, 0);
+        this.ui.Input.AddButton(this.choseLackDialog.dot,    Input.key.lack, undefined, 1);
+        this.ui.Input.AddButton(this.choseLackDialog.bamboo, Input.key.lack, undefined, 2);
 
         // this.ui.Input.AddButton(this.ui.checkButton, Input.key.enter, undefined);
         // for (let i = 0; i < 4; i++) {
@@ -94,20 +95,15 @@ export default class MahjongGame extends State {
         //     });
         // }
 
-        // this.ui.Input.AddButton(this.commandDialog.pon,  Input.key.command, undefined, Input.key.Pon);
-        // this.ui.Input.AddButton(this.commandDialog.gon,  Input.key.command, undefined, Input.key.Gon);
-        // this.ui.Input.AddButton(this.commandDialog.hu,   Input.key.command, undefined, Input.key.Hu);
-        // this.ui.Input.AddButton(this.commandDialog.none, Input.key.command, undefined, Input.key.None);
+        this.ui.Input.AddButton(this.commandDialog.pon,  Input.key.command, undefined, Input.key.Pon);
+        this.ui.Input.AddButton(this.commandDialog.gon,  Input.key.command, undefined, Input.key.Gon);
+        this.ui.Input.AddButton(this.commandDialog.hu,   Input.key.command, undefined, Input.key.Hu);
+        this.ui.Input.AddButton(this.commandDialog.none, Input.key.command, undefined, Input.key.None);
 
-        // this.ui.Input.AddButton(this.commandDialog.pongon, Input.key.Gon, undefined, COMMAND_TYPE.COMMAND_PONGON);
-        // this.ui.Input.AddButton(this.commandDialog.ongon,  Input.key.Gon, undefined, COMMAND_TYPE.COMMAND_ONGON);
+        this.ui.Input.AddButton(this.commandDialog.pongon, Input.key.Gon, undefined, COMMAND_TYPE.COMMAND_PONGON);
+        this.ui.Input.AddButton(this.commandDialog.ongon,  Input.key.Gon, undefined, COMMAND_TYPE.COMMAND_ONGON);
 
         this.ui.Refresh();
-
-        // const self = this;
-        // this.game.renderer.domElement.addEventListener("click", () => {
-        //     self.sea[0].AddTile("c1");
-        // });
 
         // this.id = Number(localStorage.getItem("ID"));
         // console.log(this.id);

@@ -8,6 +8,9 @@ import RoundEdgedBox from "mahjongh5/Util/RoundBoxGeometry";
 import CommonTileList from "mahjongh5/component/tile/CommonTileList";
 import ImageTileTable from "mahjongh5/component/tile/ImageTileTable";
 import DoorTileList from "mahjongh5/component/tile/DoorTileList";
+import ChoseLackDialog from "./ChoseLackDialog";
+import CommandDialog from "./CommandDialog";
+import Button from "mahjongh5/ui/Button";
 
 export default function MahjongStart() {
     const isPlaying = false;
@@ -106,9 +109,9 @@ export default function MahjongStart() {
             const hand   = [];
             const door   = [];
             const hu     = [];
-            const tileW = 92;
-            const tileH = 128;
-            const tileD = 68;
+            const tileW  = 92;
+            const tileH  = 128;
+            const tileD  = 68;
             for (let i = 0; i < 4; i++) {
                 hand.push(new CommonTileList(game, 13, tileTable, tileW, tileH, tileD, i === 0, 16, false));
                 hu.push(new   CommonTileList(game, 0,  tileTable, tileW, tileH, tileD, false,   16, false));
@@ -179,10 +182,88 @@ export default function MahjongStart() {
             scene.add(...sea);
             scene.add(...door);
 
+            const checkButton = new Button(game, RoundEdgedBox(200, 130, 100, 30, 1, 1, 1, 40), new Three.MeshLambertMaterial({ color: 0xFFFF00 }));
+            checkButton.position.set(820, -850, 40);
+            checkButton.stateTint.down    = 0x707070;
+            checkButton.stateTint.disable = 0x707070;
+            checkButton.visible = false;
+
+            scene.add(checkButton);
+
+            const choseLackDialog = new ChoseLackDialog(game, (dialog: ChoseLackDialog) => {
+                const buttonGeometry = new Three.CylinderGeometry(40, 40, 1, 50);
+                buttonGeometry.rotateX(Math.PI / 2);
+
+                dialog.char   = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0xD10000 }));
+                dialog.dot    = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0x2D27E8 }));
+                dialog.bamboo = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0xF7F71B }));
+                dialog.char.position.x = 20;
+                dialog.char.position.z = 5;
+                dialog.char.stateTint.down    = 0x707070;
+                dialog.char.stateTint.disable = 0x707070;
+                dialog.dot.position.x = 110;
+                dialog.dot.position.z = 5;
+                dialog.dot.stateTint.down    = 0x707070;
+                dialog.dot.stateTint.disable = 0x707070;
+                dialog.bamboo.position.x = 200;
+                dialog.bamboo.position.z = 5;
+                dialog.bamboo.stateTint.down    = 0x707070;
+                dialog.bamboo.stateTint.disable = 0x707070;
+            });
+            choseLackDialog.position.set(-400, -800, 300);
+
+            scene.add(choseLackDialog);
+
+            const commandDialog = new CommandDialog(game, (dialog: CommandDialog) => {
+                const buttonGeometry = new Three.CylinderGeometry(50, 50, 1, 50);
+                buttonGeometry.rotateX(Math.PI / 2);
+
+                dialog.pon    = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0xF7F71B }));
+                dialog.gon    = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0x2D27E8 }));
+                dialog.hu     = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0xD10000 }));
+                dialog.none   = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0x00E212 }));
+                dialog.pongon = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0xE57200 }));
+                dialog.ongon  = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0x8B00E2 }));
+
+                dialog.pon.position.x = -275;
+                dialog.pon.position.z = 5;
+                dialog.pon.stateTint.down    = 0x707070;
+                dialog.pon.stateTint.disable = 0x707070;
+                dialog.gon.position.x = -165;
+                dialog.gon.position.z = 5;
+                dialog.gon.stateTint.down    = 0x707070;
+                dialog.gon.stateTint.disable = 0x707070;
+                dialog.hu.position.x = -55;
+                dialog.hu.position.z = 5;
+                dialog.hu.stateTint.down    = 0x707070;
+                dialog.hu.stateTint.disable = 0x707070;
+                dialog.none.position.x = 275;
+                dialog.none.position.z = 5;
+                dialog.none.stateTint.down    = 0x707070;
+                dialog.none.stateTint.disable = 0x707070;
+                dialog.pongon.position.x = 165;
+                dialog.pongon.position.z = 5;
+                dialog.pongon.stateTint.down    = 0x707070;
+                dialog.pongon.stateTint.disable = 0x707070;
+                dialog.ongon.position.x = 55;
+                dialog.ongon.position.z = 5;
+                dialog.ongon.stateTint.down    = 0x707070;
+                dialog.ongon.stateTint.disable = 0x707070;
+            });
+
+            commandDialog.position.set(500, -1150, 300);
+
+            scene.add(commandDialog);
+
             mahjong.sea  = sea;
             mahjong.hu   = hu;
             mahjong.door = door;
             mahjong.hand = hand;
+
+            mahjong.ui.checkButton = checkButton;
+
+            mahjong.choseLackDialog = choseLackDialog;
+            mahjong.commandDialog   = commandDialog;
 
             mahjong.scene  = scene;
             mahjong.camera = camera;
