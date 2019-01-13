@@ -1,8 +1,10 @@
+import * as Three from "three";
 import State from "mahjongh5/State";
 import Game from "mahjongh5/Game";
 import Input from "mahjongh5/input/Input";
 import UIController from "./UIController";
 import MahjongGame from "./MahjongGame";
+import Text from "mahjongh5/ui/Text";
 
 export default class JoinState extends State {
     public loadMessage = "Loading Scene";
@@ -10,8 +12,8 @@ export default class JoinState extends State {
     public game: Game;
     public mahjongGame: MahjongGame;
 
-    // public name:      Text[];
-    // public nameBlock: Image[];
+    public name:      Text[];
+    public nameBlock: Three.Mesh[];
 
     public socket: SocketIOClient.Socket;
 

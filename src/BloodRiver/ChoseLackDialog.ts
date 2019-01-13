@@ -1,4 +1,3 @@
-import * as Three from "three";
 import Dialog, { DialogResult } from "mahjongh5/ui/Dialog";
 import Button from "mahjongh5/ui/Button";
 import Game from "mahjongh5/Game";
@@ -21,12 +20,10 @@ export default class ChoseLackDialog extends Dialog {
         this.add(this.bamboo);
         this.add(this.char);
         this.add(this.dot);
-        // this.windowGroup.add(this.text);
+        this.add(this.text);
     }
 
     public Show(): Promise<DialogResult> {
-        // this.rotation.setFromVector3(this.game.renderState.camera.rotation.toVector3());
-        // console.log(this.game.renderState.camera.rotation, this.rotation);
         this.visible = true;
         // 設定dialog物件的值
         return super.Show()

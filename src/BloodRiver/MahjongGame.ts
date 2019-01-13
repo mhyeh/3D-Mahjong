@@ -14,6 +14,7 @@ import CommandDialog from "./CommandDialog";
 import InfoDialog from "./InfoDialog";
 import EffectController from "./EffectController";
 import DoorTileList from "mahjongh5/component/tile/DoorTileList";
+import Text from "mahjongh5/ui/Text";
 
 // import Timer from "mahjongh5/component/Timer";
 
@@ -32,9 +33,9 @@ export default class MahjongGame extends State {
     public commandDialog:   CommandDialog;
     public infoDialog:      InfoDialog[];
 
-    // public name:       Text[];
-    // public scoreText:  Text[];
-    // public remainTile: Text;
+    public name:       Text[];
+    public scoreText:  Text[];
+    public remainTile: Text;
 
     // public timer: Timer;
     public arrow: Three.Mesh[];
@@ -88,7 +89,7 @@ export default class MahjongGame extends State {
         this.ui.Input.AddButton(this.choseLackDialog.dot,    Input.key.lack, undefined, 1);
         this.ui.Input.AddButton(this.choseLackDialog.bamboo, Input.key.lack, undefined, 2);
 
-        // this.ui.Input.AddButton(this.ui.checkButton, Input.key.enter, undefined);
+        this.ui.Input.AddButton(this.ui.checkButton, Input.key.enter, undefined);
         // for (let i = 0; i < 4; i++) {
         //     this.ui.avatar[i].onInputUp.add(() => {
         //         this.infoDialog[i].Show();

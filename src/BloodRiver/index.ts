@@ -11,6 +11,8 @@ import DoorTileList from "mahjongh5/component/tile/DoorTileList";
 import ChoseLackDialog from "./ChoseLackDialog";
 import CommandDialog from "./CommandDialog";
 import Button from "mahjongh5/ui/Button";
+import * as Assets from "./Assets";
+import Text from "mahjongh5/ui/Text";
 
 export default function MahjongStart() {
     const isPlaying = false;
@@ -31,6 +33,8 @@ export default function MahjongStart() {
     //     });
     // });
     const init = (game: Game) => {
+        game.assets     = Assets;
+
         const joinState = new JoinState(game);
         const mahjong   = new MahjongGame(game);
         game.gameStates.push(mahjong);
@@ -59,6 +63,7 @@ export default function MahjongStart() {
         });
 
         mahjong.onCreate.add(() => {
+            console.log(game.cache);
             const scene  = new Three.Scene();
             const camera = new Three.PerspectiveCamera(50, game.sceneWidth / game.sceneHeight, 0.1, 5000);
 
@@ -104,7 +109,7 @@ export default function MahjongStart() {
             const board = new Three.Mesh(new Three.BoxGeometry(boardW, boardH, 100), new Three.MeshLambertMaterial({ color: 0x0B5B00}));
             scene.add(board);
 
-            const tileTable = new ImageTileTable("", "");
+            const tileTable = new ImageTileTable(game.cache[Assets.tiles.tiles_config.key], Assets.tiles.tiles.key);
             const sea    = [];
             const hand   = [];
             const door   = [];
@@ -194,8 +199,15 @@ export default function MahjongStart() {
                 const buttonGeometry = new Three.CylinderGeometry(40, 40, 1, 50);
                 buttonGeometry.rotateX(Math.PI / 2);
 
+                dialog.text = new Text(game, "定缺:", Assets.font.sourceHan.key, 50, 1, new Three.MeshLambertMaterial({ color: 0xFFFFFF }), -210, -25, 5);
+
+                const fontMaterial = new Three.MeshLambertMaterial({ color: 0x000000 });
+                dialog.add(new Text(game, "萬", Assets.font.sourceHan.key, 40, 1, fontMaterial.clone(), -6,  -20, 5));
+                dialog.add(new Text(game, "筒", Assets.font.sourceHan.key, 40, 1, fontMaterial.clone(), 82,  -20, 5));
+                dialog.add(new Text(game, "條", Assets.font.sourceHan.key, 40, 1, fontMaterial.clone(), 170, -20, 5));
+
                 dialog.char   = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0xD10000 }));
-                dialog.dot    = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0x2D27E8 }));
+                dialog.dot    = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0x02C3E5 }));
                 dialog.bamboo = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0xF7F71B }));
                 dialog.char.position.x = 20;
                 dialog.char.position.z = 5;
@@ -218,12 +230,20 @@ export default function MahjongStart() {
                 const buttonGeometry = new Three.CylinderGeometry(50, 50, 1, 50);
                 buttonGeometry.rotateX(Math.PI / 2);
 
+                const fontMaterial = new Three.MeshLambertMaterial({ color: 0x000000 });
+                dialog.add(new Text(game, "碰",   Assets.font.sourceHan.key, 40, 1, fontMaterial.clone(), -303, -21, 5));
+                dialog.add(new Text(game, "槓",   Assets.font.sourceHan.key, 40, 1, fontMaterial.clone(), -193, -21, 5));
+                dialog.add(new Text(game, "胡",   Assets.font.sourceHan.key, 40, 1, fontMaterial.clone(), -83,  -21, 5));
+                dialog.add(new Text(game, "暗槓", Assets.font.sourceHan.key, 30, 1, fontMaterial.clone(),  12,  -18, 5));
+                dialog.add(new Text(game, "碰槓", Assets.font.sourceHan.key, 30, 1, fontMaterial.clone(),  122, -18, 5));
+                dialog.add(new Text(game, "略過", Assets.font.sourceHan.key, 30, 1, fontMaterial.clone(),  232, -18, 5));
+
                 dialog.pon    = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0xF7F71B }));
-                dialog.gon    = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0x2D27E8 }));
+                dialog.gon    = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0x02C3E5 }));
                 dialog.hu     = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0xD10000 }));
-                dialog.none   = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0x00E212 }));
-                dialog.pongon = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0xE57200 }));
                 dialog.ongon  = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0x8B00E2 }));
+                dialog.pongon = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0xE57200 }));
+                dialog.none   = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0x00E212 }));
 
                 dialog.pon.position.x = -275;
                 dialog.pon.position.z = 5;
@@ -237,18 +257,18 @@ export default function MahjongStart() {
                 dialog.hu.position.z = 5;
                 dialog.hu.stateTint.down    = 0x707070;
                 dialog.hu.stateTint.disable = 0x707070;
-                dialog.none.position.x = 275;
-                dialog.none.position.z = 5;
-                dialog.none.stateTint.down    = 0x707070;
-                dialog.none.stateTint.disable = 0x707070;
-                dialog.pongon.position.x = 165;
-                dialog.pongon.position.z = 5;
-                dialog.pongon.stateTint.down    = 0x707070;
-                dialog.pongon.stateTint.disable = 0x707070;
                 dialog.ongon.position.x = 55;
                 dialog.ongon.position.z = 5;
                 dialog.ongon.stateTint.down    = 0x707070;
                 dialog.ongon.stateTint.disable = 0x707070;
+                dialog.pongon.position.x = 165;
+                dialog.pongon.position.z = 5;
+                dialog.pongon.stateTint.down    = 0x707070;
+                dialog.pongon.stateTint.disable = 0x707070;
+                dialog.none.position.x = 275;
+                dialog.none.position.z = 5;
+                dialog.none.stateTint.down    = 0x707070;
+                dialog.none.stateTint.disable = 0x707070;
             });
 
             commandDialog.position.set(500, -1150, 300);

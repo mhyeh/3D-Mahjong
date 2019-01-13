@@ -1,4 +1,3 @@
-import * as Three from "three";
 import Dialog, { DialogResult } from "mahjongh5/ui/Dialog";
 import Button from "mahjongh5/ui/Button";
 import Game from "mahjongh5/Game";
@@ -14,7 +13,6 @@ export default class CommandDialog extends Dialog {
     constructor(game: Game, onCreate: (dialog: CommandDialog) => void, show: boolean = false) {
         super(game, onCreate);
         // 強制回應、點擊背景等於按下取消、視窗關閉時不銷毀(可重用)
-        // this.modal            = true;
         this.backgroundCancel = false;
         this.destoryOnHide    = false;
 
