@@ -13,7 +13,7 @@ export default class Game {
     public load:  Loader;
     public cache: { [key: string]: any };
 
-    public renderer = new Three.WebGLRenderer();
+    public renderer = new Three.WebGLRenderer({ antialias: true });
 
     public renderState: State;
 
