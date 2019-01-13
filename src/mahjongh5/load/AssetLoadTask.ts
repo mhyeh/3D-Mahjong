@@ -85,6 +85,7 @@ export default class AssetLoadTask implements Loadable {
     /** 目前寫法在一個LoadState中有很多個AssetLoadTask會造成混亂 */
     public LoadStart(progressCallback?: (progress: number) => void): Promise<void> {
         return new Promise<void>((resolve, reject) => {
+            console.log(this.assetInfos);
             if (this.assetInfos.length === 0) {
                 resolve();
             }
@@ -110,8 +111,13 @@ export default class AssetLoadTask implements Loadable {
     /** 單純把東西加入loader的queue */
     public AddToLoader(): void {
         for (const assetInfo of this.assetInfos) {
-            if ((Three as any)[assetInfo.type]) {
-                const loader = new (Three as any)[assetInfo.type](this.game.load);
+            if (assetInfo.type === "json") {
+                const loader = new Three.FileLoader(this.game.load).setResponseType("json");
+                loader.load(assetInfo.args[1], (data: any) => {
+                    this.game.cache[assetInfo.args[0]] = data;
+                }, () => {}, () => {});
+            } else if ((Three as any)[assetInfo.type + "Loader"]) {
+                const loader = new (Three as any)[assetInfo.type + "Loader"](this.game.load);
                 loader.load(assetInfo.args[1], (data: any) => {
                     this.game.cache[assetInfo.args[0]] = data;
                 }, () => {}, () => {});

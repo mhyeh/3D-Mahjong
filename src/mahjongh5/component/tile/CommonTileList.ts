@@ -41,16 +41,9 @@ export default class CommonTileList extends TileList<ImageTile> {
             }
             this.add(this.tiles[i]);
         }
-        this.AdjustAllTile();
+        this.ArrangeTile();
 
         this.sortable = sortable;
-    }
-
-    public AdjustAllTile(anchor?: Three.Vector3, scale?: Three.Vector3, position?: Three.Vector3) {
-        for (const tile of this.tiles) {
-            tile.AdjustTile(anchor, scale, position);
-        }
-        this.ArrangeTile();
     }
 
     public AddTile(ID: string) {

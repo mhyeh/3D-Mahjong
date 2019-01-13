@@ -11,7 +11,7 @@ export default class Game {
     public domevent: DomEvents;
 
     public load:  Loader;
-    public cache: { [key: string]: any };
+    public cache: { [key: string]: any } = {};
 
     public renderer = new Three.WebGLRenderer({ antialias: true });
 
@@ -73,7 +73,6 @@ export default class Game {
     }
 
     public async SwitchScene(state: State) {
-        console.log(state);
         await state.create();
         this.renderer.setSize(this.sceneWidth, this.sceneHeight);
         this.domevent.camera = state.camera;

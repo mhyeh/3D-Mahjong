@@ -33,8 +33,6 @@ export default abstract class Tlie<TileTableType extends TileTable = TileTable> 
         this.tileTable = tileTable;
     }
 
-    public abstract AdjustTile(anchor?: Three.Vector3, scale?: Three.Vector3, position?: Three.Vector3): void;
-
     protected OnIDChangedHandler(): void {
         if (this.idChangedSignal) {
             this.idChangedSignal.dispatch(this, this.id);
