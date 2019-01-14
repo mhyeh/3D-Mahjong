@@ -13,6 +13,8 @@ import CommandDialog from "./CommandDialog";
 import Button from "mahjongh5/ui/Button";
 import * as Assets from "./Assets";
 import Text from "mahjongh5/ui/Text";
+import Timer from "mahjongh5/component/Timer";
+import NumberDisplayer from "mahjongh5/ui/NumberDisplayer";
 
 export default function MahjongStart() {
     const isPlaying = false;
@@ -22,7 +24,6 @@ export default function MahjongStart() {
     //     const uuid = localStorage.getItem("uuid");
     //     const room = localStorage.getItem("room");
     //     socket.emit("auth", uuid, room, (state: number) => {
-    //         console.log(state);
     //         localStorage.setItem("state", state.toString());
     //         if (state === -1 || state === 0) {
     //             window.location.href = "./index.html";
@@ -83,7 +84,7 @@ export default function MahjongStart() {
             const outBoardW = 2200;
             const outBoardH = 100;
             const geometry  = RoundEdgedBox(outBoardW, outBoardH, 150, 30, 1, 1, 1, 6);
-            const material  = new Three.MeshLambertMaterial({ color: 0x593B00});
+            const material  = new Three.MeshLambertMaterial({ color: 0xA38511});
             const outBoard1 = new Three.Mesh(geometry, material);
             outBoard1.position.set(0, -1050, 25);
 
@@ -105,7 +106,7 @@ export default function MahjongStart() {
 
             const boardW = 2000;
             const boardH = 2000;
-            const board = new Three.Mesh(new Three.BoxGeometry(boardW, boardH, 100), new Three.MeshLambertMaterial({ color: 0x0B5B00}));
+            const board = new Three.Mesh(new Three.BoxGeometry(boardW, boardH, 100), new Three.MeshLambertMaterial({ color: 0x0B440C}));
             scene.add(board);
 
             const tileTable = new ImageTileTable(game.cache[Assets.tiles.tiles_config.key], Assets.tiles.tiles.key, Assets.tiles.tilesJson.key);
@@ -187,7 +188,7 @@ export default function MahjongStart() {
             scene.add(...door);
 
             const checkButton     = new Button(game, RoundEdgedBox(200, 130, 100, 30, 1, 1, 1, 40), new Three.MeshLambertMaterial({ color: 0xFFFF00 }));
-            const checkButtonText = new Text(game, "確認", Assets.font.sourceHan.key, 40 , 1, new Three.MeshLambertMaterial({ color: 0x000000 }), -55, -27, 50);
+            const checkButtonText = new Text(game, "確認", Assets.font.sourceHan.key, 40 , 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 0, 0, 50, true);
             checkButton.position.set(820, -850, 40);
             checkButton.stateTint.down    = 0x707070;
             checkButton.stateTint.disable = 0x707070;
@@ -196,11 +197,15 @@ export default function MahjongStart() {
 
             scene.add(checkButton);
 
+            const timer = new Timer(new NumberDisplayer(new Text(game, "0", Assets.font.sourceHan.key, 80 , 20, new Three.MeshLambertMaterial({ color: 0xFFFFFF }), 0, 0, 150, true)), undefined, 0x808080);
+            timer.rotation.setFromVector3(camera.rotation.toVector3());
+            scene.add(timer);
+
             const choseLackDialog = new ChoseLackDialog(game, (dialog: ChoseLackDialog) => {
                 const buttonGeometry = new Three.CylinderGeometry(40, 40, 1, 50);
                 buttonGeometry.rotateX(Math.PI / 2);
 
-                dialog.text = new Text(game, "定缺:", Assets.font.sourceHan.key, 50, 1, new Three.MeshLambertMaterial({ color: 0xFFFFFF }), -210, -25, 5);
+                dialog.text = new Text(game, "定缺:", Assets.font.sourceHan.key, 50, 1, new Three.MeshLambertMaterial({ color: 0xFFFFFF }), -150, 0, 5, true);
 
                 const fontMaterial = new Three.MeshLambertMaterial({ color: 0x000000 });
 
@@ -208,9 +213,9 @@ export default function MahjongStart() {
                 dialog.dot　  = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0x02C3E5 }));
                 dialog.bamboo = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0xF7F71B }));
 
-                dialog.char.add(new   Text(game, "萬", Assets.font.sourceHan.key, 40, 1, fontMaterial.clone(), -26,　-20, 0));
-                dialog.dot.add(new    Text(game, "筒", Assets.font.sourceHan.key, 40, 1, fontMaterial.clone(), -26,　-20, 0));
-                dialog.bamboo.add(new Text(game, "條", Assets.font.sourceHan.key, 40, 1, fontMaterial.clone(), -26,　-20, 0));
+                dialog.char.add(new   Text(game, "萬", Assets.font.sourceHan.key, 40, 1, fontMaterial.clone(), 0, 0, 0, true));
+                dialog.dot.add(new    Text(game, "筒", Assets.font.sourceHan.key, 40, 1, fontMaterial.clone(), 0, 0, 0, true));
+                dialog.bamboo.add(new Text(game, "條", Assets.font.sourceHan.key, 40, 1, fontMaterial.clone(), 0, 0, 0, true));
 
                 dialog.char.position.x = 20;
                 dialog.char.position.z = 5;
@@ -226,6 +231,8 @@ export default function MahjongStart() {
                 dialog.bamboo.stateTint.disable = 0x707070;
             });
             choseLackDialog.position.set(-400, -800, 300);
+            // choseLackDialog.rotation.setFromVector3(camera.rotation.toVector3());
+            // choseLackDialog.Show();
 
             scene.add(choseLackDialog);
 
@@ -242,12 +249,12 @@ export default function MahjongStart() {
                 dialog.pongon = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0xE57200 }));
                 dialog.none   = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: 0x00E212 }));
 
-                dialog.pon.add(new    Text(game, "碰",   Assets.font.sourceHan.key, 40, 1, fontMaterial.clone(), -28, -20, 5));
-                dialog.gon.add(new    Text(game, "槓",   Assets.font.sourceHan.key, 40, 1, fontMaterial.clone(), -28, -20, 5));
-                dialog.hu.add(new     Text(game, "胡",   Assets.font.sourceHan.key, 40, 1, fontMaterial.clone(), -28, -20, 5));
-                dialog.ongon.add(new  Text(game, "暗槓", Assets.font.sourceHan.key, 30, 1, fontMaterial.clone(), -43, -15, 5));
-                dialog.pongon.add(new Text(game, "碰槓", Assets.font.sourceHan.key, 30, 1, fontMaterial.clone(), -43, -15, 5));
-                dialog.none.add(new   Text(game, "略過", Assets.font.sourceHan.key, 30, 1, fontMaterial.clone(), -43, -15, 5));
+                dialog.pon.add(new    Text(game, "碰",   Assets.font.sourceHan.key, 40, 1, fontMaterial.clone(), 0, 0, 5, true));
+                dialog.gon.add(new    Text(game, "槓",   Assets.font.sourceHan.key, 40, 1, fontMaterial.clone(), 0, 0, 5, true));
+                dialog.hu.add(new     Text(game, "胡",   Assets.font.sourceHan.key, 40, 1, fontMaterial.clone(), 0, 0, 5, true));
+                dialog.ongon.add(new  Text(game, "暗槓", Assets.font.sourceHan.key, 30, 1, fontMaterial.clone(), 0, 0, 5, true));
+                dialog.pongon.add(new Text(game, "碰槓", Assets.font.sourceHan.key, 30, 1, fontMaterial.clone(), 0, 0, 5, true));
+                dialog.none.add(new   Text(game, "略過", Assets.font.sourceHan.key, 30, 1, fontMaterial.clone(), 0, 0, 5, true));
 
                 dialog.pon.position.x = -275;
                 dialog.pon.position.z = 5;
@@ -275,6 +282,8 @@ export default function MahjongStart() {
                 dialog.none.stateTint.disable = 0x707070;
             });
             commandDialog.position.set(500, -1150, 300);
+            // commandDialog.rotation.setFromVector3(camera.rotation.toVector3());
+            // commandDialog.Show();
 
             scene.add(commandDialog);
 
@@ -284,6 +293,8 @@ export default function MahjongStart() {
             mahjong.hand = hand;
 
             mahjong.ui.checkButton = checkButton;
+
+            mahjong.timer = timer;
 
             mahjong.choseLackDialog = choseLackDialog;
             mahjong.commandDialog   = commandDialog;

@@ -16,7 +16,7 @@ import EffectController from "./EffectController";
 import DoorTileList from "mahjongh5/component/tile/DoorTileList";
 import Text from "mahjongh5/ui/Text";
 
-// import Timer from "mahjongh5/component/Timer";
+import Timer from "mahjongh5/component/Timer";
 
 export default class MahjongGame extends State {
     public loadMessage = "Loading Scene";
@@ -37,7 +37,7 @@ export default class MahjongGame extends State {
     public scoreText:  Text[];
     public remainTile: Text;
 
-    // public timer: Timer;
+    public timer: Timer;
     public arrow: Three.Mesh[];
 
     public socket: SocketIOClient.Socket;
@@ -107,7 +107,6 @@ export default class MahjongGame extends State {
         this.ui.Refresh();
 
         // this.id = Number(localStorage.getItem("ID"));
-        // console.log(this.id);
 
         // const playerList = JSON.parse(localStorage.getItem("players"));
         // for (let i = 0; i < 4; i++) {
@@ -257,9 +256,9 @@ export default class MahjongGame extends State {
         const defaultChange = System.DelayValue(time, defaultTile);
         this.ui.checkButton.visible = true;
 
-        // this.timer.Play(time);
+        this.timer.Play(time);
         const changedTile = await Promise.race([this.ChoseLackTile(), defaultChange]);
-        // this.timer.ForceStop();
+        this.timer.ForceStop();
 
         this.ui.checkButton.visible = false;
         for (let i = 0; i < 3; i++) {
@@ -357,9 +356,9 @@ export default class MahjongGame extends State {
         this.choseLackDialog.Show();
         const defaultColor = System.DelayValue(time, color);
 
-        // this.timer.Play(time);
+        this.timer.Play(time);
         const lackColor = await Promise.race([this.ui.Input.WaitKeyUp(Input.key.lack), defaultColor]);
-        // this.timer.ForceStop();
+        this.timer.ForceStop();
 
         this.choseLackDialog.Hide();
         this.socket.emit("chooseLack", lackColor);
@@ -398,10 +397,9 @@ export default class MahjongGame extends State {
         this.draw.EnableAll();
         const defaultTile = System.DelayValue(time, tile);
 
-        // this.timer.Play(time);
+        this.timer.Play(time);
         const throwTile = await Promise.race([this.hand[0].getClickTileID(), this.draw.getClickTileID(), defaultTile]);
-        console.log(throwTile);
-        // this.timer.ForceStop();
+        this.timer.ForceStop();
         this.hand[0].DisableAll();
         this.socket.emit("throwTile", throwTile);
     }
@@ -424,7 +422,6 @@ export default class MahjongGame extends State {
 
     private async Command(tileMap: string, command: COMMAND_TYPE, time: number) {
         const json = JSON.parse(tileMap);
-        console.log(json);
         const map: Map<COMMAND_TYPE, string[]> = new Map<COMMAND_TYPE, string[]>();
         for (const row of json) {
             map.set(row.Key, row.Value);
@@ -452,9 +449,9 @@ export default class MahjongGame extends State {
 
         const defaultCommand = System.DelayValue(time, { cmd: COMMAND_TYPE.NONE, tile: "" });
 
-        // this.timer.Play(time);
+        this.timer.Play(time);
         const result = await Promise.race([this.ChooseCommand(map, command), defaultCommand]);
-        // this.timer.ForceStop();
+        this.timer.ForceStop();
 
         this.clearDraw();
         this.hand[0].DisableAll();
@@ -535,7 +532,6 @@ export default class MahjongGame extends State {
         } else if (command & COMMAND_TYPE.COMMAND_PON) {
             this.PON(0, idx, tile);
         }
-        console.log(this.hand[0].tileCount);
         this.setDrawPosition();
     }
 
@@ -563,7 +559,6 @@ export default class MahjongGame extends State {
     private async End(data: string) {
         const gameResult = JSON.parse(data);
         console.log(gameResult);
-        console.log("end");
         for (let i = 0; i < 4; i++) {
             const idx = this.getID(i);
             if (gameResult[i].Door !== null) {
@@ -586,7 +581,7 @@ export default class MahjongGame extends State {
 
     private updateScore() {
         for (let i = 0; i < 4; i++) {
-            // this.scoreText[i].text = "score:   " + this.score[i];
+            this.scoreText[i].text = "score:   " + this.score[i];
         }
     }
     private HU(id: number, fromId: number, tile: string, score: number) {
