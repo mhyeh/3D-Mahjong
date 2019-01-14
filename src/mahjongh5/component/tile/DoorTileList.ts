@@ -29,10 +29,8 @@ export default class DoorTileList extends CommonTileList {
 
     private ArrangeGonTile() {
         let i = 0;
-        console.log(this.gonTiles);
         for (const gTile of this.gonTiles) {
             for (; i < this.tiles.length; i++) {
-                console.log(i, gTile.uuid, this.tiles[i].ID, gTile.ID);
                 if (this.tiles[i].ID === gTile.ID) {
                     gTile.position.x = this.tiles[i + 1].position.x;
                     gTile.position.y = this.tiles[i + 1].position.y;
@@ -50,7 +48,7 @@ export default class DoorTileList extends CommonTileList {
     }
 
     private addGonTile(ID: string) {
-        const tile      = new ImageTile(this.game, this.Geometry, this.Material, this.tileTable);
+        const tile      = new ImageTile(this.game, this.tileW, this.tileH, this.tileD, this.tileR, this.tileTable);
         tile.ID         = ID;
         tile.color      = ID.slice(0, 1);
         tile.uuid       = v4();

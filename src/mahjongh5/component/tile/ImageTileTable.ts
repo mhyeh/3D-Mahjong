@@ -2,11 +2,12 @@ import TilelTable from "./TileTable";
 
 export default class ImageTileTable extends TilelTable<ImageTileConfig> {
 
-    public spriteKey:   string;
-    public tileWidth?:  number;
-    public tileHeight?: number;
+    public spriteKey:      string;
+    public tileWidth?:     number;
+    public tileHeight?:    number;
+    public textureConfig?: string;
 
-    constructor(data?: any, spriteKey?: string) {
+    constructor(data?: any, spriteKey?: string, textureConfig?: string) {
         super(data);
         if (data) {
             this.spriteKey  = data.spriteKey;
@@ -15,6 +16,9 @@ export default class ImageTileTable extends TilelTable<ImageTileConfig> {
         }
         if (spriteKey) {
             this.spriteKey = spriteKey;
+        }
+        if (textureConfig) {
+            this.textureConfig = textureConfig;
         }
     }
 

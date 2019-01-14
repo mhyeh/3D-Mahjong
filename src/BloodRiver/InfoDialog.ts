@@ -23,26 +23,19 @@ export default class InfoDialog extends Dialog {
         this.add(this.scoreLog);
     }
 
-    public Redraw() {
-        // this.background.scale.y = this.background.height + 150;
-        // this.background.clear();
-        // this.background.beginFill(0x000000, 0.6);
-        // this.background.drawRoundedRect(0, 0, 400, this.scoreLog.Height + 150, 5);
-        // this.background.endFill();
-        // this.position.y = this.Y - (this.scoreLog.Height + 50) * this.anchorY;
-    }
-
     public Show(): Promise<DialogResult> {
         if (this.scoreLog.visible === true) {
             window.addEventListener("mousewheel",     this.scoreLog.scroll.bind(this.scoreLog), false);
             window.addEventListener("DOMMouseScroll", this.scoreLog.scroll.bind(this.scoreLog), false);
+            this.visible = true;
+            // 設定dialog物件的值
+            return super.Show()
+                .then((result) => {
+                    return result;
+                });
+        } else {
+            return Promise.resolve(DialogResult.Cancel);
         }
-        this.visible = true;
-        // 設定dialog物件的值
-        return super.Show()
-            .then((result) => {
-                return result;
-            });
     }
 
     public Hide() {

@@ -85,7 +85,6 @@ export default class AssetLoadTask implements Loadable {
     /** 目前寫法在一個LoadState中有很多個AssetLoadTask會造成混亂 */
     public LoadStart(progressCallback?: (progress: number) => void): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            console.log(this.assetInfos);
             if (this.assetInfos.length === 0) {
                 resolve();
             }

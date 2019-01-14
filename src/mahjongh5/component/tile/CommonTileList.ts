@@ -1,39 +1,33 @@
-import * as Three from "three";
 import { v4 } from "uuid";
 import TileList from "./TileList";
 import ImageTile from "./ImageTile";
 import ImageTileTable from "./ImageTileTable";
 import Input from "mahjongh5/input/Input";
 import Game from "mahjongh5/Game";
-import RoundEdgedBox from "mahjongh5/Util/RoundBoxGeometry";
 
 export default class CommonTileList extends TileList<ImageTile> {
     protected game: Game;
 
     protected tileTable: ImageTileTable;
-
-    private geometry: Three.Geometry;
-    private material: Three.Material;
+    protected tileW:     number;
+    protected tileH:     number;
+    protected tileD:     number;
+    protected tileR:     number;
 
     private sortable: boolean;
-
-    public get Geometry(): Three.Geometry {
-        return this.geometry.clone();
-    }
-    public get Material(): Three.Material {
-        return this.material.clone();
-    }
 
     constructor(game: Game, tileCount: number, tileTable: ImageTileTable, tileW: number, tileH: number, tileD: number, clickable: boolean = false, maxLen = -1, sortable = true) {
         super(clickable, maxLen);
         this.game = game;
 
         this.tileTable = tileTable;
-        this.geometry  = RoundEdgedBox(tileW, tileH, tileD, 6, 1, 1, 1, 6);
-        this.material = new Three.MeshLambertMaterial({ color: 0xDBDBDB });
+        this.tileW     = tileW;
+        this.tileH     = tileH;
+        this.tileD     = tileD;
+        this.tileR     = 6;
 
         for (let i = 0; i < tileCount; i++) {
-            this.tiles.push(new ImageTile(game, this.Geometry, this.Material, tileTable));
+            this.tiles.push(new ImageTile(game, this.tileW, this.tileH, this.tileD, this.tileR, tileTable));
             if (clickable) {
                 this.tiles[i].setTint(0x707070, 0x707070);
             } else {
@@ -48,7 +42,7 @@ export default class CommonTileList extends TileList<ImageTile> {
 
     public AddTile(ID: string) {
         const map: {[key: string]: number} = {c: 0, d: 1, b: 2};
-        const newTile = new ImageTile(this.game, this.Geometry, this.Material, this.tileTable);
+        const newTile = new ImageTile(this.game, this.tileW, this.tileH, this.tileD, this.tileR, this.tileTable);
         if (this.sortable) {
             let index = 0;
             for (index = 0; index < this.tileCount; index++) {

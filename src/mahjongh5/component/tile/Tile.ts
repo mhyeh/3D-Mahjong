@@ -28,8 +28,8 @@ export default abstract class Tlie<TileTableType extends TileTable = TileTable> 
         return this.idChangedSignal;
     }
 
-    constructor(game: Game, geometry: Three.Geometry | Three.BufferGeometry, material: Three.Material | Three.Material[], tileTable: TileTableType, x?: number, y?: number, z?: number, key?: string) {
-        super(game, geometry, material, x, y, z);
+    constructor(game: Game, geometry: Three.Geometry | Three.BufferGeometry, material: Three.Material | Three.Material[], tileTable: TileTableType, x?: number, y?: number, z?: number, key?: string, textureConfig?: string) {
+        super(game, geometry, material, x, y, z, key, textureConfig);
         this.tileTable = tileTable;
     }
 

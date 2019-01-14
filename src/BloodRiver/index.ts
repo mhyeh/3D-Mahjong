@@ -63,7 +63,6 @@ export default function MahjongStart() {
         });
 
         mahjong.onCreate.add(() => {
-            console.log(game.cache);
             const scene  = new Three.Scene();
             const camera = new Three.PerspectiveCamera(50, game.sceneWidth / game.sceneHeight, 0.1, 5000);
 
@@ -109,7 +108,7 @@ export default function MahjongStart() {
             const board = new Three.Mesh(new Three.BoxGeometry(boardW, boardH, 100), new Three.MeshLambertMaterial({ color: 0x0B5B00}));
             scene.add(board);
 
-            const tileTable = new ImageTileTable(game.cache[Assets.tiles.tiles_config.key], Assets.tiles.tiles.key);
+            const tileTable = new ImageTileTable(game.cache[Assets.tiles.tiles_config.key], Assets.tiles.tiles.key, Assets.tiles.tilesJson.key);
             const sea    = [];
             const hand   = [];
             const door   = [];
@@ -136,12 +135,12 @@ export default function MahjongStart() {
             hand[1].position.x = 900 - tileD / 2;
             hand[1].position.z = 50  + tileH / 2;
 
-            hand[2].rotation.set(Math.PI / 2, 0, Math.PI);
+            hand[2].rotation.set(-Math.PI / 2, 0, Math.PI);
             new Three.Box3().setFromObject(hand[2]).getCenter(hand[2].position).multiplyScalar(- 1);
             hand[2].position.y = 900 - tileD / 2;
             hand[2].position.z = 50  + tileH / 2;
 
-            hand[3].rotation.set(0, Math.PI / 2, Math.PI * 3 / 2);
+            hand[3].rotation.set(0, -Math.PI / 2, Math.PI * 3 / 2);
             new Three.Box3().setFromObject(hand[3]).getCenter(hand[3].position).multiplyScalar(- 1);
             hand[3].position.x = -900 + tileD / 2;
             hand[3].position.z =  50  + tileH / 2;
