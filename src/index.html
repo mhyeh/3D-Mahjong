@@ -63,7 +63,6 @@
 			if (room === undefined) {
 				room = "";
 			}
-			console.log("auth")
 			socket.emit("auth", uuid, room, (state) => {
 				if (state === 0) {
 					$("#login").hide();

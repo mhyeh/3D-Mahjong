@@ -101,7 +101,6 @@ export default class JoinState extends State {
         //         }
         //     }
             // this.nameBlock[index].tint = 0XFFFF33;
-        //     console.log(name, "ready");
         // });
 
         // this.socket.on("broadcastGameStart", (playerList: string[]) => {

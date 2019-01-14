@@ -60,8 +60,6 @@ export default class Button extends Cube implements ButtonEvent {
 
     private stateChangeSignal?: Signal;
 
-    private _color: Three.Color;
-
     private mouseState: MouseState = MouseState.out;
 
     private texture?: Three.Texture;
@@ -72,10 +70,6 @@ export default class Button extends Cube implements ButtonEvent {
 
     constructor(game: Game, geometry: Three.Geometry | Three.BufferGeometry, material: Three.Material | Three.Material[], x?: number, y?: number, z?: number, texture?: string, textureConfig?: string, callback?: () => void, callbackContext?: any, overFrame?: string | number, outFrame?: string | number, downFrame?: string | number, upFrame?: string | number, disableFrame?: string | number) {
         super(geometry, material, x, y, z);
-        if (material instanceof Three.MeshBasicMaterial    || material instanceof Three.MeshLambertMaterial ||
-            material instanceof Three.MeshStandardMaterial || material instanceof Three.MeshPhongMaterial) {
-            this._color = material.color.clone();
-        }
 
         if (texture) {
             this.texture = new Three.Texture(game.cache[texture]);
@@ -93,7 +87,7 @@ export default class Button extends Cube implements ButtonEvent {
         this.onInputDown.add(() => {
             if (this.enable) {
                 if (this.stateTint.down) {
-                    this.setButtonTint(this, this.stateTint.down);
+                    this.tint = this.stateTint.down;
                 }
                 if (this.stateFrame.downFrame) {
                     this.frame = this.stateFrame.downFrame;
@@ -104,7 +98,7 @@ export default class Button extends Cube implements ButtonEvent {
         this.onInputUp.add(() => {
             if (this.enable) {
                 if (this.stateTint.up) {
-                    this.setButtonTint(this, this.stateTint.up);
+                    this.tint = this.stateTint.up;
                 }
                 if (this.stateFrame.upFrame) {
                     this.frame = this.stateFrame.upFrame;
@@ -115,7 +109,7 @@ export default class Button extends Cube implements ButtonEvent {
         this.onInputOver.add(() => {
             if (this.enable) {
                 if (this.stateTint.over) {
-                    this.setButtonTint(this, this.stateTint.over);
+                    this.tint = this.stateTint.over;
                 }
                 if (this.stateFrame.overFrame) {
                     this.frame = this.stateFrame.overFrame;
@@ -126,7 +120,7 @@ export default class Button extends Cube implements ButtonEvent {
         this.onInputOut.add(() => {
             if (this.enable) {
                 if (this.stateTint.out) {
-                    this.setButtonTint(this, this.stateTint.out);
+                    this.tint = this.stateTint.out;
                 }
                 if (this.stateFrame.outFrame) {
                     this.frame = this.stateFrame.outFrame;
@@ -137,21 +131,21 @@ export default class Button extends Cube implements ButtonEvent {
         this.onEnableChange.add((enable: boolean) => {
             if (enable) {
                 if (this.stateTint.out) {
-                    this.setButtonTint(this, this.stateTint.out);
+                    this.tint = this.stateTint.out;
                 }
                 if (this.stateFrame.outFrame) {
                     this.frame = this.stateFrame.outFrame;
                 }
             } else if (this.stateTint.disable) {
                 if (this.stateTint.disable) {
-                    this.setButtonTint(this, this.stateTint.disable);
+                    this.tint = this.stateTint.disable;
                 }
                 if (this.stateFrame.disableFrame) {
                     this.frame = this.stateFrame.disableFrame;
                 }
             } else {
                 if (this.stateTint.out) {
-                    this.setButtonTint(this, this.stateTint.out);
+                    this.tint = this.stateTint.out;
                 }
                 if (this.stateFrame.outFrame) {
                     this.frame = this.stateFrame.outFrame;
@@ -259,31 +253,6 @@ export default class Button extends Cube implements ButtonEvent {
     private StateChangeHandler() {
         if (this.stateChangeSignal) {
             this.stateChangeSignal.dispatch();
-        }
-    }
-
-    private setButtonTint(mesh: Three.Mesh, tint: number) {
-        if (mesh.material instanceof Array) {
-            mesh.material.forEach((m) => this.setMaterialTint(m, tint));
-        } else if (mesh.material instanceof Three.MeshBasicMaterial    || mesh.material instanceof Three.MeshLambertMaterial ||
-                   mesh.material instanceof Three.MeshStandardMaterial || mesh.material instanceof Three.MeshPhongMaterial) {
-            const color = this._color.clone();
-            mesh.material.color.set(color.multiply(new Three.Color(tint)));
-        }
-        mesh.children.forEach((child) => {
-            if (child instanceof Three.Mesh) {
-                this.setMaterialTint(child.material, tint);
-            }
-        });
-    }
-
-    private setMaterialTint(material: Three.Material | Three.Material[], tint: number) {
-        if (material instanceof Array) {
-            material.forEach((m) => this.setMaterialTint(m, tint));
-        } else if (material instanceof Three.MeshBasicMaterial    || material instanceof Three.MeshLambertMaterial ||
-                   material instanceof Three.MeshStandardMaterial || material instanceof Three.MeshPhongMaterial) {
-            const color = this._color.clone();
-            material.color.set(color.multiply(new Three.Color(tint)));
         }
     }
 
