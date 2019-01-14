@@ -72,18 +72,12 @@ export default class CommonTileList extends TileList<ImageTile> {
     public RemoveTile(ID: string) {
         let index = -1;
         if (this.sortable) {
-            index = this.tiles.findIndex((a) => a.ID === ID);
+            index = this.tiles.findIndex((tile) => tile.ID === ID);
         } else {
-            let flag = false;
-            for (let i = this.tiles.length - 1; i >= 0; i--) {
-                if (this.tiles[i].ID === ID) {
-                    index = i;
-                    flag  = true;
-                    break;
-                }
-            }
-            if (!flag) {
-                index = -1;
+            const t = this.tiles.slice(0).reverse();
+            index = t.findIndex((tile) => tile.ID === ID);
+            if (index !== -1) {
+                index = this.tileCount - index - 1;
             }
         }
         if (index !== -1) {

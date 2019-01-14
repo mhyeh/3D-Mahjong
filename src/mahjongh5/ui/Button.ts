@@ -85,46 +85,38 @@ export default class Button extends Cube implements ButtonEvent {
         this.stateFrame = { overFrame, outFrame, downFrame, upFrame, disableFrame };
 
         this.onInputDown.add(() => {
-            if (this.enable) {
-                if (this.stateTint.down) {
-                    this.tint = this.stateTint.down;
-                }
-                if (this.stateFrame.downFrame) {
-                    this.frame = this.stateFrame.downFrame;
-                }
+            if (this.stateTint.down) {
+                this.tint = this.stateTint.down;
+            }
+            if (this.stateFrame.downFrame) {
+                this.frame = this.stateFrame.downFrame;
             }
             this.StateChangeHandler();
         });
         this.onInputUp.add(() => {
-            if (this.enable) {
-                if (this.stateTint.up) {
-                    this.tint = this.stateTint.up;
-                }
-                if (this.stateFrame.upFrame) {
-                    this.frame = this.stateFrame.upFrame;
-                }
+            if (this.stateTint.up) {
+                this.tint = this.stateTint.up;
+            }
+            if (this.stateFrame.upFrame) {
+                this.frame = this.stateFrame.upFrame;
             }
             this.StateChangeHandler();
         });
         this.onInputOver.add(() => {
-            if (this.enable) {
-                if (this.stateTint.over) {
-                    this.tint = this.stateTint.over;
-                }
-                if (this.stateFrame.overFrame) {
-                    this.frame = this.stateFrame.overFrame;
-                }
+            if (this.stateTint.over) {
+                this.tint = this.stateTint.over;
+            }
+            if (this.stateFrame.overFrame) {
+                this.frame = this.stateFrame.overFrame;
             }
             this.StateChangeHandler();
         });
         this.onInputOut.add(() => {
-            if (this.enable) {
-                if (this.stateTint.out) {
-                    this.tint = this.stateTint.out;
-                }
-                if (this.stateFrame.outFrame) {
-                    this.frame = this.stateFrame.outFrame;
-                }
+            if (this.stateTint.out) {
+                this.tint = this.stateTint.out;
+            }
+            if (this.stateFrame.outFrame) {
+                this.frame = this.stateFrame.outFrame;
             }
             this.StateChangeHandler();
         });
@@ -154,24 +146,26 @@ export default class Button extends Cube implements ButtonEvent {
             this.StateChangeHandler();
         });
         game.domevent.addEventListener(this, "mousedown", () => {
-            if (this.mouseState === MouseState.over || this.mouseState === MouseState.up) {
+            if (this.enable && (this.mouseState === MouseState.over || this.mouseState === MouseState.up)) {
                 this.mouseState = MouseState.down;
                 this.onInputDown.dispatch();
             }
         }, false);
         game.domevent.addEventListener(this, "mouseup", () => {
-            if (this.mouseState === MouseState.down) {
+            if (this.enable && (this.mouseState === MouseState.down)) {
                 this.mouseState = MouseState.up;
                 this.onInputUp.dispatch();
             }
         }, false);
         game.domevent.addEventListener(this, "mouseout", () => {
-            this.mouseState = MouseState.out;
-            this.mouseState = MouseState.over;
-            this.onInputOut.dispatch();
+            if (this.enable) {
+                this.mouseState = MouseState.out;
+                this.mouseState = MouseState.over;
+                this.onInputOut.dispatch();
+            }
         }, false);
         game.domevent.addEventListener(this, "mousemove", () => {
-            if (this.mouseState === MouseState.out) {
+            if (this.enable && (this.mouseState === MouseState.out)) {
                 this.mouseState = MouseState.over;
                 this.onInputOver.dispatch();
             }

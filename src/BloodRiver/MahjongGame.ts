@@ -300,7 +300,7 @@ export default class MahjongGame extends State {
                 const removeIndex = changeTile.findIndex((value) => value === this.hand[0].tiles[index].ID);
                 changeTile.splice(removeIndex, 1);
                 this.hand[0].tiles[index].isClick = false;
-                this.hand[0].tiles[index].position.y += 10;
+                this.hand[0].tiles[index].position.y += 50;
                 if (changeTile.length === 0) {
                     for (const tile of this.hand[0].tiles) {
                         if (count[tile.color] >= 3) {
@@ -317,7 +317,7 @@ export default class MahjongGame extends State {
             } else {
                 changeTile.push(this.hand[0].tiles[index].ID);
                 this.hand[0].tiles[index].isClick = true;
-                this.hand[0].tiles[index].position.y -= 10;
+                this.hand[0].tiles[index].position.y -= 50;
                 for (const tile of this.hand[0].tiles) {
                     if (tile.color !== this.hand[0].tiles[index].color) {
                         tile.enable = false;
@@ -607,9 +607,8 @@ export default class MahjongGame extends State {
         for (let i = 0; i < 3; i++) {
             this.hand[id].RemoveTile(id === 0 ? tile : "None");
         }
-        for (let i = 0; i < 4; i++) {
-            this.door[id].AddTile(tile);
-        }
+        this.door[id].Gon(tile);
+        this.moveDoor(id, 3);
         this.score[id]     += score;
         this.score[fromId] -= score;
     }
@@ -617,19 +616,20 @@ export default class MahjongGame extends State {
     private ONGON(id: number, tile: string, score: number) {
         for (let i = 0; i < 4; i++) {
             this.hand[id].RemoveTile(id === 0 ? tile : "None");
-            this.door[id].AddTile(id === 0 ? tile : "None");
         }
+        this.door[id].Gon(id === 0 ? tile : "None");
         this.score[id] += score * 3;
         for (let i = 0; i < 4; i++) {
             if (i !== id) {
                 this.score[i] -= score;
             }
         }
+        this.moveDoor(id, 3);
     }
 
     private PONGON(id: number, tile: string, score: number) {
         this.hand[id].RemoveTile(id === 0 ? tile : "None");
-        this.door[id].AddTile(tile);
+        this.door[id].PonGon(tile);
         this.score[id] += score * 3;
         for (let i = 0; i < 4; i++) {
             if (i !== id) {
@@ -643,9 +643,14 @@ export default class MahjongGame extends State {
         for (let i = 0; i < 2; i++) {
             this.hand[id].RemoveTile(id === 0 ? tile : "None");
         }
-        for (let i = 0; i < 3; i++) {
-            this.door[id].AddTile(tile);
-        }
+        this.door[id].Pon(tile);
+        this.moveDoor(id, 3);
+    }
+
+    private moveDoor(id: number, n: number) {
+        const len = this.door[id].tiles[0].width * n;
+        const map = ["x", "y"];
+        (this.door[id].position as any)[map[id % 2]] += len * (id < 2 ? -1 : 1);
     }
 
     private clearDraw() {

@@ -56,7 +56,7 @@ export default class DoorTileList extends CommonTileList {
         const map: {[key: string]: number} = {c: 0, d: 1, b: 2};
         let index = 0;
         for (index = 0; index < this.gonTiles.length; index++) {
-            const t1 = this.tiles[index].ID;
+            const t1 = this.gonTiles[index].ID;
             const t2 = ID;
             if (map[t1.charAt(0)] * 10 + Number(t1.charAt(1)) > map[t2.charAt(0)] * 10 + Number(t2.charAt(1))) {
                 break;

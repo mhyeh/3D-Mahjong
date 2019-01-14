@@ -31,6 +31,7 @@ export const tiles = {
 
 export const font = {
     sourceHan: {type: "Font", key: "", args: [require("assets/Mahjong/SourceHanSansTW_Regular_Regular.json")] },
+    jhengHei: {type: "Font", key: "", args: [require("assets/Mahjong/Microsoft JhengHei_Regular.json")] },
 };
 
 // 如果直接把上面的東西都加到這裡面不個別export的話，在別的地方import之後就要打Assets.assets.background這樣多包了一層

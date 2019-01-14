@@ -24,8 +24,8 @@ export default class ImageTile extends Tile<ImageTileTable> {
 
         const front = new Three.Mesh(planeGeometry, this.frontMaterial);
         const back  = new Three.Mesh(planeGeometry, this.backMaterial);
-        front.position.z =  this.depth / 2;
-        back.position.z  = -this.depth / 2;
+        front.position.z =  this.depth / 2 + 2;
+        back.position.z  = -this.depth / 2 - 3;
         this.add(front);
         this.add(back);
 
