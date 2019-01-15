@@ -88,10 +88,10 @@ export default class Input {
      * @param holdDuration 按鈕要長按多久才算按下，單位為毫秒
      */
     public AddButton(button: ButtonEvent, type: ButtonKey, holdDuration: number = 0, data ?: string | number): void {
-        this.AddSignal(button.onInputDown, button.onInputUp, type, holdDuration, data);
+        this.AddSignal(button.onInputDown, button.onInputUp, button.onInputOut, type, holdDuration, data);
     }
 
-    public AddSignal(onDown: Signal, onUp: Signal, type: ButtonKey, holdDuration: number = 0, data ?: string | number): void {
+    public AddSignal(onDown: Signal, onUp: Signal, onOut: Signal, type: ButtonKey, holdDuration: number = 0, data ?: string | number): void {
         let isPressed = false;
         const buttonDownCallBack = () => {
             if (isPressed) {
@@ -106,6 +106,10 @@ export default class Input {
                 this[type].SetButtonUp(data);
             }
         };
+        const buttonOutCallBack = () => {
+            isPressed = false;
+            this[type].SetButtonOut();
+        };
         if (holdDuration !== 0) {
             onDown.add(() => {
                 const buttonUp = new Promise<boolean>((resolve) => onUp.addOnce(() => resolve(false)));
@@ -118,9 +122,11 @@ export default class Input {
                     });
             });
             onUp.add(buttonUpCallBack);
+            onOut.add(buttonOutCallBack);
         } else {
             onDown.add(buttonDownCallBack);
             onUp.add(buttonUpCallBack);
+            onOut.add(buttonOutCallBack);
         }
     }
 

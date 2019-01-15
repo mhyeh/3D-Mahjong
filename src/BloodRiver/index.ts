@@ -15,6 +15,7 @@ import * as Assets from "./Assets";
 import Text from "mahjongh5/ui/Text";
 import Timer from "mahjongh5/component/Timer";
 import NumberDisplayer from "mahjongh5/ui/NumberDisplayer";
+import Cube from "mahjongh5/ui/Cube";
 
 export default function MahjongStart() {
     const isPlaying = false;
@@ -38,7 +39,7 @@ export default function MahjongStart() {
 
         const joinState = new JoinState(game);
         const mahjong   = new MahjongGame(game);
-        game.gameStates.push(mahjong);
+        game.gameStates.push(joinState);
 
         // if (isPlaying) {
         //     game.gameStates.push(mahjong);
@@ -59,6 +60,58 @@ export default function MahjongStart() {
             const scene  = new Three.Scene();
             const camera = new Three.PerspectiveCamera(50, game.sceneWidth / game.sceneHeight, 0.1, 3000);
 
+            camera.position.set(0, -1800, 1500);
+            camera.rotateX(0.8);
+
+            const ambientLight = new Three.AmbientLight(0xAAAAAA);
+            scene.add(ambientLight);
+
+            const pointLight = new Three.PointLight(0x050505, 25);
+
+            pointLight.position.set(0, -2000, 1000);
+            pointLight.lookAt(0, 0, 0);
+            scene.add(pointLight);
+
+            const title = new Text(game, "配對成功", Assets.font.jhengHei.key, 200, 1, new Three.MeshLambertMaterial({ color: 0xFFFFFF }), 0, 0, 0, true);
+            title.rotation.setFromVector3(camera.rotation.toVector3());
+            title.position.y += 800;
+            title.position.z += 300;
+            scene.add(title);
+
+            const nameBlock = [];
+            const name      = [];
+            for (let i = 0; i < 4; i++) {
+                nameBlock.push(new Three.Mesh(RoundEdgedBox(500, 500, 40, 20, 1, 1, 1, 20), new Three.MeshLambertMaterial({ color: 0xAAAAAA })));
+                nameBlock[i].add(new Text(game, "ID", Assets.font.jhengHei.key, 100, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 0, 100, 20, true));
+
+                name.push(new Text(game, "name", Assets.font.jhengHei.key, 50, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 0, -100, 20, true));
+                nameBlock[i].add(name[i]);
+
+                nameBlock[i].rotation.setFromVector3(camera.rotation.toVector3());
+            }
+            nameBlock[0].position.x = -1000;
+            nameBlock[1].position.x = -335;
+            nameBlock[2].position.x =  335;
+            nameBlock[3].position.x =  1000;
+            scene.add(...nameBlock);
+
+            const ready = new Button(game, RoundEdgedBox(400, 200, 40, 50, 1, 1, 1, 20), new Three.MeshLambertMaterial({ color: 0x10A3E8, transparent: true, opacity: 0.8}));
+            ready.add(new Text(game, "Ready", Assets.font.jhengHei.key, 60, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 5, 0, 30, true));
+            ready.position.y    -= 900;
+            ready.stateTint.down = 0x808080;
+            ready.stateTint.up   = 0xFFFFFF;
+            ready.lookAt(camera.position);
+            scene.add(ready);
+
+            // joinState.socket = socket;
+
+            joinState.ui.readyButton = ready;
+
+            joinState.name      = name;
+            joinState.nameBlock = nameBlock;
+
+            joinState.mahjongGame = mahjong;
+
             joinState.scene  = scene;
             joinState.camera = camera;
         });
@@ -67,7 +120,7 @@ export default function MahjongStart() {
             const scene  = new Three.Scene();
             const camera = new Three.PerspectiveCamera(50, game.sceneWidth / game.sceneHeight, 0.1, 5000);
 
-            scene.background = new Three.Color( 0xAAAAAA );
+            scene.background = new Three.Color(0xAAAAAA);
 
             camera.position.set(0, -1800, 1500);
             camera.rotateX(0.8);
@@ -114,6 +167,30 @@ export default function MahjongStart() {
             remainTile.position.set(-1500, 300, 650);
             scene.add(remainTile);
 
+            // arrow setting
+            const sideLen1 = 60;
+            const sideLen2 = 60;
+            const angle    = 90;
+            const height   = 10;
+            const shape = new Three.Shape();
+            let x = 0;
+            let y = 0;
+            shape.moveTo(x, y);
+            x += sideLen1;
+            shape.lineTo(x, y);
+            x -= sideLen2 * Math.cos(Math.PI * angle / 180);
+            y += sideLen2 * Math.sin(Math.PI * angle / 180);
+            shape.lineTo(x, y);
+            shape.lineTo(0, 0);
+
+            const extrudeSettings = {
+                depth:          height,
+                bevelEnabled:   true,
+                bevelThickness: 1,
+                bevelSize:      8,
+                bevelSegments:  1,
+            };
+
             const tileTable = new ImageTileTable(game.cache[Assets.tiles.tiles_config.key], Assets.tiles.tiles.key, Assets.tiles.tilesJson.key);
             const sea    = [];
             const hand   = [];
@@ -137,27 +214,29 @@ export default function MahjongStart() {
 
                 score.push(new Text(game, "score: ", Assets.font.jhengHei.key, 50, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 0, 0, 70));
                 score[i].rotation.setFromVector3(camera.rotation.toVector3());
+
+                arrow.push(new Cube(new Three.ExtrudeGeometry(shape, extrudeSettings), new Three.MeshLambertMaterial({ color: 0xF0F40E }), 0, 0));
             }
 
             // hand
             hand[0].rotateX(Math.PI * 80 / 180);
-            new Three.Box3().setFromObject(hand[0]).getCenter(hand[0].position).multiplyScalar(- 1);
+            new Three.Box3().setFromObject(hand[0]).getCenter(hand[0].position).multiplyScalar(-1);
             hand[0].position.y = -900 + tileD / 2;
             hand[0].position.z =  50  + tileH / 2;
             hand[0].SetImmediate(["c1", "c1", "c1", "c5", "c5", "c8", "c8", "c9", "d2", "d3", "d4", "b4", "b7"]);
 
             hand[1].rotation.set(0, Math.PI / 2, Math.PI / 2);
-            new Three.Box3().setFromObject(hand[1]).getCenter(hand[1].position).multiplyScalar(- 1);
+            new Three.Box3().setFromObject(hand[1]).getCenter(hand[1].position).multiplyScalar(-1);
             hand[1].position.x = 900 - tileD / 2;
             hand[1].position.z = 50  + tileH / 2;
 
             hand[2].rotation.set(-Math.PI / 2, 0, Math.PI);
-            new Three.Box3().setFromObject(hand[2]).getCenter(hand[2].position).multiplyScalar(- 1);
+            new Three.Box3().setFromObject(hand[2]).getCenter(hand[2].position).multiplyScalar(-1);
             hand[2].position.y = 900 - tileD / 2;
             hand[2].position.z = 50  + tileH / 2;
 
             hand[3].rotation.set(0, -Math.PI / 2, Math.PI * 3 / 2);
-            new Three.Box3().setFromObject(hand[3]).getCenter(hand[3].position).multiplyScalar(- 1);
+            new Three.Box3().setFromObject(hand[3]).getCenter(hand[3].position).multiplyScalar(-1);
             hand[3].position.x = -900 + tileD / 2;
             hand[3].position.z =  50  + tileH / 2;
 
@@ -219,12 +298,34 @@ export default function MahjongStart() {
 
             // score[3].position.x -= 1200;
 
+            // arrow
+            arrow[0].rotateZ(-Math.PI * 45  / 180);
+            new Three.Box3().setFromObject(arrow[0]).getCenter(arrow[0].position).multiplyScalar(-1);
+            arrow[0].position.y -= 100;
+            arrow[0].position.z  = 50;
+
+            arrow[1].rotateZ( Math.PI * 45  / 180);
+            new Three.Box3().setFromObject(arrow[1]).getCenter(arrow[1].position).multiplyScalar(-1);
+            arrow[1].position.x += 100;
+            arrow[1].position.z  = 50;
+
+            arrow[2].rotateZ( Math.PI * 135 / 180);
+            new Three.Box3().setFromObject(arrow[2]).getCenter(arrow[2].position).multiplyScalar(-1);
+            arrow[2].position.y += 100;
+            arrow[2].position.z  = 50;
+
+            arrow[3].rotateZ( Math.PI * 225 / 180);
+            new Three.Box3().setFromObject(arrow[3]).getCenter(arrow[3].position).multiplyScalar(-1);
+            arrow[3].position.x -= 100;
+            arrow[3].position.z  = 50;
+
             scene.add(...hand);
             scene.add(...hu);
             scene.add(...sea);
             scene.add(...door);
             // scene.add(...name);
             // scene.add(...score);
+            scene.add(...arrow);
 
             const checkButton     = new Button(game, RoundEdgedBox(200, 130, 100, 30, 1, 1, 1, 40), new Three.MeshLambertMaterial({ color: 0xFFFF00 }));
             const checkButtonText = new Text(game, "確認", Assets.font.jhengHei.key, 40 , 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 0, 0, 52, true);
@@ -330,6 +431,7 @@ export default function MahjongStart() {
 
             mahjong.name      = name;
             mahjong.scoreText = score;
+            mahjong.arrow     = arrow;
 
             mahjong.sea  = sea;
             mahjong.hu   = hu;

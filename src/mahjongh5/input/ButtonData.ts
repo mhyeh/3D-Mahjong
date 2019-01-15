@@ -61,4 +61,8 @@ export default class ButtonData {
             }
         }
     }
+
+    public SetButtonOut() {
+        this.pressCount = 0;
+    }
 }

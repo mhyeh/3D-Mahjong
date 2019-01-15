@@ -160,7 +160,6 @@ export default class Button extends Cube implements ButtonEvent {
         game.domevent.addEventListener(this, "mouseout", () => {
             if (this.enable) {
                 this.mouseState = MouseState.out;
-                this.mouseState = MouseState.over;
                 this.onInputOut.dispatch();
             }
         }, false);

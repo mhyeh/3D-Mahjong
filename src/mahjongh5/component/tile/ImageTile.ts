@@ -4,6 +4,7 @@ import ImageTileTable from "./ImageTileTable";
 import Game from "mahjongh5/Game";
 import AltasTexture from "mahjongh5/Util/AltasTexture";
 import RoundEdgedBox from "mahjongh5/Util/RoundBoxGeometry";
+import Cube from "mahjongh5/ui/Cube";
 
 export default class ImageTile extends Tile<ImageTileTable> {
     private frontMaterial?: Three.Material;
@@ -22,8 +23,8 @@ export default class ImageTile extends Tile<ImageTileTable> {
         this.frontMaterial  = new Three.MeshLambertMaterial({ color: 0xFFFFFF });
         this.backMaterial   = new Three.MeshLambertMaterial({ color: 0x026300, side: Three.DoubleSide });
 
-        const front = new Three.Mesh(planeGeometry, this.frontMaterial);
-        const back  = new Three.Mesh(planeGeometry, this.backMaterial);
+        const front = new Cube(planeGeometry, this.frontMaterial);
+        const back  = new Cube(planeGeometry, this.backMaterial);
         front.position.z =  this.depth / 2 + 2;
         back.position.z  = -this.depth / 2 - 3;
         this.add(front);
