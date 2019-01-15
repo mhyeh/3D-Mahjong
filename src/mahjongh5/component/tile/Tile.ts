@@ -7,10 +7,11 @@ import Game from "mahjongh5/Game";
 export default abstract class Tlie<TileTableType extends TileTable = TileTable> extends Button {
     public isClick = false;
     public color: string;
-    public uuid:  string;
+
     protected tileTable: TileTableType;
 
-    private _id: string;
+    private _uuid: string;
+    private _id:   string;
     private idChangedSignal: Signal;
 
     public get ID(): string {
@@ -21,6 +22,13 @@ export default abstract class Tlie<TileTableType extends TileTable = TileTable> 
         this.OnIDChangedHandler();
     }
 
+    public get UUID(): string {
+        return this._uuid;
+    }
+    public set UUID(value: string) {
+        this._uuid = value;
+    }
+
     public get onIDChanged(): Signal {
         if (!this.idChangedSignal) {
             this.idChangedSignal = new Signal();
@@ -28,8 +36,8 @@ export default abstract class Tlie<TileTableType extends TileTable = TileTable> 
         return this.idChangedSignal;
     }
 
-    constructor(game: Game, geometry: Three.Geometry | Three.BufferGeometry, material: Three.Material | Three.Material[], tileTable: TileTableType, x?: number, y?: number, z?: number, key?: string, textureConfig?: string) {
-        super(game, geometry, material, x, y, z, key, textureConfig);
+    constructor(game: Game, geometry: Three.Geometry | Three.BufferGeometry, material: Three.Material | Three.Material[], tileTable: TileTableType, x?: number, y?: number, z?: number) {
+        super(game, geometry, material, x, y, z);
         this.tileTable = tileTable;
     }
 

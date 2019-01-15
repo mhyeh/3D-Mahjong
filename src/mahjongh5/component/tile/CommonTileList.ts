@@ -59,10 +59,10 @@ export default class CommonTileList extends TileList<ImageTile> {
         this.add(newTile);
         newTile.ID    = ID;
         newTile.color = ID.slice(0, 1);
-        newTile.uuid  = v4();
+        newTile.UUID  = v4();
         if (this.clickable) {
             newTile.setTint(0x707070, 0x707070);
-            this.Input.AddButton(newTile, Input.key.Throw, undefined, newTile.uuid);
+            this.Input.AddButton(newTile, Input.key.Throw, undefined, newTile.UUID);
         } else {
             newTile.enable = false;
         }

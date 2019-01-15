@@ -51,7 +51,7 @@ export default class DoorTileList extends CommonTileList {
         const tile      = new ImageTile(this.game, this.tileW, this.tileH, this.tileD, this.tileR, this.tileTable);
         tile.ID         = ID;
         tile.color      = ID.slice(0, 1);
-        tile.uuid       = v4();
+        tile.UUID       = v4();
         tile.position.z = tile.depth + 2;
         const map: {[key: string]: number} = {c: 0, d: 1, b: 2};
         let index = 0;

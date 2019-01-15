@@ -5,6 +5,7 @@ import Input from "mahjongh5/input/Input";
 import UIController from "./UIController";
 import MahjongGame from "./MahjongGame";
 import Text from "mahjongh5/ui/Text";
+import Cube from "mahjongh5/ui/Cube";
 
 export default class JoinState extends State {
     public loadMessage = "Loading Scene";
@@ -13,7 +14,7 @@ export default class JoinState extends State {
     public mahjongGame: MahjongGame;
 
     public name:      Text[];
-    public nameBlock: Three.Mesh[];
+    public nameBlock: Cube[];
 
     public socket: SocketIOClient.Socket;
 
@@ -54,63 +55,63 @@ export default class JoinState extends State {
     public async create() {
         super.create();
 
-        this.ui.Input.AddButton(this.ui.readyButton, Input.key.enter, undefined);
+        this.ui.Input.AddButton(this.ui.readyButton, Input.key.enter);
         this.ui.Refresh();
 
-        // this.uuid = localStorage.getItem("uuid");
-        // this.room = localStorage.getItem("room");
+        this.uuid = localStorage.getItem("uuid");
+        this.room = localStorage.getItem("room");
 
-        // const state = localStorage.getItem("state");
+        const state = localStorage.getItem("state");
 
-        // const list = JSON.parse(localStorage.getItem("players"));
-        // for (let i = 0; i < 4; i++) {
-            // this.name[i].text = list[i];
-        // }
+        const list = JSON.parse(localStorage.getItem("players"));
+        for (let i = 0; i < 4; i++) {
+            this.name[i].text = list[i];
+        }
 
-        // this.socket.emit("getReadyPlayer", this.room, (nameList: string[]) => {
-        //     if (nameList !== null) {
-        //         for (const name of nameList) {
-        //             let index = 0;
-        //             for (let i = 0; i < 4; i++) {
-        //                 if (list[i] === name) {
-        //                     index = i;
-        //                 }
-        //             }
-        //             // this.nameBlock[index].tint = 0XFFFF33;
-        //         }
-        //     }
-        // });
+        this.socket.emit("getReadyPlayer", this.room, (nameList: string[]) => {
+            if (nameList !== null) {
+                for (const name of nameList) {
+                    let index = 0;
+                    for (let i = 0; i < 4; i++) {
+                        if (list[i] === name) {
+                            index = i;
+                        }
+                    }
+                    this.nameBlock[index].tint = 0xFFFF33;
+                }
+            }
+        });
 
-        // if (state === "2") {
-        //     this.ui.readyButton.visible = false;
-        //     this.socket.emit("getID", this.uuid, this.room, (res: number) => {
-        //         if (res === -1) {
-        //             window.location.href = "./index.html";
-        //             return;
-        //         }
-        //         this.ID = res;
-        //         localStorage.setItem("ID", res.toString());
-        //     });
-        // }
+        if (state === "2") {
+            this.ui.readyButton.visible = false;
+            this.socket.emit("getID", this.uuid, this.room, (res: number) => {
+                if (res === -1) {
+                    window.location.href = "./index.html";
+                    return;
+                }
+                this.ID = res;
+                localStorage.setItem("ID", res.toString());
+            });
+        }
 
-        // this.socket.on("broadcastReady", (name: string) => {
-        //     let index = 0;
-        //     for (let i = 0; i < 4; i++) {
-        //         if (list[i] === name) {
-        //             index = i;
-        //         }
-        //     }
-            // this.nameBlock[index].tint = 0XFFFF33;
-        // });
+        this.socket.on("broadcastReady", (name: string) => {
+            let index = 0;
+            for (let i = 0; i < 4; i++) {
+                if (list[i] === name) {
+                    index = i;
+                }
+            }
+            this.nameBlock[index].tint = 0xFFFF33;
+        });
 
-        // this.socket.on("broadcastGameStart", (playerList: string[]) => {
-        //     const players = [];
-        //     for (let i = 0; i < 4; i++) {
-        //         players.push(playerList[(i + this.ID) % 4]);
-        //     }
-        //     localStorage.setItem("players", JSON.stringify(players));
-        //     this.game.SwitchScene(this.mahjongGame);
-        // });
+        this.socket.on("broadcastGameStart", (playerList: string[]) => {
+            const players = [];
+            for (let i = 0; i < 4; i++) {
+                players.push(playerList[(i + this.ID) % 4]);
+            }
+            localStorage.setItem("players", JSON.stringify(players));
+            this.game.SwitchScene(this.mahjongGame);
+        });
 
         this.StartMainLoop();
     }

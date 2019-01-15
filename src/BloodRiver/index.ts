@@ -18,22 +18,22 @@ import NumberDisplayer from "mahjongh5/ui/NumberDisplayer";
 import Cube from "mahjongh5/ui/Cube";
 
 export default function MahjongStart() {
-    const isPlaying = false;
+    let isPlaying = false;
 
-    // const socket = io.connect("http://140.118.127.157:3000", { transports: ["websocket"] });
-    // socket.on("auth", () => {
-    //     const uuid = localStorage.getItem("uuid");
-    //     const room = localStorage.getItem("room");
-    //     socket.emit("auth", uuid, room, (state: number) => {
-    //         localStorage.setItem("state", state.toString());
-    //         if (state === -1 || state === 0) {
-    //             window.location.href = "./index.html";
-    //         } else if (state === 4) {
-    //             isPlaying = true;
-    //         }
-    //         Mahjongh5.StartGame(init, "game");
-    //     });
-    // });
+    const socket = io.connect("http://140.118.127.157:3000", { transports: ["websocket"] });
+    socket.on("auth", () => {
+        const uuid = localStorage.getItem("uuid");
+        const room = localStorage.getItem("room");
+        socket.emit("auth", uuid, room, (state: number) => {
+            localStorage.setItem("state", state.toString());
+            if (state === -1 || state === 0) {
+                window.location.href = "./index.html";
+            } else if (state === 4) {
+                isPlaying = true;
+            }
+            Mahjongh5.StartGame(init, "game");
+        });
+    });
     const init = (game: Game) => {
         game.assets     = Assets;
 
@@ -41,12 +41,12 @@ export default function MahjongStart() {
         const mahjong   = new MahjongGame(game);
         game.gameStates.push(joinState);
 
-        // if (isPlaying) {
-        //     game.gameStates.push(mahjong);
-        // } else {
-        //     game.gameStates.push(joinState);
-        //     game.gameStates.push(mahjong);
-        // }
+        if (isPlaying) {
+            game.gameStates.push(mahjong);
+        } else {
+            game.gameStates.push(joinState);
+            game.gameStates.push(mahjong);
+        }
 
         game.loadState.onCreate.add(() => {
             const scene  = new Three.Scene();
@@ -81,13 +81,13 @@ export default function MahjongStart() {
             const nameBlock = [];
             const name      = [];
             for (let i = 0; i < 4; i++) {
-                nameBlock.push(new Three.Mesh(RoundEdgedBox(500, 500, 40, 20, 1, 1, 1, 20), new Three.MeshLambertMaterial({ color: 0xAAAAAA })));
-                nameBlock[i].add(new Text(game, "ID", Assets.font.jhengHei.key, 100, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 0, 100, 20, true));
+                nameBlock.push(new Cube(RoundEdgedBox(500, 500, 100, 50, 1, 1, 1, 50), new Three.MeshLambertMaterial({ color: 0xAAAAAA })));
+                nameBlock[i].add(new Text(game, "ID", Assets.font.jhengHei.key, 100, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 0, 100, 60, true));
 
-                name.push(new Text(game, "name", Assets.font.jhengHei.key, 50, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 0, -100, 20, true));
+                name.push(new Text(game, "name", Assets.font.jhengHei.key, 50, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 0, -100, 60, true));
                 nameBlock[i].add(name[i]);
 
-                nameBlock[i].rotation.setFromVector3(camera.rotation.toVector3());
+                nameBlock[i].lookAt(camera.position);
             }
             nameBlock[0].position.x = -1000;
             nameBlock[1].position.x = -335;
@@ -103,7 +103,7 @@ export default function MahjongStart() {
             ready.lookAt(camera.position);
             scene.add(ready);
 
-            // joinState.socket = socket;
+            joinState.socket = socket;
 
             joinState.ui.readyButton = ready;
 
@@ -191,7 +191,7 @@ export default function MahjongStart() {
                 bevelSegments:  1,
             };
 
-            const tileTable = new ImageTileTable(game.cache[Assets.tiles.tiles_config.key], Assets.tiles.tiles.key, Assets.tiles.tilesJson.key);
+            const tileTable = new ImageTileTable(game, game.cache[Assets.tiles.tiles_config.key], Assets.tiles.tiles.key, Assets.tiles.tilesJson.key);
             const sea    = [];
             const hand   = [];
             const door   = [];
@@ -219,26 +219,25 @@ export default function MahjongStart() {
             }
 
             // hand
-            hand[0].rotateX(Math.PI * 80 / 180);
+            hand[0].rotateX(Math.PI);
             new Three.Box3().setFromObject(hand[0]).getCenter(hand[0].position).multiplyScalar(-1);
-            hand[0].position.y = -900 + tileD / 2;
-            hand[0].position.z =  50  + tileH / 2;
-            hand[0].SetImmediate(["c1", "c1", "c1", "c5", "c5", "c8", "c8", "c9", "d2", "d3", "d4", "b4", "b7"]);
+            hand[0].position.y = -900 + tileH / 2;
+            hand[0].position.z =  50  + tileD / 2;
 
-            hand[1].rotation.set(0, Math.PI / 2, Math.PI / 2);
+            hand[1].rotation.set(0, Math.PI, Math.PI / 2);
             new Three.Box3().setFromObject(hand[1]).getCenter(hand[1].position).multiplyScalar(-1);
-            hand[1].position.x = 900 - tileD / 2;
-            hand[1].position.z = 50  + tileH / 2;
+            hand[1].position.x = 900 - tileH / 2;
+            hand[1].position.z = 50  + tileD / 2;
 
-            hand[2].rotation.set(-Math.PI / 2, 0, Math.PI);
+            hand[2].rotation.set(Math.PI, 0, Math.PI);
             new Three.Box3().setFromObject(hand[2]).getCenter(hand[2].position).multiplyScalar(-1);
-            hand[2].position.y = 900 - tileD / 2;
-            hand[2].position.z = 50  + tileH / 2;
+            hand[2].position.y = 900 - tileH / 2;
+            hand[2].position.z = 50  + tileD / 2;
 
-            hand[3].rotation.set(0, -Math.PI / 2, Math.PI * 3 / 2);
+            hand[3].rotation.set(0, Math.PI, Math.PI * 3 / 2);
             new Three.Box3().setFromObject(hand[3]).getCenter(hand[3].position).multiplyScalar(-1);
-            hand[3].position.x = -900 + tileD / 2;
-            hand[3].position.z =  50  + tileH / 2;
+            hand[3].position.x = -900 + tileH / 2;
+            hand[3].position.z =  50  + tileD / 2;
 
             // hu
             hu[0].position.set(-6 * tileW, -750 + tileH / 2, 50 + tileD / 2);
@@ -337,8 +336,7 @@ export default function MahjongStart() {
 
             scene.add(checkButton);
 
-            const timer = new Timer(new NumberDisplayer(new Text(game, "0", Assets.font.jhengHei.key, 80 , 20, new Three.MeshLambertMaterial({ color: 0xFFFFFF }), 0, 50, 150, true)), undefined, 0x808080);
-            timer.rotation.setFromVector3(camera.rotation.toVector3());
+            const timer = new Timer(new NumberDisplayer(new Text(game, "0", Assets.font.jhengHei.key, 80 , 20, new Three.MeshLambertMaterial({ color: 0xFFFFFF }), 0, 0, 50, true)), undefined, 0x808080);
             scene.add(timer);
 
             const choseLackDialog = new ChoseLackDialog(game, (dialog: ChoseLackDialog) => {
@@ -426,6 +424,8 @@ export default function MahjongStart() {
             // commandDialog.Show();
 
             scene.add(commandDialog);
+
+            mahjong.socket = socket;
 
             mahjong.remainTile = remainTile;
 

@@ -48,7 +48,6 @@ export default class Game {
 
     public async Start() {
         this.loadState.onPreload.add(() => {
-            // this.load.bitmapFont(arial.key, arial.texture, undefined, arial.atlas);
             if (this.assets instanceof Array) {
                 for (const asset of this.assets) {
                     asset.CreateLoadTask(this, { [asset.sectionFlag.preload]: true }).AddToLoader();

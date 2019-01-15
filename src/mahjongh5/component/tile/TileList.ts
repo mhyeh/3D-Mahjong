@@ -51,11 +51,11 @@ export default abstract class TileList<TileType extends Tile> extends Three.Grou
         const tileIterator = tiles[Symbol.iterator]();
         let result: IteratorResult<string> = tileIterator.next();
         for (let i = 0; i < this.tileCount && !result.done; i++ , result = tileIterator.next()) {
-            this.tiles[i].ID = result.value;
-            this.tiles[i].uuid = v4();
+            this.tiles[i].ID    = result.value;
+            this.tiles[i].UUID  = v4();
             this.tiles[i].color = result.value.slice(0, 1);
             if (this.clickable) {
-                this.Input.AddButton(this.tiles[i], Input.key.Throw, undefined, this.tiles[i].uuid);
+                this.Input.AddButton(this.tiles[i], Input.key.Throw, undefined, this.tiles[i].UUID);
             }
         }
     }
@@ -90,13 +90,13 @@ export default abstract class TileList<TileType extends Tile> extends Three.Grou
 
     public async getClickTileIndex(): Promise<number> {
         const uuid = await this.Input.WaitKeyUp(Input.key.Throw);
-        const tile = this.tiles.findIndex((value) => value.uuid === uuid.toString());
+        const tile = this.tiles.findIndex((value) => value.UUID === uuid);
         return tile;
     }
 
     public async getClickTileID(): Promise<string> {
         const uuid = await this.Input.WaitKeyUp(Input.key.Throw);
-        const tile = this.tiles.find((value) => value.uuid === uuid.toString());
+        const tile = this.tiles.find((value) => value.UUID === uuid);
         return tile.ID;
     }
 }
