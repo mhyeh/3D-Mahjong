@@ -228,8 +228,8 @@ export default class Button extends Cube implements ButtonEvent {
 
     public removeAllEvent() {
         this.game.domevent.removeEventListener(this, "mousedown", this.mouseDown.bind(this), false);
-        this.game.domevent.removeEventListener(this, "mouseup",   this.mouseUp.bind(this), false);
-        this.game.domevent.removeEventListener(this, "mouseout",  this.mouseOut.bind(this), false);
+        this.game.domevent.removeEventListener(this, "mouseup",   this.mouseUp.bind(this),   false);
+        this.game.domevent.removeEventListener(this, "mouseout",  this.mouseOut.bind(this),  false);
         this.game.domevent.removeEventListener(this, "mousemove", this.mouseOver.bind(this), false);
     }
 
@@ -242,7 +242,6 @@ export default class Button extends Cube implements ButtonEvent {
 
     private mouseUp() {
         if (this.enable && (this.mouseState === MouseState.down)) {
-            console.log("button up", this.uuid);
             this.mouseState = MouseState.up;
             this.onInputUp.dispatch();
         }

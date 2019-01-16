@@ -203,10 +203,10 @@ export default class MahjongGame extends State {
             this.socket.emit("getCurrentIdx", room, (playerIdx: number) => {
                 if (playerIdx !== -1) {
                     const idx = this.getID(playerIdx);
-                    this.arrow[idx].tint = 0xFFFFFF;
+                    this.arrow[idx].tint = ENABLE_TINT;
                     for (let i = 0; i < 4; i++) {
                         if (i !== idx) {
-                            this.arrow[i].tint = 0x808080;
+                            this.arrow[i].tint = DISABLE_TINT;
                         }
                     }
                 }
@@ -344,7 +344,7 @@ export default class MahjongGame extends State {
 
     private BroadcastChange(id: number) {
         const idx = this.getID(id);
-        // this.effect.changeTileEffect.Play(0, idx);
+        this.effect.changeTileEffect.Play(0, idx);
         if (idx !== 0) {
             this.hand[idx].RemoveTile("None");
             this.hand[idx].RemoveTile("None");
@@ -354,8 +354,8 @@ export default class MahjongGame extends State {
 
     private async AfterChange(tile: string[], turn: number) {
         await System.Delay(1500);
-        // this.effect.changeTileEffect.Play(1, turn);
-        await System.Delay(2000);
+        this.effect.changeTileEffect.Play(1, turn);
+        await System.Delay(1500);
         for (let i = 0; i < 3; i++) {
             this.hand[0].AddTile(tile[i]);
         }
@@ -380,14 +380,14 @@ export default class MahjongGame extends State {
     }
 
     private AfterLack(lake: number[], flag: boolean = true) {
-        const mapping = ["char", "dot", "bamboo"];
+        const mapping = ["萬", "筒", "條"];
         for (let i = 0; i < 4; i++) {
-            const idx     = this.getID(i);
-            const texture = mapping[lake[i]];
-            // this.infoDialog[idx].lack.loadTexture(texture);
+            const idx   = this.getID(i);
+            const color = mapping[lake[i]];
+            // this.infoDialog[idx].lack.loadTexture(color);
             // this.infoDialog[idx].lack.visible = true;
             if (flag) {
-                // this.effect.lackEffect[idx].Play(texture);
+                this.effect.lackEffect[idx].Play(color);
             }
         }
     }
@@ -397,9 +397,9 @@ export default class MahjongGame extends State {
         const idx = this.getID(id);
         for (let i = 0; i < 4; i++) {
             if (idx === i) {
-                this.arrow[i].tint = 0xFFFFFF;
+                this.arrow[i].tint = ENABLE_TINT;
             } else {
-                this.arrow[i].tint = 0x808080;
+                this.arrow[i].tint = DISABLE_TINT;
             }
         }
         if (idx !== 0) {
@@ -421,7 +421,7 @@ export default class MahjongGame extends State {
 
     private BroadcastThrow(id: number, tile: string) {
         for (let i = 0; i < 4; i++) {
-            this.arrow[i].tint = 0x808080;
+            this.arrow[i].tint = DISABLE_TINT;
         }
         const idx = this.getID(id);
         if (idx === 0) {
@@ -678,6 +678,6 @@ export default class MahjongGame extends State {
     }
 
     private setDrawPosition() {
-        this.draw.position.x = this.hand[0].position.x + (this.hand[0].tileW + 5) * this.hand[0].tileCount + 10;
+        this.draw.position.x = this.hand[0].position.x + (TILE_W + 5) * this.hand[0].tileCount + 10;
     }
 }

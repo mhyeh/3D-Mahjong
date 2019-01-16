@@ -10,7 +10,6 @@ export default abstract class Tlie<TileTableType extends TileTable = TileTable> 
 
     protected tileTable: TileTableType;
 
-    private _uuid: string;
     private _id:   string;
     private idChangedSignal: Signal;
 
@@ -20,13 +19,6 @@ export default abstract class Tlie<TileTableType extends TileTable = TileTable> 
     public set ID(value: string) {
         this._id = value;
         this.OnIDChangedHandler();
-    }
-
-    public get UUID(): string {
-        return this._uuid;
-    }
-    public set UUID(value: string) {
-        this._uuid = value;
     }
 
     public get onIDChanged(): Signal {

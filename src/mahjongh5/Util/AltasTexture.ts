@@ -9,12 +9,13 @@ export default class TextureAtlas {
         texture.needsUpdate = true;
 
         for (const key in json) {
-            const t = texture.clone();
+            const t    = texture.clone();
             const data = json[key];
             t.repeat.set(data.frame.w / image.width, data.frame.h / image.height);
-            t.offset.x = ((data.frame.x) / image.width);
-            t.offset.y = 1 - (data.frame.h / image.height) - (data.frame.y / image.height);
+            t.offset.x    = ((data.frame.x) / image.width);
+            t.offset.y    = 1 - (data.frame.h / image.height) - (data.frame.y / image.height);
             t.needsUpdate = true;
+
             this.textures[key] = t;
         }
     }

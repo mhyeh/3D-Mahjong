@@ -1,4 +1,5 @@
 import * as Three from "three";
+import * as Tween from "@tweenjs/tween.js";
 import State from "./State";
 import LoadState from "./load/LoadState";
 import * as Assets from "./Assets";
@@ -19,8 +20,6 @@ export default class Game {
 
     private loadStateValue?: LoadState;
 
-    private aspect: number = 1.628;
-
     public get loadState(): LoadState {
         if (!this.loadStateValue) {
             this.loadStateValue = new LoadState(this);
@@ -32,11 +31,11 @@ export default class Game {
     }
 
     public get sceneWidth(): number {
-        return Math.min(window.innerWidth, window.innerHeight * this.aspect);
+        return Math.min(window.innerWidth, window.innerHeight * ASPECT);
     }
 
     public get sceneHeight(): number {
-        return this.sceneWidth / this.aspect;
+        return this.sceneWidth / ASPECT;
     }
 
     constructor(display: string) {
@@ -82,6 +81,7 @@ export default class Game {
 
     public render() {
         requestAnimationFrame(this.render.bind(this));
+        Tween.update();
         this.renderer.render(this.renderState.scene, this.renderState.camera);
     }
 

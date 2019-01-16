@@ -1,4 +1,3 @@
-import { v4 } from "uuid";
 import TileList from "./TileList";
 import ImageTile from "./ImageTile";
 import ImageTileTable from "./ImageTileTable";
@@ -60,10 +59,9 @@ export default class CommonTileList extends TileList<ImageTile> {
         this.add(newTile);
         newTile.ID    = ID;
         newTile.color = ID.slice(0, 1);
-        newTile.UUID  = v4();
         if (this.clickable) {
             newTile.setTint(0x707070, 0x707070);
-            this.Input.AddButton(newTile, Input.key.Throw, undefined, newTile.UUID);
+            this.Input.AddButton(newTile, Input.key.Throw, undefined, newTile.uuid);
         } else {
             newTile.enable = false;
         }

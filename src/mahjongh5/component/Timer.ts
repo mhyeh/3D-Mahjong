@@ -15,7 +15,7 @@ export default class Timer extends Effect {
         return this.timer.displayer;
     }
 
-    constructor(timer: NumberDisplayer, enableTint: number = 0xFFFFFF, disableTint: number = 0xFFFFFF) {
+    constructor(timer: NumberDisplayer, enableTint: number = ENABLE_TINT, disableTint: number = DISABLE_TINT) {
         super();
         this.add(timer.displayer);
         this.timer = timer;

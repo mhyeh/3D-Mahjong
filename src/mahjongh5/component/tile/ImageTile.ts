@@ -14,13 +14,13 @@ export default class ImageTile extends Tile<ImageTileTable> {
 
     constructor(game: Game, tileW: number, tileH: number, tileD: number, tileR: number, tileTable: ImageTileTable, x?: number, y?: number, z?: number, w?: number, h?: number, r?: number) {
         const geometry = RoundEdgedBox(tileW, tileH, tileD, tileR, 1, 1, 1, tileR);
-        const material = new Three.MeshLambertMaterial({ color: 0xFFFFFF });
+        const material = new Three.MeshLambertMaterial({ color: TILE_F_COLOR });
 
         super(game, geometry, material, tileTable, x, y, z);
 
         const planeGeometry = new Three.PlaneGeometry(tileW - tileR * 2, tileH - tileR * 2);
-        this.frontMaterial  = new Three.MeshLambertMaterial({ color: 0xFFFFFF });
-        this.backMaterial   = new Three.MeshLambertMaterial({ color: 0x026300, side: Three.DoubleSide });
+        this.frontMaterial  = new Three.MeshLambertMaterial({ color: TILE_F_COLOR });
+        this.backMaterial   = new Three.MeshLambertMaterial({ color: TILE_B_COLOR, side: Three.DoubleSide });
 
         this.front = new Cube(planeGeometry, this.frontMaterial);
         this.back  = new Cube(planeGeometry, this.backMaterial);
@@ -34,7 +34,7 @@ export default class ImageTile extends Tile<ImageTileTable> {
         }
     }
 
-    public setTint(disable: number = 0xFFFFFF, down: number = 0xFFFFFF, out: number = 0xFFFFFF, over: number = 0xFFFFFF, up: number = 0xFFFFFF) {
+    public setTint(disable: number = DISABLE_TINT, down: number = DOWN_TINT, out: number = OUT_TINT, over: number = OVER_TINT, up: number = UP_TINT) {
         this.stateTint.disable = disable;
         this.stateTint.down    = down;
         this.stateTint.out     = out;

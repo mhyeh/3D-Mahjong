@@ -32,8 +32,8 @@ export default class Dialog extends Three.Group {
 
     protected backgroundGraphics: Three.Mesh;
 
-    private showSignal: Signal;
-    private hideSignal: Signal;
+    private showSignal:  Signal;
+    private hideSignal:  Signal;
     private replySignal: Signal = new Signal();
 
     public get onShow(): Signal {
@@ -85,9 +85,6 @@ export default class Dialog extends Three.Group {
         if (this.hideSignal) {
             this.hideSignal.dispatch();
         }
-        // if (this.destoryOnHide) {
-        //     this.destroy();
-        // }
     }
 
     public SetReplyButton(button: ButtonEvent, result: DialogResult) {
