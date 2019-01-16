@@ -6,13 +6,14 @@ import Input from "mahjongh5/input/Input";
 import Game from "mahjongh5/Game";
 
 export default class CommonTileList extends TileList<ImageTile> {
+    public tileW: number;
+    public tileH: number;
+    public tileD: number;
+    public tileR: number;
+
     protected game: Game;
 
     protected tileTable: ImageTileTable;
-    protected tileW:     number;
-    protected tileH:     number;
-    protected tileD:     number;
-    protected tileR:     number;
 
     private sortable: boolean;
 
@@ -82,6 +83,7 @@ export default class CommonTileList extends TileList<ImageTile> {
         }
         if (index !== -1) {
             this.remove(this.tiles[index]);
+            this.tiles[index].removeAllEvent();
             this.tiles.splice(index, 1);
         }
         this.ArrangeTile();

@@ -68,8 +68,11 @@ export default class Button extends Cube implements ButtonEvent {
     private stateFrame: ButtonFrame;
     private frameName?: string | number;
 
+    private game: Game;
+
     constructor(game: Game, geometry: Three.Geometry | Three.BufferGeometry, material: Three.Material | Three.Material[], x?: number, y?: number, z?: number, texture?: string, textureConfig?: string, callback?: () => void, callbackContext?: any, overFrame?: string | number, outFrame?: string | number, downFrame?: string | number, upFrame?: string | number, disableFrame?: string | number) {
         super(geometry, material, x, y, z);
+        this.game = game;
 
         if (texture) {
             this.texture = new Three.Texture(game.cache[texture]);
@@ -145,30 +148,10 @@ export default class Button extends Cube implements ButtonEvent {
             }
             this.StateChangeHandler();
         });
-        game.domevent.addEventListener(this, "mousedown", () => {
-            if (this.enable && (this.mouseState === MouseState.over || this.mouseState === MouseState.up)) {
-                this.mouseState = MouseState.down;
-                this.onInputDown.dispatch();
-            }
-        }, false);
-        game.domevent.addEventListener(this, "mouseup", () => {
-            if (this.enable && (this.mouseState === MouseState.down)) {
-                this.mouseState = MouseState.up;
-                this.onInputUp.dispatch();
-            }
-        }, false);
-        game.domevent.addEventListener(this, "mouseout", () => {
-            if (this.enable) {
-                this.mouseState = MouseState.out;
-                this.onInputOut.dispatch();
-            }
-        }, false);
-        game.domevent.addEventListener(this, "mousemove", () => {
-            if (this.enable && (this.mouseState === MouseState.out)) {
-                this.mouseState = MouseState.over;
-                this.onInputOver.dispatch();
-            }
-        }, false);
+        game.domevent.addEventListener(this, "mousedown", this.mouseDown.bind(this), false);
+        game.domevent.addEventListener(this, "mouseup",   this.mouseUp.bind(this),   false);
+        game.domevent.addEventListener(this, "mouseout",  this.mouseOut.bind(this),  false);
+        game.domevent.addEventListener(this, "mousemove", this.mouseOver.bind(this), false);
     }
 
     public get outFrame(): string | number {
@@ -240,6 +223,42 @@ export default class Button extends Cube implements ButtonEvent {
         this.frame = this.outFrame;
         if (!this.enable) {
             this.frame = this.disableFrame;
+        }
+    }
+
+    public removeAllEvent() {
+        this.game.domevent.removeEventListener(this, "mousedown", this.mouseDown.bind(this), false);
+        this.game.domevent.removeEventListener(this, "mouseup",   this.mouseUp.bind(this), false);
+        this.game.domevent.removeEventListener(this, "mouseout",  this.mouseOut.bind(this), false);
+        this.game.domevent.removeEventListener(this, "mousemove", this.mouseOver.bind(this), false);
+    }
+
+    private mouseDown() {
+        if (this.enable && (this.mouseState === MouseState.over || this.mouseState === MouseState.up)) {
+            this.mouseState = MouseState.down;
+            this.onInputDown.dispatch();
+        }
+    }
+
+    private mouseUp() {
+        if (this.enable && (this.mouseState === MouseState.down)) {
+            console.log("button up", this.uuid);
+            this.mouseState = MouseState.up;
+            this.onInputUp.dispatch();
+        }
+    }
+
+    private mouseOut() {
+        if (this.enable) {
+            this.mouseState = MouseState.out;
+            this.onInputOut.dispatch();
+        }
+    }
+
+    private mouseOver() {
+        if (this.enable && (this.mouseState === MouseState.out)) {
+            this.mouseState = MouseState.over;
+            this.onInputOver.dispatch();
         }
     }
 

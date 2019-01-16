@@ -203,11 +203,11 @@ export default function MahjongStart() {
             const tileH  = 128;
             const tileD  = 68;
             for (let i = 0; i < 4; i++) {
-                hand.push(new CommonTileList(game, 13, tileTable, tileW, tileH, tileD, i === 0, 16, false));
+                hand.push(new CommonTileList(game, 13, tileTable, tileW, tileH, tileD, i === 0, 16, true));
                 hu.push(new   CommonTileList(game, 0,  tileTable, tileW, tileH, tileD, false,   16, false));
                 sea.push(new  CommonTileList(game, 0,  tileTable, tileW, tileH, tileD, false,   8,  false));
 
-                door.push(new DoorTileList(game, tileTable, tileW, tileH, tileD, 16, false));
+                door.push(new DoorTileList(game, tileTable, tileW, tileH, tileD, 16, true));
 
                 name.push(new Text(game, "ID: ", Assets.font.jhengHei.key, 50, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 0, 0, 70));
                 name[i].rotation.setFromVector3(camera.rotation.toVector3());
@@ -217,6 +217,7 @@ export default function MahjongStart() {
 
                 arrow.push(new Cube(new Three.ExtrudeGeometry(shape, extrudeSettings), new Three.MeshLambertMaterial({ color: 0xF0F40E }), 0, 0));
             }
+            const draw = new CommonTileList(game, 0, tileTable, tileW, tileH, tileD, true);
 
             // hand
             hand[0].rotateX(Math.PI);
@@ -238,6 +239,10 @@ export default function MahjongStart() {
             new Three.Box3().setFromObject(hand[3]).getCenter(hand[3].position).multiplyScalar(-1);
             hand[3].position.x = -900 + tileH / 2;
             hand[3].position.z =  50  + tileD / 2;
+
+            // draw
+            draw.rotateX(Math.PI  * 80 / 180);
+            draw.position.set(7.5 * tileW, -900 + tileH / 2, 50 + tileH / 2);
 
             // hu
             hu[0].position.set(-6 * tileW, -750 + tileH / 2, 50 + tileD / 2);
@@ -264,16 +269,16 @@ export default function MahjongStart() {
             sea[3].position.set(-300 + tileH / 2, 6.5 * tileW, 50 + tileD / 2);
 
             // door
-            door[0].position.set(8 * tileW, -900 + tileH / 4, 50 + tileD / 2);
+            door[0].position.set(9 * tileW, -900 + tileH / 4, 50 + tileD / 2);
 
             door[1].rotateZ(Math.PI / 2);
-            door[1].position.set(900 - tileH / 4, 8 * tileW, 50 + tileD / 2);
+            door[1].position.set(900 - tileH / 4, 9 * tileW, 50 + tileD / 2);
 
             door[2].rotateZ(Math.PI);
-            door[2].position.set(-8 * tileW, 900 - tileH / 4, 50 + tileD / 2);
+            door[2].position.set(-9 * tileW, 900 - tileH / 4, 50 + tileD / 2);
 
             door[3].rotateZ(Math.PI * 3 / 2);
-            door[3].position.set(-900 + tileH / 4, -8 * tileW, 50 + tileD / 2);
+            door[3].position.set(-900 + tileH / 4, -9 * tileW, 50 + tileD / 2);
 
             // name
             // name[0].position.x -= 900;
@@ -325,6 +330,7 @@ export default function MahjongStart() {
             // scene.add(...name);
             // scene.add(...score);
             scene.add(...arrow);
+            scene.add(draw);
 
             const checkButton     = new Button(game, RoundEdgedBox(200, 130, 100, 30, 1, 1, 1, 40), new Three.MeshLambertMaterial({ color: 0xFFFF00 }));
             const checkButtonText = new Text(game, "確認", Assets.font.jhengHei.key, 40 , 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 0, 0, 52, true);
@@ -437,6 +443,7 @@ export default function MahjongStart() {
             mahjong.hu   = hu;
             mahjong.door = door;
             mahjong.hand = hand;
+            mahjong.draw = draw;
 
             mahjong.ui.checkButton = checkButton;
 

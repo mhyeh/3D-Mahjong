@@ -222,15 +222,13 @@ export default class MahjongGame extends State {
 
         this.socket.on("dealTile", (hand: string[]) => {
             this.hand[0].SetImmediate(hand);
-            this.hand[1].SetImmediate(hand);
-            this.hand[2].SetImmediate(hand);
-            this.hand[3].SetImmediate(hand);
             const map    = ["x", "y"];
             const height = this.hand[0].tiles[0].height;
             for (let i = 0; i < 4; i++) {
                 (this.hand[i].rotation as any)[map[i % 2]] = Math.PI / 2 * (i < 2 ? 1 : -1);
                 this.hand[i].position.z = 50  + height / 2;
             }
+            this.hand[0].rotation.x = Math.PI * 80 / 180;
         });
 
         this.socket.on("change", (defaultTile: string[], time: number) => this.ChangeTile(defaultTile, time));
@@ -665,7 +663,7 @@ export default class MahjongGame extends State {
     }
 
     private moveDoor(id: number, n: number) {
-        const len = this.door[id].tiles[0].width * n;
+        const len = this.door[id].tileW * n;
         const map = ["x", "y"];
         (this.door[id].position as any)[map[id % 2]] += len * (id < 2 ? -1 : 1);
     }
@@ -675,11 +673,11 @@ export default class MahjongGame extends State {
             const tile = this.draw.tiles[0].ID;
             this.draw.RemoveTile(tile);
             this.hand[0].AddTile(tile);
+            this.hand[0].DisableAll();
         }
-        this.hand[0].DisableAll();
     }
 
     private setDrawPosition() {
-        this.draw.position.x = this.hand[0].position.x + this.hand[0].tiles[0].width * this.hand[0].tileCount / 2 + 20;
+        this.draw.position.x = this.hand[0].position.x + (this.hand[0].tileW + 5) * this.hand[0].tileCount + 10;
     }
 }
