@@ -18,14 +18,14 @@ export default class ImageTile extends Tile<ImageTileTable> {
 
         super(game, geometry, material, tileTable, x, y, z);
 
-        const planeGeometry = new Three.PlaneGeometry(tileW - tileR * 2, tileH - tileR * 2);
+        const planeGeometry = new Three.PlaneBufferGeometry(tileW - tileR * 2, tileH - tileR * 2);
         this.frontMaterial  = new Three.MeshLambertMaterial({ color: TILE_F_COLOR });
         this.backMaterial   = new Three.MeshLambertMaterial({ color: TILE_B_COLOR, side: Three.DoubleSide });
 
         this.front = new Cube(planeGeometry, this.frontMaterial);
         this.back  = new Cube(planeGeometry, this.backMaterial);
-        this.front.position.z =  this.depth / 2 + 2;
-        this.back.position.z  = -this.depth / 2 - 3;
+        this.front.position.z =  this.depth / 2 + 5;
+        this.back.position.z  = -this.depth / 2 - 5;
         this.add(this.front);
         this.add(this.back);
 

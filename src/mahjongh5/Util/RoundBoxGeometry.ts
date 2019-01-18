@@ -34,7 +34,7 @@ export default function RoundEdgedBox(width: number, height: number, depth: numb
 
     // edges - 2 fourths for each dimension
     // width
-    const edge = new Three.CylinderGeometry(radius, radius, width - radius * 2, smoothness, widthSegments, true, 0, Math.PI * .5);
+    const edge  = new Three.CylinderGeometry(radius, radius, width - radius * 2, smoothness, widthSegments, true, 0, Math.PI * .5);
     edge.rotateZ(Math.PI * .5);
     edge.translate(0, halfHeight, halfDepth);
     const edge2 = new Three.CylinderGeometry(radius, radius, width - radius * 2, smoothness, widthSegments, true, Math.PI * 1.5, Math.PI * .5);

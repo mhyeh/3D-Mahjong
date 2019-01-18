@@ -125,6 +125,12 @@ export default class MahjongGame extends State {
                     }
                     this.hand[0].SetImmediate(hand);
                     this.hand[0].DisableAll();
+                    const map    = ["x", "y"];
+                    for (let i = 0; i < 4; i++) {
+                        (this.hand[i].rotation as any)[map[i % 2]] = Math.PI / 2 * (i < 2 ? 1 : -1);
+                        this.hand[i].position.z = (BOARD_D + TILE_H) / 2;
+                    }
+                    this.hand[0].rotation.x = Math.PI * 80 / 180;
                 }
             });
             this.socket.emit("getPlayerList", room, (nameList: string[]) => {
@@ -172,8 +178,10 @@ export default class MahjongGame extends State {
                                 }
                             }
                         }
-                        while (inVisibleCount[i] -= 4) {
-                            this.door[idx].Gon("None");
+                        if (inVisibleCount[i] !== null && inVisibleCount[i] !== 0) {
+                            while (inVisibleCount[i] -= 4) {
+                                this.door[idx].Gon("None");
+                            }
                         }
                     }
                 }
@@ -223,10 +231,9 @@ export default class MahjongGame extends State {
         this.socket.on("dealTile", (hand: string[]) => {
             this.hand[0].SetImmediate(hand);
             const map    = ["x", "y"];
-            const height = this.hand[0].tiles[0].height;
             for (let i = 0; i < 4; i++) {
                 (this.hand[i].rotation as any)[map[i % 2]] = Math.PI / 2 * (i < 2 ? 1 : -1);
-                this.hand[i].position.z = 50  + height / 2;
+                this.hand[i].position.z = (BOARD_D + TILE_H) / 2;
             }
             this.hand[0].rotation.x = Math.PI * 80 / 180;
         });
@@ -574,16 +581,21 @@ export default class MahjongGame extends State {
     private async End(data: string) {
         const gameResult = JSON.parse(data);
         console.log(gameResult);
+        const map    = ["x", "y"];
         for (let i = 0; i < 4; i++) {
             const idx = this.getID(i);
             if (gameResult[i].Door !== null) {
                 // this.door[idx].SetImmediate(gameResult[i].Door);
             }
             this.hand[idx].SetImmediate(gameResult[i].Hand);
+            (this.hand[idx].rotation as any)[map[idx % 2]] = 0;
+            this.hand[idx].position.z = (BOARD_D + TILE_D) / 2;
             this.score[idx] = gameResult[i].Score;
             let tmp = "";
-            for (const scoreLog of gameResult[i].ScoreLog) {
-                tmp += scoreLog.Message + ": " + scoreLog.Score + "\n";
+            if (gameResult[i].ScoreLog !== null) {
+                for (const scoreLog of gameResult[i].ScoreLog) {
+                    tmp += scoreLog.Message + ": " + scoreLog.Score + "\n";
+                }
             }
             // this.infoDialog[idx].scoreLog.text.text = tmp;
             // this.infoDialog[idx].scoreLog.visible   = true;

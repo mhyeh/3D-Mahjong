@@ -10,6 +10,28 @@ export default class DoorTileList extends CommonTileList {
         super(game, 0, tileTable, tileW, tileH, tileD, false, maxLen, true);
     }
 
+    public AddTile(ID: string) {
+        const newTile  = new ImageTile(this.game, this.tileW, this.tileH, this.tileD, this.tileR, this.tileTable);
+        newTile.ID     = ID;
+        newTile.color  = ID.slice(0, 1);
+        newTile.enable = false;
+        const map: {[key: string]: number} = {c: 0, d: 1, b: 2};
+        let index = 0;
+        for (index = 0; index < this.tileCount; index++) {
+            const t1 = this.tiles[index].ID;
+            const t2 = ID;
+            if (map[t1.charAt(0)] * 10 + Number(t1.charAt(1)) > map[t2.charAt(0)] * 10 + Number(t2.charAt(1))) {
+                break;
+            }
+        }
+        if (ID === "None") {
+            newTile.rotateX(Math.PI);
+        }
+        this.tiles.splice(index, 0, newTile);
+        this.add(newTile);
+        this.ArrangeTile();
+    }
+
     public Pon(ID: string) {
         this.addThreeTile(ID);
         this.ArrangeGonTile();
@@ -42,7 +64,7 @@ export default class DoorTileList extends CommonTileList {
 
     private addThreeTile(ID: string) {
         for (let i = 0; i < 3; i++) {
-            super.AddTile(ID);
+            this.AddTile(ID);
         }
     }
 
@@ -51,6 +73,7 @@ export default class DoorTileList extends CommonTileList {
         tile.ID         = ID;
         tile.color      = ID.slice(0, 1);
         tile.position.z = tile.depth + 2;
+        tile.enable     = false;
         const map: {[key: string]: number} = {c: 0, d: 1, b: 2};
         let index = 0;
         for (index = 0; index < this.gonTiles.length; index++) {
@@ -59,6 +82,9 @@ export default class DoorTileList extends CommonTileList {
             if (map[t1.charAt(0)] * 10 + Number(t1.charAt(1)) > map[t2.charAt(0)] * 10 + Number(t2.charAt(1))) {
                 break;
             }
+        }
+        if (ID === "None") {
+            tile.rotateX(Math.PI);
         }
         this.gonTiles.splice(index, 0, tile);
         super.add(tile);

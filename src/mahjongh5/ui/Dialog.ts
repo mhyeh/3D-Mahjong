@@ -2,7 +2,7 @@ import * as Three from "three";
 import { Signal } from "@robotlegsjs/signals";
 import { ButtonEvent } from "./Button";
 import Game from "../Game";
-import RoundEdgedBox from "../Util/RoundBoxGeometry";
+import RoundRectangleGeometry from "../Util/RoundRectangleGeometry";
 
 /**
  * 參考Windows Form DialogResult
@@ -61,7 +61,7 @@ export default class Dialog extends Three.Group {
     }
 
     public Show(): Promise<DialogResult> {
-        this.rotation.setFromVector3(this.game.renderState.camera.rotation.toVector3());
+        // this.rotation.setFromVector3(this.game.renderState.camera.rotation.toVector3());
         if (this.backgroundCancel) {
             this.game.domevent.addEventListener(this.game.renderState.scene, "click", this.Hide.bind(this), false);
         }
@@ -95,6 +95,6 @@ export default class Dialog extends Three.Group {
     }
 
     protected CreateBG(w: number, h: number, r: number, alpha: number) {
-        this.backgroundGraphics = new Three.Mesh(RoundEdgedBox(w, h, 1, r, 1, 1, 1, 8), new Three.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: alpha }));
+        this.backgroundGraphics = new Three.Mesh(RoundRectangleGeometry(w, h, r, 10), new Three.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: alpha }));
     }
 }

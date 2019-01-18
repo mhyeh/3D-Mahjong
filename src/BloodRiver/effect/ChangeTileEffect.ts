@@ -21,22 +21,22 @@ export default class ChangeTileEffect extends Effect {
         this.animTile[0].rotateX(Math.PI);
         new Three.Box3().setFromObject(this.animTile[0]).getCenter(this.animTile[0].position).multiplyScalar(-1);
         this.animTile[0].position.y = -900 + TILE_H;
-        this.animTile[0].position.z =  50  + TILE_D / 2;
+        this.animTile[0].position.z = (BOARD_D + TILE_D) / 2;
 
         this.animTile[1].rotation.set(0, Math.PI, Math.PI / 2);
         new Three.Box3().setFromObject(this.animTile[1]).getCenter(this.animTile[1].position).multiplyScalar(-1);
         this.animTile[1].position.x = 900 - TILE_H;
-        this.animTile[1].position.z = 50  + TILE_D / 2;
+        this.animTile[1].position.z = (BOARD_D + TILE_D) / 2;
 
         this.animTile[2].rotation.set(Math.PI, 0, Math.PI);
         new Three.Box3().setFromObject(this.animTile[2]).getCenter(this.animTile[2].position).multiplyScalar(-1);
         this.animTile[2].position.y = 900 - TILE_H;
-        this.animTile[2].position.z = 50  + TILE_D / 2;
+        this.animTile[2].position.z = (BOARD_D + TILE_D) / 2;
 
         this.animTile[3].rotation.set(0, Math.PI, Math.PI * 3 / 2);
         new Three.Box3().setFromObject(this.animTile[3]).getCenter(this.animTile[3].position).multiplyScalar(-1);
         this.animTile[3].position.x = -900 + TILE_H;
-        this.animTile[3].position.z =  50  + TILE_D / 2;
+        this.animTile[3].position.z = (BOARD_D + TILE_D) / 2;
 
         this.anim = new Array<Tween.Tween>(4);
         this.anim[0] = new Tween.Tween(this.animTile[0].position).to({ y: -500 + TILE_H / 2 }, 700);

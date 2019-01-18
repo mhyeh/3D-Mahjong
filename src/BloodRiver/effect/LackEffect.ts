@@ -15,7 +15,7 @@ export default class ChangeTileEffect extends Effect {
     constructor(game: Game, ox: number, oy: number, oz: number, dx: number, dy: number, dz: number) {
         super();
         this.game = game;
-        this.lack = new Three.Mesh(new Three.CylinderGeometry(80, 80, 20, 100).rotateX(Math.PI / 2), new Three.MeshLambertMaterial({ color: 0xFFFFFF }));
+        this.lack = new Three.Mesh(new Three.CylinderBufferGeometry(80, 80, 20, 100).rotateX(Math.PI / 2), new Three.MeshLambertMaterial({ color: 0xFFFFFF }));
         this.lack.position.set(ox, oy, oz);
         this.lack.visible  = false;
 

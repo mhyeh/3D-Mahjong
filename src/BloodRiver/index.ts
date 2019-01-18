@@ -18,6 +18,7 @@ import NumberDisplayer from "mahjongh5/ui/NumberDisplayer";
 import Cube from "mahjongh5/ui/Cube";
 import ChangeTileEffect from "./effect/ChangeTileEffect";
 import LackEffect from "./effect/LackEffect";
+import RoundRetangleGeometry from "mahjongh5/Util/RoundRectangleGeometry";
 
 export default function MahjongStart() {
     let isPlaying = false;
@@ -41,7 +42,6 @@ export default function MahjongStart() {
 
         const joinState = new JoinState(game);
         const mahjong   = new MahjongGame(game);
-        game.gameStates.push(joinState);
 
         if (isPlaying) {
             game.gameStates.push(mahjong);
@@ -75,35 +75,36 @@ export default function MahjongStart() {
             scene.add(pointLight);
 
             const title = new Text(game, "配對成功", Assets.font.jhengHei.key, 200, 1, new Three.MeshLambertMaterial({ color: 0xFFFFFF }), 0, 0, 0, true);
-            title.rotation.setFromVector3(camera.rotation.toVector3());
-            title.position.y += 800;
-            title.position.z += 300;
-            scene.add(title);
+            title.position.y = 500;
 
             const nameBlock = [];
             const name      = [];
             for (let i = 0; i < 4; i++) {
-                nameBlock.push(new Cube(RoundEdgedBox(500, 500, 100, 50, 1, 1, 1, 50), new Three.MeshLambertMaterial({ color: 0xAAAAAA })));
-                nameBlock[i].add(new Text(game, "ID", Assets.font.jhengHei.key, 100, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 0, 100, 60, true));
-
-                name.push(new Text(game, "name", Assets.font.jhengHei.key, 50, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 0, -100, 60, true));
+                nameBlock.push(new Cube(RoundRetangleGeometry(500, 500, 50, 50), new Three.MeshLambertMaterial({ color: 0xAAAAAA })));
+                nameBlock[i].add(new Text(game, "ID", Assets.font.jhengHei.key, 100, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 0, 100, 5, true));
+                nameBlock[i].position.y = -200;
+                name.push(new Text(game, "name", Assets.font.jhengHei.key, 50, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 0, -100, 5, true));
                 nameBlock[i].add(name[i]);
-
-                nameBlock[i].lookAt(camera.position);
             }
             nameBlock[0].position.x = -1000;
             nameBlock[1].position.x = -335;
             nameBlock[2].position.x =  335;
             nameBlock[3].position.x =  1000;
-            scene.add(...nameBlock);
 
-            const ready = new Button(game, RoundEdgedBox(400, 200, 40, 50, 1, 1, 1, 20), new Three.MeshLambertMaterial({ color: 0x10A3E8, transparent: true, opacity: 0.8}));
-            ready.add(new Text(game, "Ready", Assets.font.jhengHei.key, 60, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 5, 0, 30, true));
+            const ready = new Button(game, RoundRetangleGeometry(400, 200, 50, 50), new Three.MeshLambertMaterial({ color: 0x10A3E8, transparent: true, opacity: 0.8}));
+            ready.add(new Text(game, "Ready", Assets.font.jhengHei.key, 60, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 5, 0, 5, true));
+            ready.frustumCulled  = false;
             ready.position.y    -= 900;
             ready.stateTint.down = 0x808080;
             ready.stateTint.up   = 0xFFFFFF;
-            ready.lookAt(camera.position);
-            scene.add(ready);
+
+            const group = new Three.Group();
+            group.rotation.setFromVector3(camera.rotation.toVector3());
+            group.add(title);
+            group.add(...nameBlock);
+            group.add(ready);
+
+            scene.add(group);
 
             joinState.socket = socket;
 
@@ -138,34 +139,28 @@ export default function MahjongStart() {
 
             const outBoardW = 2200;
             const outBoardH = 100;
+            const halfOutW  = outBoardW / 2;
+            const halfOutH  = outBoardH / 2;
             const geometry  = RoundEdgedBox(outBoardW, outBoardH, 150, 30, 1, 1, 1, 6);
+            const geometry2 = geometry.clone();
+            const geometry3 = geometry.clone();
+            const geometry4 = geometry.clone();
+            geometry.translate(0, -halfOutW + halfOutH, 0);
+            geometry2.translate(0, halfOutW - halfOutH, 0);
+            geometry2.rotateZ(Math.PI / 2);
+            geometry3.translate(0,  halfOutW - halfOutH, 0);
+            geometry4.translate(0, -halfOutW + halfOutH, 0);
+            geometry4.rotateZ(Math.PI / 2);
+            geometry.merge(geometry2);
+            geometry.merge(geometry3);
+            geometry.merge(geometry4);
+            geometry.mergeVertices();
             const material  = new Three.MeshLambertMaterial({ color: 0xA38511});
-            const outBoard1 = new Three.Mesh(geometry, material);
-            outBoard1.position.set(0, -1050, 25);
+            const outBoard  = new Three.Mesh(geometry, material);
+            scene.add(outBoard);
 
-            const outBoard2 = new Three.Mesh(geometry, material);
-            outBoard2.position.set(1050, 0, 25);
-            outBoard2.rotateZ(Math.PI / 2);
-
-            const outBoard3 = new Three.Mesh(geometry, material);
-            outBoard3.position.set(0, 1050, 25);
-
-            const outBoard4 = new Three.Mesh(geometry, material);
-            outBoard4.position.set(-1050, 0, 25);
-            outBoard4.rotateZ(Math.PI / 2);
-
-            scene.add(outBoard1);
-            scene.add(outBoard2);
-            scene.add(outBoard3);
-            scene.add(outBoard4);
-
-            const board = new Three.Mesh(new Three.BoxGeometry(BOARD_W, BOARD_H, 100), new Three.MeshLambertMaterial({ color: 0x0B440C}));
+            const board = new Three.Mesh(new Three.BoxBufferGeometry(BOARD_W, BOARD_H, 100), new Three.MeshLambertMaterial({ color: 0x0B440C}));
             scene.add(board);
-
-            const remainTile = new Text(game, "剩餘張數: 56", Assets.font.jhengHei.key, 40, 1, new Three.MeshLambertMaterial({ color: 0x000000}));
-            remainTile.rotation.setFromVector3(camera.rotation.toVector3());
-            remainTile.position.set(-1500, 300, 650);
-            scene.add(remainTile);
 
             // arrow setting
             const sideLen1 = 60;
@@ -202,7 +197,7 @@ export default function MahjongStart() {
             for (let i = 0; i < 4; i++) {
                 hand.push(new CommonTileList(game, 13, tileTable, TILE_W, TILE_H, TILE_D, i === 0, 16, true));
                 hu.push(new   CommonTileList(game, 0,  tileTable, TILE_W, TILE_H, TILE_D, false,   16, false));
-                sea.push(new  CommonTileList(game, 0,  tileTable, TILE_W, TILE_H, TILE_D, false,   8,  false));
+                sea.push(new  CommonTileList(game, 0,  tileTable, TILE_W, TILE_H, TILE_D, false,   6,  false));
 
                 door.push(new DoorTileList(game, tileTable, TILE_W, TILE_H, TILE_D, 16, true));
 
@@ -212,7 +207,7 @@ export default function MahjongStart() {
                 score.push(new Text(game, "score: ", Assets.font.jhengHei.key, 50, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 0, 0, 70));
                 score[i].rotation.setFromVector3(camera.rotation.toVector3());
 
-                arrow.push(new Cube(new Three.ExtrudeGeometry(shape, extrudeSettings), new Three.MeshLambertMaterial({ color: 0xF0F40E }), 0, 0));
+                arrow.push(new Cube(new Three.ExtrudeBufferGeometry(shape, extrudeSettings), new Three.MeshLambertMaterial({ color: 0xF0F40E }), 0, 0));
                 arrow[i].tint = DISABLE_TINT;
             }
             const draw = new CommonTileList(game, 0, tileTable, TILE_W, TILE_H, TILE_D, true);
@@ -255,16 +250,16 @@ export default function MahjongStart() {
             hu[3].position.set(-750 + TILE_H / 2, 6 * TILE_W, (BOARD_D + TILE_D) / 2);
 
             // sea
-            sea[0].position.set(-6.5 * TILE_W, -300 + TILE_H / 2, (BOARD_D + TILE_D) / 2);
+            sea[0].position.set(-4.5 * TILE_W, -300 + TILE_H / 2, (BOARD_D + TILE_D) / 2);
 
             sea[1].rotateZ(Math.PI / 2);
-            sea[1].position.set(300 - TILE_H / 2, -6.5 * TILE_W, (BOARD_D + TILE_D) / 2);
+            sea[1].position.set(300 - TILE_H / 2, -4.5 * TILE_W, (BOARD_D + TILE_D) / 2);
 
             sea[2].rotateZ(Math.PI);
-            sea[2].position.set(6.5 * TILE_W, 300 - TILE_H / 2, (BOARD_D + TILE_D) / 2);
+            sea[2].position.set(4.5 * TILE_W, 300 - TILE_H / 2, (BOARD_D + TILE_D) / 2);
 
             sea[3].rotateZ(Math.PI * 3 / 2);
-            sea[3].position.set(-300 + TILE_H / 2, 6.5 * TILE_W, (BOARD_D + TILE_D) / 2);
+            sea[3].position.set(-300 + TILE_H / 2, 4.5 * TILE_W, (BOARD_D + TILE_D) / 2);
 
             // door
             door[0].position.set(9 * TILE_W, -900 + TILE_H / 4, (BOARD_D + TILE_D) / 2);
@@ -343,9 +338,7 @@ export default function MahjongStart() {
             scene.add(timer);
 
             const choseLackDialog = new ChoseLackDialog(game, (dialog: ChoseLackDialog) => {
-                const buttonGeometry = new Three.CylinderGeometry(40, 40, 1, 50);
-                buttonGeometry.rotateX(Math.PI / 2);
-
+                const buttonGeometry = new Three.CircleGeometry(40, 40);
                 dialog.text = new Text(game, "定缺:", Assets.font.jhengHei.key, 50, 1, new Three.MeshLambertMaterial({ color: 0xFFFFFF }), -150, 0, 5, true);
 
                 const fontMaterial = new Three.MeshLambertMaterial({ color: 0x000000 });
@@ -354,29 +347,26 @@ export default function MahjongStart() {
                 dialog.dot　  = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: DOT_COLOR }));
                 dialog.bamboo = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ color: BAMBOO_COLOR }));
 
-                dialog.char.add(new   Text(game, "萬", Assets.font.jhengHei.key, 40, 1, fontMaterial.clone(), 0, 0, 2, true));
-                dialog.dot.add(new    Text(game, "筒", Assets.font.jhengHei.key, 40, 1, fontMaterial.clone(), 0, 0, 2, true));
-                dialog.bamboo.add(new Text(game, "條", Assets.font.jhengHei.key, 40, 1, fontMaterial.clone(), 0, 0, 2, true));
+                dialog.char.add(new   Text(game, "萬", Assets.font.jhengHei.key, 40, 1, fontMaterial.clone(), 0, 0, 5, true));
+                dialog.dot.add(new    Text(game, "筒", Assets.font.jhengHei.key, 40, 1, fontMaterial.clone(), 0, 0, 5, true));
+                dialog.bamboo.add(new Text(game, "條", Assets.font.jhengHei.key, 40, 1, fontMaterial.clone(), 0, 0, 5, true));
 
                 dialog.char.position.x = 20;
-                dialog.char.position.z = 5;
+                dialog.char.position.z = 2;
                 dialog.char.stateTint.down    = DOWN_TINT;
                 dialog.char.stateTint.disable = DISABLE_TINT;
                 dialog.dot.position.x = 110;
-                dialog.dot.position.z = 5;
+                dialog.dot.position.z = 2;
                 dialog.dot.stateTint.down    = DOWN_TINT;
                 dialog.dot.stateTint.disable = DISABLE_TINT;
                 dialog.bamboo.position.x = 200;
-                dialog.bamboo.position.z = 5;
+                dialog.bamboo.position.z = 2;
                 dialog.bamboo.stateTint.down    = DOWN_TINT;
                 dialog.bamboo.stateTint.disable = DISABLE_TINT;
             });
-            choseLackDialog.position.set(-400, -800, 300);
-            scene.add(choseLackDialog);
 
             const commandDialog = new CommandDialog(game, (dialog: CommandDialog) => {
-                const buttonGeometry = new Three.CylinderGeometry(50, 50, 1, 50);
-                buttonGeometry.rotateX(Math.PI / 2);
+                const buttonGeometry = new Three.CircleGeometry(50, 50);
 
                 const fontMaterial = new Three.MeshLambertMaterial({ color: 0x000000 });
 
@@ -395,32 +385,43 @@ export default function MahjongStart() {
                 dialog.none.add(new   Text(game, "略過", Assets.font.jhengHei.key, 30, 1, fontMaterial.clone(), 0, 0, 2, true));
 
                 dialog.pon.position.x = -275;
-                dialog.pon.position.z = 5;
+                dialog.pon.position.z = 2;
                 dialog.pon.stateTint.down    = DOWN_TINT;
                 dialog.pon.stateTint.disable = DISABLE_TINT;
                 dialog.gon.position.x = -165;
-                dialog.gon.position.z = 5;
+                dialog.gon.position.z = 2;
                 dialog.gon.stateTint.down    = DOWN_TINT;
                 dialog.gon.stateTint.disable = DISABLE_TINT;
                 dialog.hu.position.x = -55;
-                dialog.hu.position.z = 5;
+                dialog.hu.position.z = 2;
                 dialog.hu.stateTint.down    = DOWN_TINT;
                 dialog.hu.stateTint.disable = DISABLE_TINT;
-                dialog.ongon.position.x = 55;
-                dialog.ongon.position.z = 5;
+                dialog.ongon.position.x = 25;
+                dialog.ongon.position.z = 2;
                 dialog.ongon.stateTint.down    = DOWN_TINT;
                 dialog.ongon.stateTint.disable = DISABLE_TINT;
                 dialog.pongon.position.x = 165;
-                dialog.pongon.position.z = 5;
+                dialog.pongon.position.z = 2;
                 dialog.pongon.stateTint.down    = DOWN_TINT;
                 dialog.pongon.stateTint.disable = DISABLE_TINT;
                 dialog.none.position.x = 275;
-                dialog.none.position.z = 5;
+                dialog.none.position.z = 2;
                 dialog.none.stateTint.down    = DOWN_TINT;
                 dialog.none.stateTint.disable = DISABLE_TINT;
             });
-            commandDialog.position.set(500, -1150, 300);
-            scene.add(commandDialog);
+
+            const remainTile = new Text(game, "剩餘張數: 56", Assets.font.jhengHei.key, 40, 1, new Three.MeshLambertMaterial({ color: 0x000000}));
+
+            const group = new Three.Group();
+            group.rotation.setFromVector3(camera.rotation.toVector3());
+            group.add(choseLackDialog);
+            group.add(commandDialog);
+            group.add(remainTile);
+            choseLackDialog.position.set(-450, -350, 500);
+            commandDialog.position.set(600, -700, 850);
+            remainTile.position.set(-1200, 600, 300);
+
+            scene.add(group);
 
             const changeTileEffect = new ChangeTileEffect(game, tileTable);
             scene.add(changeTileEffect);
@@ -430,7 +431,7 @@ export default function MahjongStart() {
             lackEffect.push(new LackEffect(game, 650, 0,  BOARD_D / 2 + 10,  900, -750, BOARD_D / 2 + 10));
             lackEffect.push(new LackEffect(game, 0, 650,  BOARD_D / 2 + 10,  750,  900, BOARD_D / 2 + 10));
             lackEffect.push(new LackEffect(game, -650, 0, BOARD_D / 2 + 10, -900,  750, BOARD_D / 2 + 10));
-            scene.add(...lackEffect);
+            // scene.add(...lackEffect);
 
             mahjong.socket = socket;
 

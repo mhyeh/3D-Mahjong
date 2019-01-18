@@ -24,7 +24,7 @@ export default class CommonTileList extends TileList<ImageTile> {
         this.tileW     = tileW;
         this.tileH     = tileH;
         this.tileD     = tileD;
-        this.tileR     = 6;
+        this.tileR     = TILE_R;
 
         for (let i = 0; i < tileCount; i++) {
             this.tiles.push(new ImageTile(game, this.tileW, this.tileH, this.tileD, this.tileR, tileTable));
@@ -87,7 +87,7 @@ export default class CommonTileList extends TileList<ImageTile> {
         this.ArrangeTile();
     }
 
-    private ArrangeTile() {
+    protected ArrangeTile() {
         for (const [i, tile] of this.tiles.entries()) {
             tile.position.x =  (tile.width  + 5) *   (i % this.MaxLen);
             tile.position.y = -(tile.height + 5) * ~~(i / this.MaxLen);
