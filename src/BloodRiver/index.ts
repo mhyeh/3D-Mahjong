@@ -80,7 +80,7 @@ export default function MahjongStart() {
             const nameBlock = [];
             const name      = [];
             for (let i = 0; i < 4; i++) {
-                nameBlock.push(new Cube(RoundRetangleGeometry(500, 500, 50, 50), new Three.MeshLambertMaterial({ color: 0xAAAAAA })));
+                nameBlock.push(new Cube(RoundRetangleGeometry(500, 500, 50, 30), new Three.MeshLambertMaterial({ color: 0xAAAAAA })));
                 nameBlock[i].add(new Text(game, "ID", Assets.font.jhengHei.key, 100, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 0, 100, 5, true));
                 nameBlock[i].position.y = -200;
                 name.push(new Text(game, "name", Assets.font.jhengHei.key, 50, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 0, -100, 5, true));
@@ -91,7 +91,7 @@ export default function MahjongStart() {
             nameBlock[2].position.x =  335;
             nameBlock[3].position.x =  1000;
 
-            const ready = new Button(game, RoundRetangleGeometry(400, 200, 50, 50), new Three.MeshLambertMaterial({ color: 0x10A3E8, transparent: true, opacity: 0.8}));
+            const ready = new Button(game, RoundRetangleGeometry(400, 200, 50, 10), new Three.MeshLambertMaterial({ color: 0x10A3E8, transparent: true, opacity: 0.8}));
             ready.add(new Text(game, "Ready", Assets.font.jhengHei.key, 60, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 5, 0, 5, true));
             ready.frustumCulled  = false;
             ready.position.y    -= 900;
@@ -141,7 +141,7 @@ export default function MahjongStart() {
             const outBoardH = 100;
             const halfOutW  = outBoardW / 2;
             const halfOutH  = outBoardH / 2;
-            const geometry  = RoundEdgedBox(outBoardW, outBoardH, 150, 30, 1, 1, 1, 6);
+            const geometry  = new Three.Geometry().fromBufferGeometry(RoundEdgedBox(outBoardW, outBoardH, 150, 30, 1, 1, 1, 5));
             const geometry2 = geometry.clone();
             const geometry3 = geometry.clone();
             const geometry4 = geometry.clone();
@@ -325,7 +325,7 @@ export default function MahjongStart() {
             scene.add(...arrow);
             scene.add(draw);
 
-            const checkButton     = new Button(game, RoundEdgedBox(200, 130, 100, 30, 1, 1, 1, 40), new Three.MeshLambertMaterial({ color: 0xFFFF00 }));
+            const checkButton     = new Button(game, RoundEdgedBox(200, 130, 100, 30, 1, 1, 1, 6), new Three.MeshLambertMaterial({ color: 0xFFFF00 }));
             const checkButtonText = new Text(game, "確認", Assets.font.jhengHei.key, 40 , 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 0, 0, 52, true);
             checkButton.position.set(820, -850, 40);
             checkButton.stateTint.down    = DISABLE_TINT;
@@ -338,7 +338,7 @@ export default function MahjongStart() {
             scene.add(timer);
 
             const choseLackDialog = new ChoseLackDialog(game, (dialog: ChoseLackDialog) => {
-                const buttonGeometry = new Three.CircleGeometry(40, 40);
+                const buttonGeometry = new Three.CircleGeometry(40, 30);
                 dialog.text = new Text(game, "定缺:", Assets.font.jhengHei.key, 50, 1, new Three.MeshLambertMaterial({ color: 0xFFFFFF }), -150, 0, 5, true);
 
                 const fontMaterial = new Three.MeshLambertMaterial({ color: 0x000000 });
@@ -366,7 +366,7 @@ export default function MahjongStart() {
             });
 
             const commandDialog = new CommandDialog(game, (dialog: CommandDialog) => {
-                const buttonGeometry = new Three.CircleGeometry(50, 50);
+                const buttonGeometry = new Three.CircleGeometry(50, 30);
 
                 const fontMaterial = new Three.MeshLambertMaterial({ color: 0x000000 });
 

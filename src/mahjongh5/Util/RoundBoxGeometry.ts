@@ -96,5 +96,5 @@ export default function RoundEdgedBox(width: number, height: number, depth: numb
 
     geometry.mergeVertices();
 
-    return geometry;
+    return new Three.BufferGeometry().fromGeometry(geometry);
 }

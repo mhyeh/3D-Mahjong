@@ -23,5 +23,5 @@ export default function RoundEdgedBox(w: number, h: number, r: number, s: number
     rec1.merge(rec3);
     rec1.merge(coner1);
 
-    return rec1;
+    return new Three.BufferGeometry().fromGeometry(rec1);
 }

@@ -13,7 +13,7 @@ export default class ImageTile extends Tile<ImageTileTable> {
     private back:  Cube;
 
     constructor(game: Game, tileW: number, tileH: number, tileD: number, tileR: number, tileTable: ImageTileTable, x?: number, y?: number, z?: number, w?: number, h?: number, r?: number) {
-        const geometry = RoundEdgedBox(tileW, tileH, tileD, tileR, 1, 1, 1, tileR);
+        const geometry = RoundEdgedBox(tileW, tileH, tileD, tileR, 1, 1, 1, 3);
         const material = new Three.MeshLambertMaterial({ color: TILE_F_COLOR });
 
         super(game, geometry, material, tileTable, x, y, z);
