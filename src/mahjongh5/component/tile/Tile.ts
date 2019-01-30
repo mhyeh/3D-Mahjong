@@ -10,7 +10,7 @@ export default abstract class Tlie<TileTableType extends TileTable = TileTable> 
 
     protected tileTable: TileTableType;
 
-    private _id:   string;
+    private _id: string;
     private idChangedSignal: Signal;
 
     public get ID(): string {
@@ -28,8 +28,8 @@ export default abstract class Tlie<TileTableType extends TileTable = TileTable> 
         return this.idChangedSignal;
     }
 
-    constructor(game: Game, geometry: Three.Geometry | Three.BufferGeometry, material: Three.Material | Three.Material[], tileTable: TileTableType, x?: number, y?: number, z?: number) {
-        super(game, geometry, material, x, y, z);
+    constructor(game: Game, geometry: Three.Geometry | Three.BufferGeometry, material: Three.Material | Three.Material[], tileTable: TileTableType) {
+        super(game, geometry, material);
         this.tileTable = tileTable;
     }
 

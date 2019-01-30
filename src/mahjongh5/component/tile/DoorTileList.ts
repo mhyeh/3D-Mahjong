@@ -6,15 +6,15 @@ import ImageTile from "./ImageTile";
 export default class DoorTileList extends CommonTileList {
     private gonTiles: ImageTile[] = [];
 
-    constructor(game: Game, tileTable: ImageTileTable, tileW: number, tileH: number, tileD: number, maxLen = 12, sortable = true) {
-        super(game, 0, tileTable, tileW, tileH, tileD, false, maxLen, true);
+    constructor(game: Game, tileW: number, tileH: number, tileD: number, maxLen = 12, sortable = true) {
+        super(game, 0, tileW, tileH, tileD, false, maxLen, true);
     }
 
     public AddTile(ID: string) {
-        const newTile  = new ImageTile(this.game, this.tileW, this.tileH, this.tileD, this.tileR, this.tileTable);
-        newTile.ID     = ID;
-        newTile.color  = ID.slice(0, 1);
-        newTile.enable = false;
+        const newTile   = new ImageTile(this.game, CommonTileList.bufferGeometry, CommonTileList.tileTable);
+        newTile.ID      = ID;
+        newTile.color   = ID.slice(0, 1);
+        newTile.enable  = false;
         const map: {[key: string]: number} = {c: 0, d: 1, b: 2};
         let index = 0;
         for (index = 0; index < this.tileCount; index++) {
@@ -27,8 +27,9 @@ export default class DoorTileList extends CommonTileList {
         if (ID === "None") {
             newTile.rotateX(Math.PI);
         }
-        this.tiles.splice(index, 0, newTile);
         this.add(newTile);
+        CommonTileList.addTile(newTile);
+        this.tiles.splice(index, 0, newTile);
         this.ArrangeTile();
     }
 
@@ -60,6 +61,7 @@ export default class DoorTileList extends CommonTileList {
                 }
             }
         }
+        CommonTileList.update();
     }
 
     private addThreeTile(ID: string) {
@@ -69,7 +71,7 @@ export default class DoorTileList extends CommonTileList {
     }
 
     private addGonTile(ID: string) {
-        const tile      = new ImageTile(this.game, this.tileW, this.tileH, this.tileD, this.tileR, this.tileTable);
+        const tile      = new ImageTile(this.game, CommonTileList.bufferGeometry, CommonTileList.tileTable);
         tile.ID         = ID;
         tile.color      = ID.slice(0, 1);
         tile.position.z = tile.depth + 2;
@@ -87,6 +89,7 @@ export default class DoorTileList extends CommonTileList {
             tile.rotateX(Math.PI);
         }
         this.gonTiles.splice(index, 0, tile);
-        super.add(tile);
+        this.add(tile);
+        CommonTileList.addTile(tile);
     }
 }

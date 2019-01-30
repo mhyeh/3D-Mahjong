@@ -158,6 +158,7 @@ export default class MahjongGame extends State {
                             }
                         }
                     }
+                    CommonTileList.update();
                 }
             });
             this.socket.emit("getRemainCount", room, (count: number) => {
@@ -236,6 +237,7 @@ export default class MahjongGame extends State {
                 this.hand[i].position.z = (BOARD_D + TILE_H) / 2;
             }
             this.hand[0].rotation.x = Math.PI * 80 / 180;
+            CommonTileList.update();
         });
 
         this.socket.on("change", (defaultTile: string[], time: number) => this.ChangeTile(defaultTile, time));
@@ -602,6 +604,7 @@ export default class MahjongGame extends State {
             // this.infoDialog[idx].Redraw();
         }
         this.updateScore();
+        CommonTileList.update();
         await System.Delay(5000);
         // window.location.href = "./index.html";
     }
@@ -678,6 +681,7 @@ export default class MahjongGame extends State {
         const len = this.door[id].tileW * n;
         const map = ["x", "y"];
         (this.door[id].position as any)[map[id % 2]] += len * (id < 2 ? -1 : 1);
+        CommonTileList.update();
     }
 
     private clearDraw() {
@@ -686,10 +690,12 @@ export default class MahjongGame extends State {
             this.draw.RemoveTile(tile);
             this.hand[0].AddTile(tile);
             this.hand[0].DisableAll();
+            CommonTileList.update();
         }
     }
 
     private setDrawPosition() {
         this.draw.position.x = this.hand[0].position.x + (TILE_W + 5) * this.hand[0].tileCount + 10;
+        CommonTileList.update();
     }
 }

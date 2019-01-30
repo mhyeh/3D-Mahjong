@@ -14,7 +14,7 @@ export default class Game {
     public load:  Loader;
     public cache: { [key: string]: any } = {};
 
-    public renderer = new Three.WebGLRenderer({ antialias: true });
+    public renderer: Three.WebGLRenderer;
 
     public renderState: State;
 
@@ -39,7 +39,10 @@ export default class Game {
     }
 
     constructor(display: string) {
-        this.load = new Loader();
+        const _canvas  = document.createElement("canvas");
+        const _context = _canvas.getContext("webgl2");
+        this.renderer  = new Three.WebGLRenderer({ antialias: true, canvas: _canvas, context : (_context as any) });
+        this.load      = new Loader();
         this.renderer.setSize(this.sceneWidth, this.sceneWidth);
         document.getElementById(display).appendChild(this.renderer.domElement);
         this.domevent = new DomEvents(this.renderer.domElement);

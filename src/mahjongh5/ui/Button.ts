@@ -70,7 +70,7 @@ export default class Button extends Cube implements ButtonEvent {
 
     private game: Game;
 
-    constructor(game: Game, geometry: Three.Geometry | Three.BufferGeometry, material: Three.Material | Three.Material[], x?: number, y?: number, z?: number, texture?: string, textureConfig?: string, callback?: () => void, callbackContext?: any, overFrame?: string | number, outFrame?: string | number, downFrame?: string | number, upFrame?: string | number, disableFrame?: string | number) {
+    constructor(game: Game, geometry?: Three.Geometry | Three.BufferGeometry, material?: Three.Material | Three.Material[], x?: number, y?: number, z?: number, texture?: string, textureConfig?: string, callback?: () => void, callbackContext?: any, overFrame?: string | number, outFrame?: string | number, downFrame?: string | number, upFrame?: string | number, disableFrame?: string | number) {
         super(geometry, material, x, y, z);
         this.game = game;
 

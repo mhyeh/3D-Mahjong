@@ -19,8 +19,8 @@ module.exports = {
     },
     devServer: {
         contentBase: "./dist",
-        host: "localhost",
-        port: 9000,
+        host: "140.118.127.157",
+        port: 9001,
     },
     module: {
         rules: [

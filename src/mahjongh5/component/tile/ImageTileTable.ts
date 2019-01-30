@@ -1,6 +1,6 @@
 import * as Three from "three";
 import TilelTable from "./TileTable";
-import AltasTexture from "mahjongh5/Util/AltasTexture";
+// import AltasTexture from "mahjongh5/Util/AltasTexture";
 import Game from "mahjongh5/Game";
 
 export default class ImageTileTable extends TilelTable<ImageTileConfig> {
@@ -9,7 +9,10 @@ export default class ImageTileTable extends TilelTable<ImageTileConfig> {
     public tileHeight?:    number;
     public textureConfig?: string;
 
-    public tileTexture?: AltasTexture;
+    private _texture:  Three.Texture;
+    private frameJson: FrameJson;
+    private imagew:    number;
+    private imageh:    number;
 
     constructor(game: Game, data?: any, spriteKey?: string, textureConfig?: string) {
         super(data);
@@ -23,10 +26,17 @@ export default class ImageTileTable extends TilelTable<ImageTileConfig> {
         }
         if (textureConfig) {
             this.textureConfig = textureConfig;
+            this.frameJson     = game.cache[textureConfig].frames;
         }
-        if (this.spriteKey && this.textureConfig) {
-            this.tileTexture = new AltasTexture(game.cache[textureConfig].frames, game.cache[spriteKey]);
-        }
+
+        this.imagew   = game.cache[this.spriteKey].width;
+        this.imageh   = game.cache[this.spriteKey].height;
+        this._texture = new Three.Texture(game.cache[this.spriteKey]);
+        this._texture.needsUpdate = true;
+    }
+
+    public get texture(): Three.Texture {
+        return this._texture;
     }
 
     public GetSprite(tile: number | string): number | string | null {
@@ -41,16 +51,40 @@ export default class ImageTileTable extends TilelTable<ImageTileConfig> {
         return super.GetConfig(tile);
     }
 
-    public GetTexture(tile: string): Three.Texture | undefined {
-        const key = this.GetSprite(tile);
-        if (this.tileTexture && typeof key === "string") {
-            return this.tileTexture.Get(key);
+    public GetUv(ID: string): Three.Vector4 {
+        const key = this.GetSprite(ID);
+        if (typeof key === "string" && this.frameJson[key]) {
+            const frame = this.frameJson[key].frame;
+            return new Three.Vector4(frame.x / this.imagew, 1 - (frame.h / this.imageh) - (frame.y / this.imageh), frame.w / this.imagew, frame.h / this.imageh);
         }
-        return undefined;
+        return new Three.Vector4(0, 0, 0, 0);
     }
 }
 
 export interface ImageTileConfig {
     tile:  string;
     image: string | number;
+}
+
+interface FrameJson {
+    [key: string]: {
+        frame: {
+            x: number,
+            y: number,
+            w: number,
+            h: number,
+        },
+        rotated: boolean,
+        trimmed: boolean,
+        spriteSourceSize: {
+            x: number,
+            y: number,
+            w: number,
+            h: number,
+        },
+        sourceSize: {
+            w: number,
+            h: number,
+        },
+    };
 }
