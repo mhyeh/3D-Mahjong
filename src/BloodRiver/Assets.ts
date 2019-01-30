@@ -23,6 +23,18 @@ export const image = {
     avatar: { type: "Image", key: "", args: [require("assets/Mahjong/avatar.png")] },
 };
 
+export const button = {
+    char: { type: "Image", key: "", args: [require("assets/Mahjong/Char.png")] },
+    dot: { type: "Image", key: "", args: [require("assets/Mahjong/Dot.png")] },
+    bamboo: { type: "Image", key: "", args: [require("assets/Mahjong/Bamboo.png")] },
+    pon: { type: "Image", key: "", args: [require("assets/Mahjong/Pon.png")] },
+    gon: { type: "Image", key: "", args: [require("assets/Mahjong/Gon.png")] },
+    pongon: { type: "Image", key: "", args: [require("assets/Mahjong/PonGon.png")] },
+    ongon: { type: "Image", key: "", args: [require("assets/Mahjong/OnGon.png")] },
+    hu: { type: "Image", key: "", args: [require("assets/Mahjong/Hu.png")] },
+    none: { type: "Image", key: "", args: [require("assets/Mahjong/None.png")] },
+};
+
 export const tiles = {
     tiles: { type: "Image", key: "tiles", args: [require("assets/Mahjong/tiles/tiles.png")] },
     tilesJson: { type: "json", key: "", args: [require("assets/Mahjong/tiles/tiles.json")] },
@@ -40,4 +52,5 @@ export const loadAssets: { [section: string]: any } = {
     image,
     tiles,
     font,
+    button,
 };
