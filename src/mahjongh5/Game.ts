@@ -89,14 +89,14 @@ export default class Game {
         Tween.update();
         this.renderer.autoClear = true;
         this.renderer.setViewport(0, 0, this.sceneWidth, this.sceneHeight);
-        this.renderer.setScissor(0, 0, this.sceneWidth, this.sceneHeight);
+        this.renderer.setScissor(0,  0, this.sceneWidth, this.sceneHeight);
         this.renderer.setScissorTest(true);
         this.renderer.render(this.renderState.scene, this.renderState.camera);
 
         if (this.orthoScene && this.orthoCamera) {
             this.renderer.autoClear = false;
-            this.renderer.setViewport(this.sceneWidth / 2 - 250, this.sceneHeight / 2 - 125, 500, 250);
-            this.renderer.setScissor(this.sceneWidth / 2 - 250, this.sceneHeight / 2 - 125, 500, 250);
+            this.renderer.setViewport(0, 0, this.sceneWidth, this.sceneHeight);
+            this.renderer.setScissor(0,  0, this.sceneWidth, this.sceneHeight);
             this.renderer.render(this.orthoScene, this.orthoCamera);
         }
     }

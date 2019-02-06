@@ -91,7 +91,7 @@ export default function MahjongStart() {
             nameBlock[2].position.x =  335;
             nameBlock[3].position.x =  1000;
 
-            const ready = new Button(game, RoundRetangleGeometry(400, 200, 50, 10), new Three.MeshLambertMaterial({ color: 0x10A3E8, transparent: true, opacity: 0.8}));
+            const ready = new Button(game, RoundRetangleGeometry(400, 200, 50, 10), new Three.MeshLambertMaterial({ color: 0x10A3E8, transparent: true, opacity: 0.8 }));
             ready.add(new Text(game, "Ready", Assets.font.jhengHei.key, 60, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 5, 0, 5, true));
             ready.frustumCulled  = false;
             ready.position.y    -= 900;
@@ -444,9 +444,11 @@ export default function MahjongStart() {
             const instanceTlies = new Three.Mesh(CommonTileList.instancedGeometry, CommonTileList.rawShaderMaterial);
             scene.add(instanceTlies);
 
+            const w = 1000;
+            const h = w / ASPECT;
             game.orthoScene  = new Three.Scene();
-            game.orthoCamera = new Three.OrthographicCamera(-1000, 1000, 500, -500, -1000, 1000);
-            // game.orthoScene.add(new Three.Mesh(new Three.PlaneGeometry(2000, 2000), new Three.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.7 })));
+            game.orthoCamera = new Three.OrthographicCamera(-w / 2, w / 2, h / 2, -h / 2, -1000, 1000);
+            game.orthoScene.add(new Three.Mesh(new Three.PlaneGeometry(w * 0.9, h * 0.9), new Three.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.7 })));
             // game.orthoScene.add(new Text(game, "剩餘張數: 56", Assets.font.jhengHei.key, 100, 10, new Three.MeshBasicMaterial({ color: 0xFFFFFF })));
 
             mahjong.socket = socket;
