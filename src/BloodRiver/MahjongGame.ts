@@ -131,6 +131,7 @@ export default class MahjongGame extends State {
                         this.hand[i].position.z = (BOARD_D + TILE_H) / 2;
                     }
                     this.hand[0].rotation.x = Math.PI * 80 / 180;
+                    CommonTileList.update();
                 }
             });
             this.socket.emit("getPlayerList", room, (nameList: string[]) => {
@@ -172,16 +173,20 @@ export default class MahjongGame extends State {
                             for (let j = 0; j < door[i].length; j++) {
                                 if (door[i][j] === door[i][j + 3]) {
                                     this.door[idx].Gon(door[i][j]);
+                                    this.moveDoor(idx, 3);
                                     j += 3;
                                 } else {
                                     this.door[idx].Pon(door[i][j]);
+                                    this.moveDoor(idx, 2);
                                     j += 2;
                                 }
                             }
                         }
                         if (inVisibleCount[i] !== null && inVisibleCount[i] !== 0) {
-                            while (inVisibleCount[i] -= 4) {
+                            while (inVisibleCount[i]) {
                                 this.door[idx].Gon("None");
+                                this.moveDoor(idx, 3);
+                                inVisibleCount[i] -= 4;
                             }
                         }
                     }
@@ -588,6 +593,17 @@ export default class MahjongGame extends State {
             const idx = this.getID(i);
             if (gameResult[i].Door !== null) {
                 // this.door[idx].SetImmediate(gameResult[i].Door);
+                for (let j = 0; j < gameResult[i].Door.length; j++) {
+                    if (gameResult[i].Door[j] === gameResult[i].Door[j + 3]) {
+                        this.door[idx].Gon(gameResult[i].Door[j]);
+                        this.moveDoor(idx, 3);
+                        j += 3;
+                    } else {
+                        this.door[idx].Pon(gameResult[i].Door[j]);
+                        this.moveDoor(idx, 2);
+                        j += 2;
+                    }
+                }
             }
             this.hand[idx].SetImmediate(gameResult[i].Hand);
             (this.hand[idx].rotation as any)[map[idx % 2]] = 0;

@@ -209,6 +209,7 @@ export default class CommonTileList extends TileList<ImageTile> {
             } else {
                 this.tiles[i].enable = false;
             }
+            this.tiles[i].ID = "None";
             this.add(this.tiles[i]);
             CommonTileList.addTile(this.tiles[i]);
         }

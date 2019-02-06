@@ -9,6 +9,8 @@ import DomEvents from "./Util/DomEvents";
 export default class Game {
     public assets: typeof Assets | Array<typeof Assets> = Assets;
     public gameStates: State[] = [];
+    public orthoScene:  Three.Scene;
+    public orthoCamera: Three.Camera;
     public domevent: DomEvents;
 
     public load:  Loader;
@@ -41,7 +43,7 @@ export default class Game {
     constructor(display: string) {
         const _canvas  = document.createElement("canvas");
         const _context = _canvas.getContext("webgl2");
-        this.renderer  = new Three.WebGLRenderer({ antialias: true, canvas: _canvas, context : (_context as any) });
+        this.renderer  = new Three.WebGLRenderer({ antialias: true, canvas: _canvas, context : (_context as any), alpha: true , preserveDrawingBuffer: true });
         this.load      = new Loader();
         this.renderer.setSize(this.sceneWidth, this.sceneWidth);
         document.getElementById(display).appendChild(this.renderer.domElement);
@@ -85,7 +87,18 @@ export default class Game {
     public render() {
         requestAnimationFrame(this.render.bind(this));
         Tween.update();
+        this.renderer.autoClear = true;
+        this.renderer.setViewport(0, 0, this.sceneWidth, this.sceneHeight);
+        this.renderer.setScissor(0, 0, this.sceneWidth, this.sceneHeight);
+        this.renderer.setScissorTest(true);
         this.renderer.render(this.renderState.scene, this.renderState.camera);
+
+        if (this.orthoScene && this.orthoCamera) {
+            this.renderer.autoClear = false;
+            this.renderer.setViewport(this.sceneWidth / 2 - 250, this.sceneHeight / 2 - 125, 500, 250);
+            this.renderer.setScissor(this.sceneWidth / 2 - 250, this.sceneHeight / 2 - 125, 500, 250);
+            this.renderer.render(this.orthoScene, this.orthoCamera);
+        }
     }
 
     public Resize() {

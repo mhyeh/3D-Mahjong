@@ -444,6 +444,11 @@ export default function MahjongStart() {
             const instanceTlies = new Three.Mesh(CommonTileList.instancedGeometry, CommonTileList.rawShaderMaterial);
             scene.add(instanceTlies);
 
+            game.orthoScene  = new Three.Scene();
+            game.orthoCamera = new Three.OrthographicCamera(-1000, 1000, 500, -500, -1000, 1000);
+            // game.orthoScene.add(new Three.Mesh(new Three.PlaneGeometry(2000, 2000), new Three.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.7 })));
+            // game.orthoScene.add(new Text(game, "剩餘張數: 56", Assets.font.jhengHei.key, 100, 10, new Three.MeshBasicMaterial({ color: 0xFFFFFF })));
+
             mahjong.socket = socket;
 
             mahjong.remainTile = remainTile;
