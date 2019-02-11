@@ -5,8 +5,14 @@ import Cube from "./Cube";
 export default class Text extends Cube {
     private config:   any;
     private isCenter: boolean;
+    private value:    string;
+
+    public get text(): string {
+        return this.value;
+    }
 
     public set text(value: string) {
+        this.value    = value;
         this.geometry = new Three.TextBufferGeometry(value, this.config);
         if (this.isCenter) {
             this.geometry.center();
@@ -29,5 +35,6 @@ export default class Text extends Cube {
             this.geometry.center();
         }
         this.position.set(x, y, z);
+        this.value = text;
     }
 }

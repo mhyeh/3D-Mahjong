@@ -28,7 +28,9 @@ export default class InfoDialog extends Dialog {
 
         this.CreateBG(900, 900 / ASPECT, 10, 0.7);
         this.add(this.backgroundGraphics);
-        // this.add(this.scoreLog);
+        this.add(...this.nameText);
+        this.add(...this.scoreText);
+        this.add(...this.lackImg);
     }
 
     public Show(): Promise<DialogResult> {

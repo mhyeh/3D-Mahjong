@@ -1,5 +1,6 @@
 import * as io from "socket.io-client";
 import * as Three from "three";
+import * as Assets from "./Assets";
 import State from "mahjongh5/State";
 import Game from "mahjongh5/Game";
 import Input from "mahjongh5/input/Input";
@@ -33,8 +34,6 @@ export default class MahjongGame extends State {
     public commandDialog:   CommandDialog;
     public infoDialog:      InfoDialog;
 
-    public name:       Text[];
-    public scoreText:  Text[];
     public remainTile: Text;
 
     public timer: Timer;
@@ -122,8 +121,9 @@ export default class MahjongGame extends State {
 
         const playerList = JSON.parse(localStorage.getItem("players"));
         for (let i = 0; i < 4; i++) {
-            this.name[i].text += playerList[i];
-            this.scoreText[i].text = "score:   " + this.score[i];
+            console.log(this.infoDialog.nameText[i].text);
+            this.infoDialog.nameText[i].text += playerList[i];
+            this.infoDialog.scoreText[i].text = "score:   " + this.score[i];
         }
 
         const state = localStorage.getItem("state");
@@ -152,7 +152,7 @@ export default class MahjongGame extends State {
                     players.push(nameList[(i + this.id) % 4]);
                 }
                 for (let i = 0; i < 4; i++) {
-                    this.name[i].text = "ID:   " + players[i];
+                    this.infoDialog.nameText[i].text = "ID:   " + players[i];
                 }
                 localStorage.setItem("players", JSON.stringify(players));
             });
@@ -406,15 +406,13 @@ export default class MahjongGame extends State {
     }
 
     private AfterLack(lake: number[], flag: boolean = true) {
-        const mapping = ["萬", "筒", "條"];
+        const mapping = ["char", "dot", "bamboo"];
         for (let i = 0; i < 4; i++) {
-            const idx   = this.getID(i);
-            const color = mapping[lake[i]];
-            // this.infoDialog[idx].lack.loadTexture(color);
-            // this.infoDialog[idx].lack.visible = true;
-            if (flag) {
-                this.effect.lackEffect[idx].Play(color);
-            }
+            const idx     = this.getID(i);
+            const texture = new Three.Texture(this.game.cache[(Assets.button as any)[mapping[lake[i]]].key]);
+            texture.needsUpdate = true;
+            (this.infoDialog.lackImg[idx].material as any).map = texture;
+            this.infoDialog.lackImg[idx].visible = true;
         }
     }
 
@@ -603,16 +601,14 @@ export default class MahjongGame extends State {
         const map    = ["x", "y"];
         for (let i = 0; i < 4; i++) {
             const idx = this.getID(i);
+            this.door[idx].ClearDoor();
             if (gameResult[i].Door !== null) {
-                // this.door[idx].SetImmediate(gameResult[i].Door);
                 for (let j = 0; j < gameResult[i].Door.length; j++) {
                     if (gameResult[i].Door[j] === gameResult[i].Door[j + 3]) {
                         this.door[idx].Gon(gameResult[i].Door[j]);
-                        this.moveDoor(idx, 3);
                         j += 3;
                     } else {
                         this.door[idx].Pon(gameResult[i].Door[j]);
-                        this.moveDoor(idx, 2);
                         j += 2;
                     }
                 }
@@ -639,7 +635,7 @@ export default class MahjongGame extends State {
 
     private updateScore() {
         for (let i = 0; i < 4; i++) {
-            this.scoreText[i].text = "score:   " + this.score[i];
+            this.infoDialog.scoreText[i].text = "score:   " + this.score[i];
         }
     }
     private HU(id: number, fromId: number, tile: string, score: number) {

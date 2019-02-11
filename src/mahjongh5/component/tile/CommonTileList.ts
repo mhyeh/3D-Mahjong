@@ -252,7 +252,7 @@ export default class CommonTileList extends TileList<ImageTile> {
             index = this.tiles.findIndex((tile) => tile.ID === ID);
         } else {
             const t = this.tiles.slice(0).reverse();
-            index = t.findIndex((tile) => tile.ID === ID);
+            index   = t.findIndex((tile) => tile.ID === ID);
             if (index !== -1) {
                 index = this.tileCount - index - 1;
             }

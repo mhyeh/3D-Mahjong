@@ -17,7 +17,6 @@ import Timer from "mahjongh5/component/Timer";
 import NumberDisplayer from "mahjongh5/ui/NumberDisplayer";
 import Cube from "mahjongh5/ui/Cube";
 import ChangeTileEffect from "./effect/ChangeTileEffect";
-import LackEffect from "./effect/LackEffect";
 import RoundRetangleGeometry from "mahjongh5/Util/RoundRectangleGeometry";
 import InfoDialog from "./InfoDialog";
 
@@ -194,8 +193,6 @@ export default function MahjongStart() {
             const hand   = [];
             const door   = [];
             const hu     = [];
-            const name   = [];
-            const score  = [];
             const arrow  = [];
             for (let i = 0; i < 4; i++) {
                 hand.push(new CommonTileList(game, 13, TILE_W, TILE_H, TILE_D, i === 0, 16, true));
@@ -203,12 +200,6 @@ export default function MahjongStart() {
                 sea.push(new  CommonTileList(game, 0,  TILE_W, TILE_H, TILE_D, false,   6,  false));
 
                 door.push(new DoorTileList(game, TILE_W, TILE_H, TILE_D, 16, true));
-
-                name.push(new Text(game, "ID: ", Assets.font.jhengHei.key, 50, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 0, 0, 70));
-                name[i].rotation.setFromVector3(camera.rotation.toVector3());
-
-                score.push(new Text(game, "score: ", Assets.font.jhengHei.key, 50, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 0, 0, 70));
-                score[i].rotation.setFromVector3(camera.rotation.toVector3());
 
                 arrow.push(new Cube(new Three.ExtrudeBufferGeometry(shape, extrudeSettings), new Three.MeshLambertMaterial({ color: 0xF0F40E }), 0, 0));
                 arrow[i].tint = DISABLE_TINT;
@@ -275,28 +266,6 @@ export default function MahjongStart() {
 
             door[3].rotateZ(Math.PI * 3 / 2);
             door[3].position.set(-900 + TILE_H / 2, -9 * TILE_W, (BOARD_D + TILE_D) / 2);
-
-            // name
-            // name[0].position.x -= 900;
-            // name[0].position.y -= 1100;
-            // name[0].position.z += 50;
-
-            // name[1].position.x += 1200;
-
-            // name[2].position.x -= 1500;
-
-            // name[3].position.x -= 1200;
-
-            // score
-            // score[0].position.x -= 900;
-            // score[0].position.y -= 1100;
-            // score[0].position.z += 50;
-
-            // score[1].position.x += 1200;
-
-            // score[2].position.x -= 1500;
-
-            // score[3].position.x -= 1200;
 
             // arrow
             arrow[0].rotateZ(-Math.PI * 45  / 180);
@@ -434,11 +403,11 @@ export default function MahjongStart() {
             const changeTileEffect = new ChangeTileEffect(game);
             CommonTileList.intersectsScene.add(changeTileEffect);
 
-            const lackEffect = [];
-            lackEffect.push(new LackEffect(game, 0, -650, BOARD_D / 2 + 10, -750, -900, BOARD_D / 2 + 10));
-            lackEffect.push(new LackEffect(game, 650, 0,  BOARD_D / 2 + 10,  900, -750, BOARD_D / 2 + 10));
-            lackEffect.push(new LackEffect(game, 0, 650,  BOARD_D / 2 + 10,  750,  900, BOARD_D / 2 + 10));
-            lackEffect.push(new LackEffect(game, -650, 0, BOARD_D / 2 + 10, -900,  750, BOARD_D / 2 + 10));
+            // const lackEffect = [];
+            // lackEffect.push(new LackEffect(game, 0, -650, BOARD_D / 2 + 10, -750, -900, BOARD_D / 2 + 10));
+            // lackEffect.push(new LackEffect(game, 650, 0,  BOARD_D / 2 + 10,  900, -750, BOARD_D / 2 + 10));
+            // lackEffect.push(new LackEffect(game, 0, 650,  BOARD_D / 2 + 10,  750,  900, BOARD_D / 2 + 10));
+            // lackEffect.push(new LackEffect(game, -650, 0, BOARD_D / 2 + 10, -900,  750, BOARD_D / 2 + 10));
             // scene.add(...lackEffect);
 
             CommonTileList.update();
@@ -451,6 +420,49 @@ export default function MahjongStart() {
             game.orthoCamera = new Three.OrthographicCamera(-w / 2, w / 2, h / 2, -h / 2, -1000, 1000);
 
             const infoDialog = new InfoDialog(game, (dialog: InfoDialog) => {
+                const texture = new Three.Texture(game.cache[Assets.button.char.key]);
+                texture.needsUpdate = true;
+                dialog.nameList  = [];
+                dialog.nameText  = [];
+                dialog.lack      = [];
+                dialog.lackImg   = [];
+                dialog.score     = [];
+                dialog.scoreText = [];
+                for (let i = 0; i < 4; i++) {
+                    dialog.nameText.push(new Text(game, "ID: ", Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, true));
+                    dialog.scoreText.push(new Text(game, "score: ", Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, true));
+                    dialog.lackImg.push(new Three.Mesh(new Three.CircleGeometry(20, 20), new Three.MeshBasicMaterial({ map: texture })));
+                    dialog.lackImg[i].visible = false;
+                }
+
+                // name
+                dialog.nameText[0].position.y = -h / 2 + 120;
+
+                dialog.nameText[1].position.x =  w / 2 - 150;
+                dialog.nameText[1].position.y =  70;
+
+                dialog.nameText[2].position.y =  h / 2 - 70;
+
+                dialog.nameText[3].position.x = -w / 2 + 150;
+                dialog.nameText[3].position.y =  70;
+
+                // score
+                dialog.scoreText[0].position.y = -h / 2 + 90;
+
+                dialog.scoreText[1].position.x =  w / 2 - 150;
+                dialog.scoreText[1].position.y =  40;
+
+                dialog.scoreText[2].position.y =  h / 2 - 100;
+
+                dialog.scoreText[3].position.x = -w / 2 + 150;
+                dialog.scoreText[3].position.y =  40;
+
+                // lack
+                dialog.lackImg[0].position.set(-100, -h / 2 + 110, 1);
+                dialog.lackImg[1].position.set( w / 2 - 130,  110, 1);
+                dialog.lackImg[2].position.set(-100,  h / 2 - 80,  1);
+                dialog.lackImg[3].position.set(-w / 2 + 130,  110, 1);
+
             });
             infoDialog.visible = false;
 
@@ -460,8 +472,6 @@ export default function MahjongStart() {
 
             mahjong.remainTile = remainTile;
 
-            mahjong.name      = name;
-            mahjong.scoreText = score;
             mahjong.arrow     = arrow;
 
             mahjong.sea  = sea;
@@ -471,7 +481,7 @@ export default function MahjongStart() {
             mahjong.draw = draw;
 
             mahjong.effect.changeTileEffect = changeTileEffect;
-            mahjong.effect.lackEffect       = lackEffect;
+            // mahjong.effect.lackEffect       = lackEffect;
 
             mahjong.ui.checkButton = checkButton;
 

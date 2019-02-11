@@ -49,6 +49,16 @@ export default class DoorTileList extends CommonTileList {
         this.ArrangeGonTile();
     }
 
+    public ClearDoor() {
+        const list = this.tiles.map((tile) => tile.ID);
+        list.forEach((ID) => this.RemoveTile(ID));
+        this.gonTiles.forEach((tile) => {
+            this.remove(tile);
+            CommonTileList.removeTile(tile);
+        });
+        this.gonTiles = [];
+    }
+
     private ArrangeGonTile() {
         let i = 0;
         for (const gTile of this.gonTiles) {
