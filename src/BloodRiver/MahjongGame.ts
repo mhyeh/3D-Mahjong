@@ -31,7 +31,7 @@ export default class MahjongGame extends State {
 
     public choseLackDialog: ChoseLackDialog;
     public commandDialog:   CommandDialog;
-    public infoDialog:      InfoDialog[];
+    public infoDialog:      InfoDialog;
 
     public name:       Text[];
     public scoreText:  Text[];
@@ -84,6 +84,18 @@ export default class MahjongGame extends State {
 
     public async create() {
         super.create();
+
+        document.addEventListener("keydown", (event: KeyboardEvent) => {
+            if (event.code === "KeyZ") {
+                this.infoDialog.Show();
+            }
+        }, false);
+
+        document.addEventListener("keyup", (event: KeyboardEvent) => {
+            if (event.code === "KeyZ") {
+                this.infoDialog.Hide();
+            }
+        }, false);
 
         this.ui.Input.AddButton(this.choseLackDialog.char,   Input.key.lack, undefined, 0);
         this.ui.Input.AddButton(this.choseLackDialog.dot,    Input.key.lack, undefined, 1);

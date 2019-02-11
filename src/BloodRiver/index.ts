@@ -19,6 +19,7 @@ import Cube from "mahjongh5/ui/Cube";
 import ChangeTileEffect from "./effect/ChangeTileEffect";
 import LackEffect from "./effect/LackEffect";
 import RoundRetangleGeometry from "mahjongh5/Util/RoundRectangleGeometry";
+import InfoDialog from "./InfoDialog";
 
 export default function MahjongStart() {
     let isPlaying = false;
@@ -448,8 +449,12 @@ export default function MahjongStart() {
             const h = w / ASPECT;
             game.orthoScene  = new Three.Scene();
             game.orthoCamera = new Three.OrthographicCamera(-w / 2, w / 2, h / 2, -h / 2, -1000, 1000);
-            game.orthoScene.add(new Three.Mesh(new Three.PlaneGeometry(w * 0.9, h * 0.9), new Three.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.7 })));
-            // game.orthoScene.add(new Text(game, "剩餘張數: 56", Assets.font.jhengHei.key, 100, 10, new Three.MeshBasicMaterial({ color: 0xFFFFFF })));
+
+            const infoDialog = new InfoDialog(game, (dialog: InfoDialog) => {
+            });
+            infoDialog.visible = false;
+
+            game.orthoScene.add(infoDialog);
 
             mahjong.socket = socket;
 
@@ -474,6 +479,7 @@ export default function MahjongStart() {
 
             mahjong.choseLackDialog = choseLackDialog;
             mahjong.commandDialog   = commandDialog;
+            mahjong.infoDialog      = infoDialog;
 
             mahjong.scene  = scene;
             mahjong.camera = camera;

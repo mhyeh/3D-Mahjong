@@ -8,10 +8,10 @@ import DomEvents from "./Util/DomEvents";
 
 export default class Game {
     public assets: typeof Assets | Array<typeof Assets> = Assets;
-    public gameStates: State[] = [];
+    public gameStates:  State[] = [];
     public orthoScene:  Three.Scene;
     public orthoCamera: Three.Camera;
-    public domevent: DomEvents;
+    public domevent:    DomEvents;
 
     public load:  Loader;
     public cache: { [key: string]: any } = {};

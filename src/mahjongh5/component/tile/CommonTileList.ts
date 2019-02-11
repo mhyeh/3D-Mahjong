@@ -96,7 +96,6 @@ export default class CommonTileList extends TileList<ImageTile> {
 
                                 texelColor = mapTexelToLinear(texelColor);
                                 diffuseColor *= texelColor;
-                                diffuseColor.w = 1.;
                             #else
                                 diffuseColor *= white;
                             #endif
