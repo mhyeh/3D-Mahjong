@@ -5,8 +5,8 @@ import { Loadable } from "./load/LoadState";
 
 export default class State implements Loadable {
 
-    public scene:  Three.Scene;
-    public camera: Three.PerspectiveCamera;
+    public scene:  Three.Scene[]  = [];
+    public camera: Three.Camera[] = [];
 
     public game: Game;
 

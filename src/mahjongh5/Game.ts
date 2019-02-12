@@ -74,13 +74,18 @@ export default class Game {
         }
         this.loadState.onTaskError.add((sender: any, error: any) => window.location.reload());
         await this.SwitchScene(this.loadState);
+
+        this.renderer.setViewport(0, 0, this.sceneWidth, this.sceneHeight);
+        this.renderer.setScissor(0,  0, this.sceneWidth, this.sceneHeight);
+        this.renderer.setScissorTest(true);
+
         this.render();
     }
 
     public async SwitchScene(state: State) {
         await state.create();
         this.renderer.setSize(this.sceneWidth, this.sceneHeight);
-        this.domevent.camera = state.camera;
+        this.domevent.camera = state.camera[0];
         this.renderState     = state;
     }
 
@@ -88,26 +93,26 @@ export default class Game {
         requestAnimationFrame(this.render.bind(this));
         Tween.update();
         this.renderer.autoClear = true;
-        this.renderer.setViewport(0, 0, this.sceneWidth, this.sceneHeight);
-        this.renderer.setScissor(0,  0, this.sceneWidth, this.sceneHeight);
-        this.renderer.setScissorTest(true);
-        this.renderer.render(this.renderState.scene, this.renderState.camera);
+        this.renderer.render(this.renderState.scene[0], this.renderState.camera[0]);
 
-        if (this.orthoScene && this.orthoCamera) {
+        for (let i = 1; i < this.renderState.scene.length; i++) {
             this.renderer.autoClear = false;
-            this.renderer.setViewport(0, 0, this.sceneWidth, this.sceneHeight);
-            this.renderer.setScissor(0,  0, this.sceneWidth, this.sceneHeight);
-            this.renderer.render(this.orthoScene, this.orthoCamera);
+            this.renderer.render(this.renderState.scene[i], this.renderState.camera[i]);
         }
     }
 
     public Resize() {
         for (const state of this.gameStates) {
-            if (state.camera) {
-                state.camera.aspect = this.sceneWidth / this.sceneHeight;
-                state.camera.updateProjectionMatrix();
+            for (const camera of state.camera) {
+                if (camera instanceof Three.PerspectiveCamera) {
+                    camera.aspect = this.sceneWidth / this.sceneHeight;
+                    camera.updateProjectionMatrix();
+                }
             }
         }
         this.renderer.setSize(this.sceneWidth, this.sceneHeight);
+        this.renderer.setViewport(0, 0, this.sceneWidth, this.sceneHeight);
+        this.renderer.setScissor(0,  0, this.sceneWidth, this.sceneHeight);
+        this.renderer.setScissorTest(true);
     }
 }

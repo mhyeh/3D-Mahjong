@@ -101,11 +101,6 @@ export default class MahjongGame extends State {
         this.ui.Input.AddButton(this.choseLackDialog.bamboo, Input.key.lack, undefined, 2);
 
         this.ui.Input.AddButton(this.ui.checkButton, Input.key.enter);
-        for (let i = 0; i < 4; i++) {
-            // this.ui.avatar[i].onInputUp.add(() => {
-            //     this.infoDialog[i].Show();
-            // });
-        }
 
         this.ui.Input.AddButton(this.commandDialog.pon,  Input.key.command, undefined, Input.key.Pon);
         this.ui.Input.AddButton(this.commandDialog.gon,  Input.key.command, undefined, Input.key.Gon);
@@ -121,7 +116,6 @@ export default class MahjongGame extends State {
 
         const playerList = JSON.parse(localStorage.getItem("players"));
         for (let i = 0; i < 4; i++) {
-            console.log(this.infoDialog.nameText[i].text);
             this.infoDialog.nameText[i].text += playerList[i];
             this.infoDialog.scoreText[i].text = "score:   " + this.score[i];
         }

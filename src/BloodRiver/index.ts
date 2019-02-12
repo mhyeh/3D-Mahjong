@@ -54,57 +54,43 @@ export default function MahjongStart() {
             const scene  = new Three.Scene();
             const camera = new Three.PerspectiveCamera(50, game.sceneWidth / game.sceneHeight, 0.1, 3000);
 
-            game.loadState.scene  = scene;
-            game.loadState.camera = camera;
+            game.loadState.scene.push(scene);
+            game.loadState.camera.push(camera);
         });
 
         joinState.onCreate.add(() => {
+            const w = 1000;
+            const h = w / ASPECT;
             const scene  = new Three.Scene();
-            const camera = new Three.PerspectiveCamera(50, game.sceneWidth / game.sceneHeight, 0.1, 3000);
+            const camera = new Three.OrthographicCamera(-w / 2, w / 2, h / 2, -h / 2, -1000, 1000);
 
-            camera.position.set(0, -1800, 1500);
-            camera.rotateX(0.8);
-
-            const ambientLight = new Three.AmbientLight(0xAAAAAA);
-            scene.add(ambientLight);
-
-            const pointLight = new Three.PointLight(0x050505, 25);
-
-            pointLight.position.set(0, -2000, 1000);
-            pointLight.lookAt(0, 0, 0);
-            scene.add(pointLight);
-
-            const title = new Text(game, "配對成功", Assets.font.jhengHei.key, 200, 1, new Three.MeshLambertMaterial({ color: 0xFFFFFF }), 0, 0, 0, true);
-            title.position.y = 500;
+            const title = new Text(game, "配對成功", Assets.font.jhengHei.key, 50, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 1, true);
+            title.position.y = 200;
 
             const nameBlock = [];
             const name      = [];
             for (let i = 0; i < 4; i++) {
-                nameBlock.push(new Cube(RoundRetangleGeometry(500, 500, 50, 30), new Three.MeshLambertMaterial({ color: 0xAAAAAA })));
-                nameBlock[i].add(new Text(game, "ID", Assets.font.jhengHei.key, 100, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 0, 100, 5, true));
-                nameBlock[i].position.y = -200;
-                name.push(new Text(game, "name", Assets.font.jhengHei.key, 50, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 0, -100, 5, true));
+                nameBlock.push(new Cube(RoundRetangleGeometry(150, 150, 15, 15), new Three.MeshBasicMaterial({ color: 0xAAAAAA })));
+                nameBlock[i].add(new Text(game, "ID", Assets.font.jhengHei.key, 30, 1, new Three.MeshBasicMaterial({ color: 0x000000 }), 0, 30, 1, true));
+                nameBlock[i].position.y = -50;
+                name.push(new Text(game, "name", Assets.font.jhengHei.key, 20, 1, new Three.MeshBasicMaterial({ color: 0x000000 }), 0, -25, 1, true));
                 nameBlock[i].add(name[i]);
             }
-            nameBlock[0].position.x = -1000;
-            nameBlock[1].position.x = -335;
-            nameBlock[2].position.x =  335;
-            nameBlock[3].position.x =  1000;
+            nameBlock[0].position.x = -375;
+            nameBlock[1].position.x = -125;
+            nameBlock[2].position.x =  125;
+            nameBlock[3].position.x =  375;
 
-            const ready = new Button(game, RoundRetangleGeometry(400, 200, 50, 10), new Three.MeshLambertMaterial({ color: 0x10A3E8, transparent: true, opacity: 0.8 }));
-            ready.add(new Text(game, "Ready", Assets.font.jhengHei.key, 60, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 5, 0, 5, true));
+            const ready = new Button(game, RoundRetangleGeometry(100, 50, 10, 10), new Three.MeshBasicMaterial({ color: 0x10A3E8 }));
+            ready.add(new Text(game, "Ready", Assets.font.jhengHei.key, 20, 1, new Three.MeshBasicMaterial({ color: 0x000000 }), 0, 0, 1, true));
             ready.frustumCulled  = false;
-            ready.position.y    -= 900;
+            ready.position.y    -= 250;
             ready.stateTint.down = 0x808080;
             ready.stateTint.up   = 0xFFFFFF;
 
-            const group = new Three.Group();
-            group.rotation.setFromVector3(camera.rotation.toVector3());
-            group.add(title);
-            group.add(...nameBlock);
-            group.add(ready);
-
-            scene.add(group);
+            scene.add(title);
+            scene.add(...nameBlock);
+            scene.add(ready);
 
             joinState.socket = socket;
 
@@ -115,13 +101,18 @@ export default function MahjongStart() {
 
             joinState.mahjongGame = mahjong;
 
-            joinState.scene  = scene;
-            joinState.camera = camera;
+            joinState.scene.push(scene);
+            joinState.camera.push(camera);
         });
 
         mahjong.onCreate.add(() => {
             const scene  = new Three.Scene();
             const camera = new Three.PerspectiveCamera(50, game.sceneWidth / game.sceneHeight, 0.1, 5000);
+
+            const w = 1000;
+            const h = w / ASPECT;
+            const orthoScene  = new Three.Scene();
+            const orthoCamera = new Three.OrthographicCamera(-w / 2, w / 2, h / 2, -h / 2, -1000, 1000);
 
             scene.background = new Three.Color(0xAAAAAA);
 
@@ -293,8 +284,6 @@ export default function MahjongStart() {
             CommonTileList.intersectsScene.add(...sea);
             CommonTileList.intersectsScene.add(...door);
             CommonTileList.intersectsScene.add(draw);
-            // scene.add(...name);
-            // scene.add(...score);
             scene.add(...arrow);
 
             const checkButton     = new Button(game, RoundEdgedBox(200, 130, 100, 30, 1, 1, 1, 6), new Three.MeshLambertMaterial({ color: 0xFFFF00 }));
@@ -403,21 +392,9 @@ export default function MahjongStart() {
             const changeTileEffect = new ChangeTileEffect(game);
             CommonTileList.intersectsScene.add(changeTileEffect);
 
-            // const lackEffect = [];
-            // lackEffect.push(new LackEffect(game, 0, -650, BOARD_D / 2 + 10, -750, -900, BOARD_D / 2 + 10));
-            // lackEffect.push(new LackEffect(game, 650, 0,  BOARD_D / 2 + 10,  900, -750, BOARD_D / 2 + 10));
-            // lackEffect.push(new LackEffect(game, 0, 650,  BOARD_D / 2 + 10,  750,  900, BOARD_D / 2 + 10));
-            // lackEffect.push(new LackEffect(game, -650, 0, BOARD_D / 2 + 10, -900,  750, BOARD_D / 2 + 10));
-            // scene.add(...lackEffect);
-
             CommonTileList.update();
             const instanceTlies = new Three.Mesh(CommonTileList.instancedGeometry, CommonTileList.rawShaderMaterial);
             scene.add(instanceTlies);
-
-            const w = 1000;
-            const h = w / ASPECT;
-            game.orthoScene  = new Three.Scene();
-            game.orthoCamera = new Three.OrthographicCamera(-w / 2, w / 2, h / 2, -h / 2, -1000, 1000);
 
             const infoDialog = new InfoDialog(game, (dialog: InfoDialog) => {
                 const texture = new Three.Texture(game.cache[Assets.button.char.key]);
@@ -466,13 +443,13 @@ export default function MahjongStart() {
             });
             infoDialog.visible = false;
 
-            game.orthoScene.add(infoDialog);
+            orthoScene.add(infoDialog);
 
             mahjong.socket = socket;
 
             mahjong.remainTile = remainTile;
 
-            mahjong.arrow     = arrow;
+            mahjong.arrow = arrow;
 
             mahjong.sea  = sea;
             mahjong.hu   = hu;
@@ -491,8 +468,10 @@ export default function MahjongStart() {
             mahjong.commandDialog   = commandDialog;
             mahjong.infoDialog      = infoDialog;
 
-            mahjong.scene  = scene;
-            mahjong.camera = camera;
+            mahjong.scene.push(scene);
+            mahjong.camera.push(camera);
+            mahjong.scene.push(orthoScene);
+            mahjong.camera.push(orthoCamera);
         });
     };
 }
