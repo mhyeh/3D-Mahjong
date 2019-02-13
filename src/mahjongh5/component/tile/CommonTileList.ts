@@ -271,6 +271,5 @@ export default class CommonTileList extends TileList<ImageTile> {
             tile.position.x =  (tile.width  + 5) *   (i % this.MaxLen);
             tile.position.y = -(tile.height + 5) * ~~(i / this.MaxLen);
         }
-        CommonTileList.update();
     }
 }

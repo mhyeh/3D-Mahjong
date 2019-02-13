@@ -196,6 +196,7 @@ export default class MahjongGame extends State {
                             }
                         }
                     }
+                    CommonTileList.update();
                 }
             });
             this.socket.emit("getSea", room, (sea: string[][], err: boolean) => {
@@ -207,6 +208,7 @@ export default class MahjongGame extends State {
                             }
                         }
                     }
+                    CommonTileList.update();
                 }
             });
             this.socket.emit("getHu", room, (hu: string[][], err: boolean) => {
@@ -218,6 +220,7 @@ export default class MahjongGame extends State {
                             }
                         }
                     }
+                    CommonTileList.update();
                 }
             });
             this.socket.emit("getCurrentIdx", room, (playerIdx: number) => {
@@ -276,6 +279,7 @@ export default class MahjongGame extends State {
                     this.hand[i].RemoveTile(i === 0 ? tile : "None");
                 }
             }
+            CommonTileList.update();
         });
 
         this.socket.on("end", (data: string) => this.End(data));
@@ -360,6 +364,7 @@ export default class MahjongGame extends State {
                 }
             }
         }
+        CommonTileList.update();
     }
 
     private BroadcastChange(id: number) {
@@ -370,6 +375,7 @@ export default class MahjongGame extends State {
             this.hand[idx].RemoveTile("None");
             this.hand[idx].RemoveTile("None");
         }
+        CommonTileList.update();
     }
 
     private async AfterChange(tile: string[], turn: number) {
@@ -423,6 +429,7 @@ export default class MahjongGame extends State {
         if (idx !== 0) {
             this.hand[idx].AddTile("None");
         }
+        CommonTileList.update();
     }
 
     private async Throw(tile: string, time: number) {
@@ -451,6 +458,7 @@ export default class MahjongGame extends State {
             this.hand[idx].RemoveTile("None");
         }
         this.sea[idx].AddTile(tile);
+        CommonTileList.update();
     }
 
     private async Command(tileMap: string, command: COMMAND_TYPE, time: number) {
@@ -490,6 +498,7 @@ export default class MahjongGame extends State {
         this.hand[0].DisableAll();
         this.commandDialog.Hide();
         this.socket.emit("sendCommand", JSON.stringify({Command: result.cmd, Tile: result.tile, Score: 0}));
+        CommonTileList.update();
     }
 
     private async ChooseCommand(tiles: Map<COMMAND_TYPE, string[]>, commands: COMMAND_TYPE): Promise<{cmd: COMMAND_TYPE, tile: string}> {
@@ -566,6 +575,7 @@ export default class MahjongGame extends State {
             this.PON(0, idx, tile);
         }
         this.setDrawPosition();
+        CommonTileList.update();
     }
 
     private BroadcastSuccess(from: number, to: number, command: COMMAND_TYPE, tile: string, score: number) {
@@ -699,7 +709,6 @@ export default class MahjongGame extends State {
         const len = this.door[id].tileW * n;
         const map = ["x", "y"];
         (this.door[id].position as any)[map[id % 2]] += len * (id < 2 ? -1 : 1);
-        CommonTileList.update();
     }
 
     private clearDraw() {
@@ -708,12 +717,10 @@ export default class MahjongGame extends State {
             this.draw.RemoveTile(tile);
             this.hand[0].AddTile(tile);
             this.hand[0].DisableAll();
-            CommonTileList.update();
         }
     }
 
     private setDrawPosition() {
         this.draw.position.x = this.hand[0].position.x + (TILE_W + 5) * this.hand[0].tileCount + 10;
-        CommonTileList.update();
     }
 }

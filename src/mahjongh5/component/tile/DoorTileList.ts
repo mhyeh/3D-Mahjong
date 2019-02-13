@@ -71,7 +71,6 @@ export default class DoorTileList extends CommonTileList {
                 }
             }
         }
-        CommonTileList.update();
     }
 
     private addThreeTile(ID: string) {

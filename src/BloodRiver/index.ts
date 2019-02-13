@@ -119,10 +119,10 @@ export default function MahjongStart() {
             camera.position.set(0, -1800, 1500);
             camera.rotateX(0.8);
 
-            const ambientLight = new Three.AmbientLight(0xAAAAAA);
+            const ambientLight = new Three.AmbientLight(0xA0A0A0);
             scene.add(ambientLight);
 
-            const pointLight = new Three.PointLight(0x050505, 25);
+            const pointLight = new Three.PointLight(0x070707, 15);
 
             pointLight.position.set(0, -2000, 1000);
             pointLight.lookAt(0, 0, 0);
