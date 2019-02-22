@@ -11,11 +11,12 @@ export default class DoorTileList extends CommonTileList {
     }
 
     public AddTile(ID: string) {
+        console.log(ID);
         const newTile   = new ImageTile(this.game, CommonTileList.bufferGeometry, CommonTileList.tileTable);
         newTile.ID      = ID;
         newTile.color   = ID.slice(0, 1);
         newTile.enable  = false;
-        const map: {[key: string]: number} = {c: 0, d: 1, b: 2};
+        const map: {[key: string]: number} = {c: 0, d: 1, b: 2, o: 3, f: 4};
         let index = 0;
         for (index = 0; index < this.tileCount; index++) {
             const t1 = this.tiles[index].ID;
@@ -49,9 +50,17 @@ export default class DoorTileList extends CommonTileList {
         this.ArrangeGonTile();
     }
 
+    public Eat(ID: string) {
+        console.log(ID);
+        const v = Number(ID.charAt(1));
+        for (let i = 0; i < 3; i++) {
+            this.AddTile(ID.charAt(0) + (v + i));
+        }
+        this.ArrangeGonTile();
+    }
+
     public ClearDoor() {
-        const list = this.tiles.map((tile) => tile.ID);
-        list.forEach((ID) => this.RemoveTile(ID));
+        this.ClearTileList();
         this.gonTiles.forEach((tile) => {
             this.remove(tile);
             CommonTileList.removeTile(tile);
@@ -62,8 +71,8 @@ export default class DoorTileList extends CommonTileList {
     private ArrangeGonTile() {
         let i = 0;
         for (const gTile of this.gonTiles) {
-            for (; i < this.tiles.length; i++) {
-                if (this.tiles[i].ID === gTile.ID) {
+            for (; i < this.tiles.length - 1; i++) {
+                if (this.tiles[i].ID === gTile.ID && this.tiles[i + 1].ID === gTile.ID) {
                     gTile.position.x = this.tiles[i + 1].position.x;
                     gTile.position.y = this.tiles[i + 1].position.y;
                     i += 3;
@@ -85,7 +94,7 @@ export default class DoorTileList extends CommonTileList {
         tile.color      = ID.slice(0, 1);
         tile.position.z = tile.depth + 2;
         tile.enable     = false;
-        const map: {[key: string]: number} = {c: 0, d: 1, b: 2};
+        const map: {[key: string]: number} = {c: 0, d: 1, b: 2, o: 3, f: 4};
         let index = 0;
         for (index = 0; index < this.gonTiles.length; index++) {
             const t1 = this.gonTiles[index].ID;

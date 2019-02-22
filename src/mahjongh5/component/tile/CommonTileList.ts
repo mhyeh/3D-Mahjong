@@ -218,7 +218,7 @@ export default class CommonTileList extends TileList<ImageTile> {
     }
 
     public AddTile(ID: string) {
-        const map: {[key: string]: number} = {c: 0, d: 1, b: 2};
+        const map: {[key: string]: number} = {c: 0, d: 1, b: 2, o: 3, f: 4};
         const newTile = new ImageTile(this.game, CommonTileList.bufferGeometry, CommonTileList.tileTable);
         if (this.sortable) {
             let index = 0;
@@ -244,6 +244,11 @@ export default class CommonTileList extends TileList<ImageTile> {
             newTile.enable = false;
         }
         this.ArrangeTile();
+    }
+
+    public ClearTileList() {
+        const list = this.tiles.map((tile) => tile.ID);
+        list.forEach((ID) => this.RemoveTile(ID));
     }
 
     public RemoveTile(ID: string) {
