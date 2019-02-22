@@ -14,11 +14,10 @@ export default class InfoDialog extends Dialog {
     public nameList: string[];
     public nameText: Text[];
 
-    public lack:    number[];
-    public lackImg: Three.Mesh[];
-
     public score:     number[];
     public scoreText: Text[];
+
+    public windText: Text;
 
     constructor(game: Game, onCreate: (dialog: InfoDialog) => void, show: boolean = false) {
         super(game, onCreate);
@@ -30,7 +29,7 @@ export default class InfoDialog extends Dialog {
         this.add(this.backgroundGraphics);
         this.add(...this.nameText);
         this.add(...this.scoreText);
-        this.add(...this.lackImg);
+        this.add(this.windText);
     }
 
     public Show(): Promise<DialogResult> {

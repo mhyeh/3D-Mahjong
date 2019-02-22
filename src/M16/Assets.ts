@@ -27,6 +27,7 @@ export const button = {
     char: { type: "Image", key: "", args: [require("assets/Mahjong/Char.png")] },
     dot: { type: "Image", key: "", args: [require("assets/Mahjong/Dot.png")] },
     bamboo: { type: "Image", key: "", args: [require("assets/Mahjong/Bamboo.png")] },
+    eat: { type: "Image", key: "", args: [require("assets/Mahjong/Eat.png")] },
     pon: { type: "Image", key: "", args: [require("assets/Mahjong/Pon.png")] },
     gon: { type: "Image", key: "", args: [require("assets/Mahjong/Gon.png")] },
     pongon: { type: "Image", key: "", args: [require("assets/Mahjong/PonGon.png")] },

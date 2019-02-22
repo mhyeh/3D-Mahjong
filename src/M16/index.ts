@@ -183,14 +183,14 @@ export default function MahjongStart() {
             const sea    = [];
             const hand   = [];
             const door   = [];
-            const hu     = [];
+            const flower     = [];
             const arrow  = [];
             for (let i = 0; i < 4; i++) {
-                hand.push(new CommonTileList(game, 13, TILE_W, TILE_H, TILE_D, i === 0, 16, true));
-                hu.push(new   CommonTileList(game, 0,  TILE_W, TILE_H, TILE_D, false,   16, false));
-                sea.push(new  CommonTileList(game, 0,  TILE_W, TILE_H, TILE_D, false,   6,  false));
+                hand.push(new   CommonTileList(game, 16, TILE_W, TILE_H, TILE_D, i === 0, 16, true));
+                flower.push(new CommonTileList(game, 0,  TILE_W, TILE_H, TILE_D, false,   16, false));
+                sea.push(new    CommonTileList(game, 0,  TILE_W, TILE_H, TILE_D, false,   6,  false));
 
-                door.push(new DoorTileList(game, TILE_W, TILE_H, TILE_D, 16, true));
+                door.push(new DoorTileList(game, TILE_W, TILE_H, TILE_D, 16, false));
 
                 arrow.push(new Cube(new Three.ExtrudeBufferGeometry(shape, extrudeSettings), new Three.MeshLambertMaterial({ color: 0xF0F40E }), 0, 0));
                 arrow[i].tint = DISABLE_TINT;
@@ -200,39 +200,39 @@ export default function MahjongStart() {
             // hand
             hand[0].rotateX(Math.PI);
             new Three.Box3().setFromObject(hand[0]).getCenter(hand[0].position).multiplyScalar(-1);
-            hand[0].position.y = -900 + TILE_H / 2;
+            hand[0].position.y = -900;
             hand[0].position.z = (BOARD_D + TILE_D) / 2;
 
             hand[1].rotation.set(0, Math.PI, Math.PI / 2);
             new Three.Box3().setFromObject(hand[1]).getCenter(hand[1].position).multiplyScalar(-1);
-            hand[1].position.x = 900 - TILE_H / 2;
+            hand[1].position.x = 900;
             hand[1].position.z = (BOARD_D + TILE_D) / 2;
 
             hand[2].rotation.set(Math.PI, 0, Math.PI);
             new Three.Box3().setFromObject(hand[2]).getCenter(hand[2].position).multiplyScalar(-1);
-            hand[2].position.y = 900 - TILE_H / 2;
+            hand[2].position.y = 900;
             hand[2].position.z = (BOARD_D + TILE_D) / 2;
 
             hand[3].rotation.set(0, Math.PI, Math.PI * 3 / 2);
             new Three.Box3().setFromObject(hand[3]).getCenter(hand[3].position).multiplyScalar(-1);
-            hand[3].position.x = -900 + TILE_H / 2;
+            hand[3].position.x = -900;
             hand[3].position.z = (BOARD_D + TILE_D) / 2;
 
             // draw
             draw.rotateX(Math.PI  * 80 / 180);
-            draw.position.set(7.5 * TILE_W, -900 + TILE_H / 2, (BOARD_D + TILE_H) / 2);
+            draw.position.set(9 * TILE_W, -900, (BOARD_D + TILE_H) / 2);
 
-            // hu
-            hu[0].position.set(-6 * TILE_W, -750 + TILE_H / 2, (BOARD_D + TILE_D) / 2);
+            // flower
+            flower[0].position.set(-6 * TILE_W, -750, (BOARD_D + TILE_D) / 2);
 
-            hu[1].rotateZ(Math.PI / 2);
-            hu[1].position.set(750 - TILE_H / 2, -6 * TILE_W, (BOARD_D + TILE_D) / 2);
+            flower[1].rotateZ(Math.PI / 2);
+            flower[1].position.set(750, -6 * TILE_W, (BOARD_D + TILE_D) / 2);
 
-            hu[2].rotateZ(Math.PI);
-            hu[2].position.set(6 * TILE_W, 750 - TILE_H / 2, (BOARD_D + TILE_D) / 2);
+            flower[2].rotateZ(Math.PI);
+            flower[2].position.set(6 * TILE_W, 750, (BOARD_D + TILE_D) / 2);
 
-            hu[3].rotateZ(Math.PI * 3 / 2);
-            hu[3].position.set(-750 + TILE_H / 2, 6 * TILE_W, (BOARD_D + TILE_D) / 2);
+            flower[3].rotateZ(Math.PI * 3 / 2);
+            flower[3].position.set(-750, 6 * TILE_W, (BOARD_D + TILE_D) / 2);
 
             // sea
             sea[0].position.set(-4.5 * TILE_W, -300 + TILE_H / 2, (BOARD_D + TILE_D) / 2);
@@ -247,16 +247,16 @@ export default function MahjongStart() {
             sea[3].position.set(-300 + TILE_H / 2, 4.5 * TILE_W, (BOARD_D + TILE_D) / 2);
 
             // door
-            door[0].position.set(9 * TILE_W, -900 + TILE_H / 2, (BOARD_D + TILE_D) / 2);
+            door[0].position.set(10.5 * TILE_W, -900, (BOARD_D + TILE_D) / 2);
 
             door[1].rotateZ(Math.PI / 2);
-            door[1].position.set(900 - TILE_H / 2, 9 * TILE_W, (BOARD_D + TILE_D) / 2);
+            door[1].position.set(900, 10.5 * TILE_W, (BOARD_D + TILE_D) / 2);
 
             door[2].rotateZ(Math.PI);
-            door[2].position.set(-9 * TILE_W, 900 - TILE_H / 2, (BOARD_D + TILE_D) / 2);
+            door[2].position.set(-10.5 * TILE_W, 900, (BOARD_D + TILE_D) / 2);
 
             door[3].rotateZ(Math.PI * 3 / 2);
-            door[3].position.set(-900 + TILE_H / 2, -9 * TILE_W, (BOARD_D + TILE_D) / 2);
+            door[3].position.set(-900, -10.5 * TILE_W, (BOARD_D + TILE_D) / 2);
 
             // arrow
             arrow[0].rotateZ(-Math.PI * 45  / 180);
@@ -280,62 +280,26 @@ export default function MahjongStart() {
             arrow[3].position.z  = 50;
 
             CommonTileList.intersectsScene.add(...hand);
-            CommonTileList.intersectsScene.add(...hu);
+            CommonTileList.intersectsScene.add(...flower);
             CommonTileList.intersectsScene.add(...sea);
             CommonTileList.intersectsScene.add(...door);
             CommonTileList.intersectsScene.add(draw);
             scene.add(...arrow);
 
-            const checkButton     = new Button(game, RoundEdgedBox(200, 130, 100, 30, 1, 1, 1, 6), new Three.MeshLambertMaterial({ color: 0xFFFF00 }));
-            const checkButtonText = new Text(game, "確認", Assets.font.jhengHei.key, 40 , 1, new Three.MeshLambertMaterial({ color: 0x000000 }), 0, 0, 52, true);
-            checkButton.position.set(820, -850, 40);
-            checkButton.stateTint.down    = DISABLE_TINT;
-            checkButton.stateTint.disable = DISABLE_TINT;
-            checkButton.add(checkButtonText);
-            checkButton.visible = false;
-            scene.add(checkButton);
-
             const timer = new Timer(new NumberDisplayer(new Text(game, "0", Assets.font.jhengHei.key, 80 , 20, new Three.MeshLambertMaterial({ color: 0xFFFFFF }), 0, 0, 50, true)), undefined, DISABLE_TINT);
             scene.add(timer);
-
-            const choseLackDialog = new ChoseLackDialog(game, (dialog: ChoseLackDialog) => {
-                const buttonGeometry = new Three.CircleGeometry(40, 30);
-                dialog.text = new Text(game, "定缺:", Assets.font.jhengHei.key, 50, 1, new Three.MeshLambertMaterial({ color: 0xFFFFFF }), -150, 0, 5, true);
-
-                const charTex   = new Three.Texture(game.cache[Assets.button.char.key]);
-                const dotTex    = new Three.Texture(game.cache[Assets.button.dot.key]);
-                const bambooTex = new Three.Texture(game.cache[Assets.button.bamboo.key]);
-                charTex.needsUpdate   = true;
-                dotTex.needsUpdate    = true;
-                bambooTex.needsUpdate = true;
-
-                dialog.char   = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ map: charTex }));
-                dialog.dot　  = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ map: dotTex }));
-                dialog.bamboo = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ map: bambooTex }));
-
-                dialog.char.position.x = 20;
-                dialog.char.position.z = 2;
-                dialog.char.stateTint.down    = DOWN_TINT;
-                dialog.char.stateTint.disable = DISABLE_TINT;
-                dialog.dot.position.x = 110;
-                dialog.dot.position.z = 2;
-                dialog.dot.stateTint.down    = DOWN_TINT;
-                dialog.dot.stateTint.disable = DISABLE_TINT;
-                dialog.bamboo.position.x = 200;
-                dialog.bamboo.position.z = 2;
-                dialog.bamboo.stateTint.down    = DOWN_TINT;
-                dialog.bamboo.stateTint.disable = DISABLE_TINT;
-            });
 
             const commandDialog = new CommandDialog(game, (dialog: CommandDialog) => {
                 const buttonGeometry = new Three.CircleGeometry(50, 30);
 
+                const eatTex    = new Three.Texture(game.cache[Assets.button.eat.key]);
                 const ponTex    = new Three.Texture(game.cache[Assets.button.pon.key]);
                 const gonTex    = new Three.Texture(game.cache[Assets.button.gon.key]);
                 const huTex     = new Three.Texture(game.cache[Assets.button.hu.key]);
                 const ongonTex  = new Three.Texture(game.cache[Assets.button.ongon.key]);
                 const pongonTex = new Three.Texture(game.cache[Assets.button.pongon.key]);
                 const noneTex   = new Three.Texture(game.cache[Assets.button.none.key]);
+                eatTex.needsUpdate    = true;
                 ponTex.needsUpdate    = true;
                 gonTex.needsUpdate    = true;
                 huTex.needsUpdate     = true;
@@ -343,6 +307,7 @@ export default function MahjongStart() {
                 pongonTex.needsUpdate = true;
                 noneTex.needsUpdate   = true;
 
+                dialog.eat    = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ map: eatTex }));
                 dialog.pon    = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ map: ponTex }));
                 dialog.gon    = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ map: gonTex }));
                 dialog.hu     = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ map: huTex }));
@@ -350,40 +315,43 @@ export default function MahjongStart() {
                 dialog.pongon = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ map: pongonTex }));
                 dialog.none   = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ map: noneTex }));
 
-                dialog.pon.position.x = -275;
+                dialog.eat.position.x = -330;
+                dialog.eat.position.z = 2;
+                dialog.eat.stateTint.down    = DOWN_TINT;
+                dialog.eat.stateTint.disable = DISABLE_TINT;
+                dialog.pon.position.x = -220;
                 dialog.pon.position.z = 2;
                 dialog.pon.stateTint.down    = DOWN_TINT;
                 dialog.pon.stateTint.disable = DISABLE_TINT;
-                dialog.gon.position.x = -165;
+                dialog.gon.position.x = -110;
                 dialog.gon.position.z = 2;
                 dialog.gon.stateTint.down    = DOWN_TINT;
                 dialog.gon.stateTint.disable = DISABLE_TINT;
-                dialog.hu.position.x = -55;
+                dialog.hu.position.x = 0;
                 dialog.hu.position.z = 2;
                 dialog.hu.stateTint.down    = DOWN_TINT;
                 dialog.hu.stateTint.disable = DISABLE_TINT;
-                dialog.ongon.position.x = 25;
+                dialog.ongon.position.x = 110;
                 dialog.ongon.position.z = 2;
                 dialog.ongon.stateTint.down    = DOWN_TINT;
                 dialog.ongon.stateTint.disable = DISABLE_TINT;
-                dialog.pongon.position.x = 165;
+                dialog.pongon.position.x = 220;
                 dialog.pongon.position.z = 2;
                 dialog.pongon.stateTint.down    = DOWN_TINT;
                 dialog.pongon.stateTint.disable = DISABLE_TINT;
-                dialog.none.position.x = 275;
+                dialog.none.position.x = 330;
                 dialog.none.position.z = 2;
                 dialog.none.stateTint.down    = DOWN_TINT;
                 dialog.none.stateTint.disable = DISABLE_TINT;
             });
 
-            const remainTile = new Text(game, "剩餘張數: 56", Assets.font.jhengHei.key, 40, 1, new Three.MeshLambertMaterial({ color: 0x000000 }));
+            const remainTile = new Text(game, "剩餘張數: ", Assets.font.jhengHei.key, 40, 1, new Three.MeshLambertMaterial({ color: 0x000000 }));
+            remainTile.visible = false;
 
             const group = new Three.Group();
             group.rotation.setFromVector3(camera.rotation.toVector3());
-            group.add(choseLackDialog);
             group.add(commandDialog);
             group.add(remainTile);
-            choseLackDialog.position.set(-450, -350, 500);
             commandDialog.position.set(600, -700, 850);
             remainTile.position.set(-1200, 600, 300);
 
@@ -401,16 +369,13 @@ export default function MahjongStart() {
                 texture.needsUpdate = true;
                 dialog.nameList  = [];
                 dialog.nameText  = [];
-                dialog.lack      = [];
-                dialog.lackImg   = [];
                 dialog.score     = [];
                 dialog.scoreText = [];
                 for (let i = 0; i < 4; i++) {
                     dialog.nameText.push(new Text(game, "ID: ", Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, true));
                     dialog.scoreText.push(new Text(game, "score: ", Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, true));
-                    dialog.lackImg.push(new Three.Mesh(new Three.CircleGeometry(20, 20), new Three.MeshBasicMaterial({ map: texture })));
-                    dialog.lackImg[i].visible = false;
                 }
+                dialog.windText = new Text(game, "", Assets.font.jhengHei.key, 50, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, true);
 
                 // name
                 dialog.nameText[0].position.y = -h / 2 + 120;
@@ -433,13 +398,6 @@ export default function MahjongStart() {
 
                 dialog.scoreText[3].position.x = -w / 2 + 150;
                 dialog.scoreText[3].position.y =  40;
-
-                // lack
-                dialog.lackImg[0].position.set(-100, -h / 2 + 110, 1);
-                dialog.lackImg[1].position.set( w / 2 - 130,  110, 1);
-                dialog.lackImg[2].position.set(-100,  h / 2 - 80,  1);
-                dialog.lackImg[3].position.set(-w / 2 + 130,  110, 1);
-
             });
             infoDialog.visible = false;
 
@@ -451,22 +409,16 @@ export default function MahjongStart() {
 
             mahjong.arrow = arrow;
 
-            mahjong.sea  = sea;
-            mahjong.hu   = hu;
-            mahjong.door = door;
-            mahjong.hand = hand;
-            mahjong.draw = draw;
-
-            mahjong.effect.changeTileEffect = changeTileEffect;
-            // mahjong.effect.lackEffect       = lackEffect;
-
-            mahjong.ui.checkButton = checkButton;
+            mahjong.sea    = sea;
+            mahjong.flower = flower;
+            mahjong.door   = door;
+            mahjong.hand   = hand;
+            mahjong.draw   = draw;
 
             mahjong.timer = timer;
 
-            mahjong.choseLackDialog = choseLackDialog;
-            mahjong.commandDialog   = commandDialog;
-            mahjong.infoDialog      = infoDialog;
+            mahjong.commandDialog = commandDialog;
+            mahjong.infoDialog    = infoDialog;
 
             mahjong.scene.push(scene);
             mahjong.camera.push(camera);

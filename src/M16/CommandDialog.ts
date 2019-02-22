@@ -3,6 +3,7 @@ import Button from "mahjongh5/ui/Button";
 import Game from "mahjongh5/Game";
 
 export default class CommandDialog extends Dialog {
+    public eat:    Button;
     public pon:    Button;
     public gon:    Button;
     public hu:     Button;
@@ -16,8 +17,9 @@ export default class CommandDialog extends Dialog {
         this.backgroundCancel = false;
         this.destoryOnHide    = false;
 
-        this.CreateBG(670, 120, 10, 0.7);
+        this.CreateBG(800, 120, 10, 0.7);
         this.add(this.backgroundGraphics);
+        this.add(this.eat);
         this.add(this.pon);
         this.add(this.gon);
         this.add(this.hu);
@@ -28,6 +30,7 @@ export default class CommandDialog extends Dialog {
 
     public Show(): Promise<DialogResult> {
         this.visible        = true;
+        this.eat.enable     = false;
         this.pon.enable     = false;
         this.gon.enable     = false;
         this.hu.enable      = false;
