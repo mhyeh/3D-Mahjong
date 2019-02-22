@@ -133,47 +133,47 @@
             "image": "Flower_4.jpg"
         },
         {
-            "tile": "Spring",
+            "tile": "f5",
             "image": "Spring.jpg"
         },
         {
-            "tile": "Summer",
+            "tile": "f6",
             "image": "Summer.jpg"
         },
         {
-            "tile": "Autumn",
+            "tile": "f7",
             "image": "Autumn.jpg"
         },
         {
-            "tile": "Winter",
+            "tile": "f8",
             "image": "Winter.jpg"
         },
         {
-            "tile": "North",
-            "image": "North.jpg"
-        },
-        {
-            "tile": "East",
+            "tile": "o1",
             "image": "East.jpg"
         },
         {
-            "tile": "West",
-            "image": "West.jpg"
-        },
-        {
-            "tile": "South",
+            "tile": "o2",
             "image": "South.jpg"
         },
         {
-            "tile": "Green",
-            "image": "Green.jpg"
+            "tile": "o3",
+            "image": "West.jpg"
         },
         {
-            "tile": "Red",
+            "tile": "o4",
+            "image": "North.jpg"
+        },
+        {
+            "tile": "o5",
             "image": "Red.jpg"
         },
         {
-            "tile": "White",
+            "tile": "o6",
+            "image": "Green.jpg"
+        },
+        {
+            "tile": "o7",
             "image": "White.jpg"
         }
     ]
