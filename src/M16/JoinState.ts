@@ -65,7 +65,7 @@ export default class JoinState extends State {
 
         const list = JSON.parse(localStorage.getItem("players"));
         for (let i = 0; i < 4; i++) {
-            this.name[i].text = list[i];
+            this.name[i].text = list[i].slice(0, 8);
         }
 
         this.socket.emit("getReadyPlayer", this.room, (nameList: string[]) => {
