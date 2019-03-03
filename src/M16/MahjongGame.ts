@@ -112,6 +112,9 @@ export default class MahjongGame extends State {
         for (let i = 0; i < 4; i++) {
             this.infoDialog.nameText[i].text += playerList[i].slice(0, 8);
             this.infoDialog.scoreText[i].text = "score:   " + this.score[i];
+
+            const map = ["東", "北", "西", "南"];
+            this.infoDialog.windText[this.getID(i)].text = map[i];
         }
 
         const state = localStorage.getItem("state");
@@ -119,8 +122,20 @@ export default class MahjongGame extends State {
         const room  = localStorage.getItem("room");
         if (state === "4") {
             this.socket.emit("getWindAndRound", room, (wind: number, round: number) => {
-                const map = ["東", "南", "西", "北"];
-                this.infoDialog.windText.text = map[wind] + "風" + map[round];
+                if (wind !== -1 && round !== -1) {
+                    const map = ["東", "南", "西", "北"];
+                    this.infoDialog.windAndRoundText.text = map[wind] + "風" + map[round];
+                }
+            });
+            this.socket.emit("getOpenIdx", room, (idx: number) => {
+                if (idx !== -1) {
+                    this.OpenDoor(idx);
+                }
+            });
+            this.socket.emit("getBankerID", room, (id: number) => {
+                if (id !== -1) {
+                    this.SetBanker(id);
+                }
             });
             this.socket.emit("getHand", uuid, room, (hand: string[]) => {
                 if (typeof hand[0] !== "undefined") {
@@ -243,10 +258,10 @@ export default class MahjongGame extends State {
 
         this.socket.on("broadcastWindAndRound", (wind: number, round: number) => {
             const map = ["東", "南", "西", "北"];
-            this.infoDialog.windText.text = map[wind] + "風" + map[round];
+            this.infoDialog.windAndRoundText.text = map[wind] + "風" + map[round];
         });
 
-        this.socket.on("broadcastOpenDoor", () => {
+        this.socket.on("broadcastOpenDoor", (idx: number) => {
             const map = ["x", "y"];
             for (let i = 0; i < 4; i++) {
                 this.door[i].ClearDoor();
@@ -261,6 +276,12 @@ export default class MahjongGame extends State {
                 this.hand[i].position.z = (BOARD_D + TILE_D) / 2;
             }
             CommonTileList.update();
+
+            this.OpenDoor(idx);
+        });
+
+        this.socket.on("broadcastBanker", (id: number) => {
+            this.SetBanker(id);
         });
 
         this.socket.on("dealTile", (hand: string[]) => {
@@ -306,6 +327,24 @@ export default class MahjongGame extends State {
 
     private getID(id: number) {
         return (4 + id - this.id) % 4;
+    }
+
+    private OpenDoor(idx: number) {
+        const map = ["春", "夏", "秋", "冬"];
+        const springIdx = this.getID(idx);
+        for (let i = 0; i < 4; i++) {
+            this.infoDialog.seasonText[(springIdx + i) % 4].text = map[(springIdx + i) % 4];
+        }
+    }
+
+    private SetBanker(id: number) {
+        for (let i = 0; i < 4; i++) {
+            if (this.getID(id) === i) {
+                this.infoDialog.bankerText[i].text = "莊";
+            } else {
+                this.infoDialog.bankerText[i].text = "";
+            }
+        }
     }
 
     private BuHua(flower: string[][]) {
@@ -578,6 +617,7 @@ export default class MahjongGame extends State {
 
     private async End(data: string) {
         const gameResult = JSON.parse(data);
+        console.log(gameResult);
         const map = ["x", "y"];
         for (let i = 0; i < 4; i++) {
             const idx = this.getID(i);
@@ -612,12 +652,6 @@ export default class MahjongGame extends State {
             (this.hand[idx].rotation as any)[map[idx % 2]] = 0;
             this.hand[idx].position.z = (BOARD_D + TILE_D) / 2;
             this.score[idx] = gameResult[i].Score;
-            let tmp = "";
-            if (gameResult[i].ScoreLog !== null) {
-                for (const scoreLog of gameResult[i].ScoreLog) {
-                    tmp += scoreLog.Message + ": " + scoreLog.Score + "\n";
-                }
-            }
             // this.infoDialog[idx].scoreLog.text.text = tmp;
             // this.infoDialog[idx].scoreLog.visible   = true;
             // this.infoDialog[idx].Redraw();
@@ -700,7 +734,6 @@ export default class MahjongGame extends State {
             if (id !== 0) {
                 this.hand[id].RemoveTile("None");
             } else if (v + i !== Number(tiles[1].charAt(1))) {
-                console.log(tiles[0].charAt(0) + (v + i));
                 this.hand[id].RemoveTile(tiles[0].charAt(0) + (v + i));
             }
         }

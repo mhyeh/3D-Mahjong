@@ -17,7 +17,10 @@ export default class InfoDialog extends Dialog {
     public score:     number[];
     public scoreText: Text[];
 
-    public windText: Text;
+    public windAndRoundText: Text;
+    public windText:         Text[];
+    public bankerText:       Text[];
+    public seasonText:       Text[];
 
     constructor(game: Game, onCreate: (dialog: InfoDialog) => void, show: boolean = false) {
         super(game, onCreate);
@@ -29,7 +32,10 @@ export default class InfoDialog extends Dialog {
         this.add(this.backgroundGraphics);
         this.add(...this.nameText);
         this.add(...this.scoreText);
-        this.add(this.windText);
+        this.add(...this.windText);
+        this.add(...this.bankerText);
+        this.add(...this.seasonText);
+        this.add(this.windAndRoundText);
     }
 
     public Show(): Promise<DialogResult> {

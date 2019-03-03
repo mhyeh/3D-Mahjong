@@ -52,6 +52,10 @@ export default class Cube extends Three.Mesh {
         }
     }
 
+    public ResetSize() {
+        new Three.Box3().setFromObject(this).getSize(this.size);
+    }
+
     private setMaterialTint(material: Three.Material | Three.Material[], tint: number) {
         if (material instanceof Array) {
             material.forEach((m) => this.setMaterialTint(m, tint));

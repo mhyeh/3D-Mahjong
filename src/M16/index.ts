@@ -345,7 +345,7 @@ export default function MahjongStart() {
                 dialog.none.stateTint.disable = DISABLE_TINT;
             });
 
-            const remainTile = new Text(game, "剩餘張數: ", Assets.font.jhengHei.key, 40, 1, new Three.MeshLambertMaterial({ color: 0x000000 }));
+            const remainTile = new Text(game, "剩餘張數: ", Assets.font.jhengHei.key, 40, 1, new Three.MeshLambertMaterial({ color: 0x000000 }), -1200, 600, 300);
             remainTile.visible = false;
 
             const group = new Three.Group();
@@ -353,7 +353,6 @@ export default function MahjongStart() {
             group.add(commandDialog);
             group.add(remainTile);
             commandDialog.position.set(600, -700, 850);
-            remainTile.position.set(-1200, 600, 300);
 
             scene.add(group);
 
@@ -367,37 +366,89 @@ export default function MahjongStart() {
             const infoDialog = new InfoDialog(game, (dialog: InfoDialog) => {
                 const texture = new Three.Texture(game.cache[Assets.button.char.key]);
                 texture.needsUpdate = true;
-                dialog.nameList  = [];
-                dialog.nameText  = [];
-                dialog.score     = [];
-                dialog.scoreText = [];
+                dialog.nameList   = [];
+                dialog.nameText   = [];
+                dialog.score      = [];
+                dialog.scoreText  = [];
+                dialog.windText   = [];
+                dialog.bankerText = [];
+                dialog.seasonText = [];
                 for (let i = 0; i < 4; i++) {
-                    dialog.nameText.push(new Text(game, "ID: ", Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, true));
-                    dialog.scoreText.push(new Text(game, "score: ", Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, true));
+                    dialog.nameText.push(new   Text(game, "ID: ",    Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, false));
+                    dialog.scoreText.push(new  Text(game, "score: ", Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, false));
+                    dialog.windText.push(new   Text(game, "",        Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, false));
+                    dialog.bankerText.push(new Text(game, "",        Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFF0000 }), 0, 0, 0, false));
+                    dialog.seasonText.push(new Text(game, "",        Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, false));
                 }
-                dialog.windText = new Text(game, "", Assets.font.jhengHei.key, 50, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, true);
+                dialog.windAndRoundText = new Text(game, "", Assets.font.jhengHei.key, 45, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, true);
 
                 // name
-                dialog.nameText[0].position.y = -h / 2 + 120;
+                dialog.nameText[0].PosX = -50;
+                dialog.nameText[0].PoxY = -h / 2 + 120;
 
-                dialog.nameText[1].position.x =  w / 2 - 150;
-                dialog.nameText[1].position.y =  70;
+                dialog.nameText[1].AnchorX = 1;
+                dialog.nameText[1].PosX    = w / 2 - 80;
+                dialog.nameText[1].PoxY    = 70;
 
-                dialog.nameText[2].position.y =  h / 2 - 70;
+                dialog.nameText[2].PosX = -50;
+                dialog.nameText[2].PoxY = h / 2 - 70;
 
-                dialog.nameText[3].position.x = -w / 2 + 150;
-                dialog.nameText[3].position.y =  70;
+                dialog.nameText[3].PosX = -w / 2 + 80;
+                dialog.nameText[3].PoxY = 70;
 
                 // score
-                dialog.scoreText[0].position.y = -h / 2 + 90;
+                dialog.scoreText[0].PosX = -50;
+                dialog.scoreText[0].PoxY = -h / 2 + 90;
 
-                dialog.scoreText[1].position.x =  w / 2 - 150;
-                dialog.scoreText[1].position.y =  40;
+                dialog.scoreText[1].AnchorX = 1;
+                dialog.scoreText[1].PosX    = w / 2 - 80;
+                dialog.scoreText[1].PoxY    = 40;
 
-                dialog.scoreText[2].position.y =  h / 2 - 100;
+                dialog.scoreText[2].PosX = -50;
+                dialog.scoreText[2].PoxY = h / 2 - 100;
 
-                dialog.scoreText[3].position.x = -w / 2 + 150;
-                dialog.scoreText[3].position.y =  40;
+                dialog.scoreText[3].PosX = -w / 2 + 80;
+                dialog.scoreText[3].PoxY = 40;
+
+                // wind
+                dialog.windText[0].PosX = -50;
+                dialog.windText[0].PoxY = -h / 2 + 60;
+
+                dialog.windText[1].AnchorX = 1;
+                dialog.windText[1].PosX = w / 2 - 180;
+                dialog.windText[1].PoxY = 10;
+
+                dialog.windText[2].PosX = -50;
+                dialog.windText[2].PoxY = h / 2 - 130;
+
+                dialog.windText[3].PosX = -w / 2 + 80;
+                dialog.windText[3].PoxY = 10;
+
+                // banker
+                dialog.bankerText[0].PosX = 50;
+                dialog.bankerText[0].PoxY = -h / 2 + 60;
+
+                dialog.bankerText[1].AnchorX = 1;
+                dialog.bankerText[1].PosX = w / 2 - 80;
+                dialog.bankerText[1].PoxY = 10;
+
+                dialog.bankerText[2].PosX = 50;
+                dialog.bankerText[2].PoxY = h / 2 - 130;
+
+                dialog.bankerText[3].PosX = -w / 2 + 180;
+                dialog.bankerText[3].PoxY = 10;
+
+                // season
+                dialog.seasonText[0].PoxY = -h / 2 + 60;
+
+                dialog.seasonText[1].AnchorX = 1;
+                dialog.seasonText[1].PosX = w / 2 - 130;
+                dialog.seasonText[1].PoxY = 10;
+
+                dialog.seasonText[2].PoxY = h / 2 - 130;
+
+                dialog.seasonText[3].PosX = -w / 2 + 130;
+                dialog.seasonText[3].PoxY = 10;
             });
             infoDialog.visible = false;
 
