@@ -112,9 +112,6 @@ export default class MahjongGame extends State {
         for (let i = 0; i < 4; i++) {
             this.infoDialog.nameText[i].text += playerList[i].slice(0, 8);
             this.infoDialog.scoreText[i].text = "score:   " + this.score[i];
-
-            const map = ["東", "北", "西", "南"];
-            this.infoDialog.windText[this.getID(i)].text = map[i];
         }
 
         const state = localStorage.getItem("state");
@@ -125,6 +122,11 @@ export default class MahjongGame extends State {
                 if (wind !== -1 && round !== -1) {
                     const map = ["東", "南", "西", "北"];
                     this.infoDialog.windAndRoundText.text = map[wind] + "風" + map[round];
+                }
+            });
+            this.socket.emit("getEastIdx", room, (idx: number) => {
+                if (idx !== -1) {
+                    this.SetSeat(idx);
                 }
             });
             this.socket.emit("getOpenIdx", room, (idx: number) => {
@@ -173,6 +175,7 @@ export default class MahjongGame extends State {
                             }
                         }
                     }
+                    this.setDrawPosition();
                     CommonTileList.update();
                 }
             });
@@ -262,11 +265,23 @@ export default class MahjongGame extends State {
         });
 
         this.socket.on("broadcastOpenDoor", (idx: number) => {
+            this.door[0].position.set(10.5 * TILE_W, -900, (BOARD_D + TILE_D) / 2);
+            this.door[1].position.set(900, 10.5 * TILE_W, (BOARD_D + TILE_D) / 2);
+            this.door[2].position.set(-10.5 * TILE_W, 900, (BOARD_D + TILE_D) / 2);
+            this.door[3].position.set(-900, -10.5 * TILE_W, (BOARD_D + TILE_D) / 2);
             const map = ["x", "y"];
             for (let i = 0; i < 4; i++) {
                 this.door[i].ClearDoor();
                 this.flower[i].ClearTileList();
                 this.sea[i].ClearTileList();
+
+                for (let j = 0; j < 16; j++) {
+                    if (this.hand[i].tileCount < j) {
+                        this.hand[i].AddTile("None");
+                    } else {
+                        this.hand[i].tiles[i].ID = "None";
+                    }
+                }
 
                 while (this.hand[i].tileCount < 16) {
                     this.hand[i].AddTile("None");
@@ -275,9 +290,14 @@ export default class MahjongGame extends State {
                 (this.hand[i].rotation as any)[map[i % 2]] = Math.PI;
                 this.hand[i].position.z = (BOARD_D + TILE_D) / 2;
             }
+            this.hand[0].DisableAll();
             CommonTileList.update();
 
             this.OpenDoor(idx);
+        });
+
+        this.socket.on("broadcastSetSeat", (idx: number) => {
+            this.SetSeat(idx);
         });
 
         this.socket.on("broadcastBanker", (id: number) => {
@@ -292,6 +312,7 @@ export default class MahjongGame extends State {
                 this.hand[i].position.z = (BOARD_D + TILE_H) / 2;
             }
             this.hand[0].rotation.x = Math.PI * 80 / 180;
+            this.setDrawPosition();
             CommonTileList.update();
         });
 
@@ -333,7 +354,15 @@ export default class MahjongGame extends State {
         const map = ["春", "夏", "秋", "冬"];
         const springIdx = this.getID(idx);
         for (let i = 0; i < 4; i++) {
-            this.infoDialog.seasonText[(springIdx + i) % 4].text = map[(springIdx + i) % 4];
+            this.infoDialog.seasonText[(springIdx + i) % 4].text = map[i];
+        }
+    }
+
+    private SetSeat(idx: number) {
+        const map = ["東", "南", "西", "北"];
+        const eastIdx = this.getID(idx);
+        for (let i = 0; i < 4; i++) {
+            this.infoDialog.windText[(eastIdx + i) % 4].text = map[i];
         }
     }
 
@@ -417,17 +446,29 @@ export default class MahjongGame extends State {
 
     private async Command(tileMap: {[key: number]: string[]}, command: COMMAND_TYPE, time: number) {
         this.commandDialog.Show();
-        this.commandDialog.hu.enable  = Boolean(command & Input.key.Hu);
-        this.commandDialog.pon.enable = Boolean(command & Input.key.Pon);
-        this.commandDialog.gon.enable = Boolean(command & Input.key.Gon);
-        this.commandDialog.eat.enable = Boolean(command & Input.key.Eat);
+        this.commandDialog.hu.enable   = Boolean(command & Input.key.Hu);
+        this.commandDialog.pon.enable  = Boolean(command & Input.key.Pon);
+        this.commandDialog.gon.enable  = Boolean(command & Input.key.Gon);
+        this.commandDialog.eat.enable  = Boolean(command & Input.key.Eat);
+        this.commandDialog.none.enable = true;
 
         this.hand[0].DisableAll();
         this.draw.DisableAll();
         for (const key in tileMap) {
-            for (const id of tileMap[key]) {
-                this.hand[0].Enable(id);
-                this.draw.Enable(id);
+            if (parseInt(key, 10) !== COMMAND_TYPE.COMMAND_EAT) {
+                for (const id of tileMap[key]) {
+                    this.hand[0].Enable(id);
+                    this.draw.Enable(id);
+                }
+            } else {
+                const eatTile = tileMap[key];
+                for (let i = 1; i < eatTile.length; i++) {
+                    for (let j = 0; j < 3; j++) {
+                        if (eatTile[i].charAt(0) + (Number(eatTile[i].charAt(1)) + j) !== eatTile[0]) {
+                            this.hand[0].Enable(eatTile[i].charAt(0) + (Number(eatTile[i].charAt(1)) + j));
+                        }
+                    }
+                }
             }
         }
 
@@ -446,10 +487,11 @@ export default class MahjongGame extends State {
 
     private async ChooseCommand(tiles: {[key: number]: string[]}, commands: COMMAND_TYPE): Promise<{cmd: COMMAND_TYPE, tile: string}> {
         const action = await this.ui.Input.WaitKeyUp(Input.key.command);
-        this.commandDialog.hu.enable  = false;
-        this.commandDialog.pon.enable = false;
-        this.commandDialog.gon.enable = false;
-        this.commandDialog.eat.enable = false;
+        this.commandDialog.hu.enable   = false;
+        this.commandDialog.pon.enable  = false;
+        this.commandDialog.gon.enable  = false;
+        this.commandDialog.eat.enable  = false;
+        this.commandDialog.none.enable = false;
         let resultTile = "";
         let resultCommand = COMMAND_TYPE.NONE;
         if (action === ButtonKey.None) {
@@ -473,9 +515,12 @@ export default class MahjongGame extends State {
                 resultTile = tiles[resultCommand][1];
             } else {
                 const eatTile = tiles[COMMAND_TYPE.COMMAND_EAT];
+                console.log(eatTile);
                 for (let i = 1; i < eatTile.length; i++) {
                     for (let j = 0; j < 3; j++) {
-                        this.hand[0].Enable(eatTile[i].charAt(0) + (Number(eatTile[i].charAt(1)) + i));
+                        if (eatTile[i].charAt(0) + (Number(eatTile[i].charAt(1)) + j) !== eatTile[0]) {
+                            this.hand[0].Enable(eatTile[i].charAt(0) + (Number(eatTile[i].charAt(1)) + j));
+                        }
                     }
                 }
                 for (const tile of this.hand[0].tiles) {
@@ -485,7 +530,7 @@ export default class MahjongGame extends State {
                             let uptile;
                             if (tileID === centerTile - 2) {
                                 uptile = this.hand[0].tiles.find((t) => t.ID === tiles[resultCommand][0].charAt(0) + (tileID + i));
-                            } else if (tileID > centerTile - 2 && tileID < centerTile + 2) {
+                            } else if (tileID > centerTile - 2 && tileID < centerTile + 2 && tileID !== centerTile) {
                                 uptile = this.hand[0].tiles.find((t) => t.ID === tiles[resultCommand][0].charAt(0) + (centerTile + i - 1));
                             } else if (tileID === centerTile + 2) {
                                 uptile = this.hand[0].tiles.find((t) => t.ID === tiles[resultCommand][0].charAt(0) + (centerTile + i));
@@ -502,7 +547,7 @@ export default class MahjongGame extends State {
                             let uptile;
                             if (tileID === centerTile - 2) {
                                 uptile = this.hand[0].tiles.find((t) => t.ID === tiles[resultCommand][0].charAt(0) + (tileID + i));
-                            } else if (tileID > centerTile - 2 && tileID < centerTile + 2) {
+                            } else if (tileID > centerTile - 2 && tileID < centerTile + 2 && tileID !== centerTile) {
                                 uptile = this.hand[0].tiles.find((t) => t.ID === tiles[resultCommand][0].charAt(0) + (centerTile + i - 1));
                             } else if (tileID === centerTile + 2) {
                                 uptile = this.hand[0].tiles.find((t) => t.ID === tiles[resultCommand][0].charAt(0) + (centerTile + i));
@@ -515,6 +560,7 @@ export default class MahjongGame extends State {
                     };
                     tile.onInputOver.add(over);
                     tile.onInputOut.add(out);
+                    tile.onInputDown.add(out);
                 }
                 const chooseTile   = await this.hand[0].getClickTileID();
                 const chooseTileID = Number(chooseTile.charAt(1));
@@ -524,7 +570,7 @@ export default class MahjongGame extends State {
                 } else if (chooseTileID > centerTile - 2 && chooseTileID < centerTile + 2) {
                     resultTile += centerTile - 1;
                 } else if (chooseTileID === centerTile + 2) {
-                    resultTile += centerTile  + 2;
+                    resultTile += centerTile;
                 }
                 for (const tile of this.hand[0].tiles) {
                     tile.onInputOver.removeAll();
@@ -613,9 +659,14 @@ export default class MahjongGame extends State {
             }
         }
         this.updateScore();
+        CommonTileList.update();
     }
 
     private async End(data: string) {
+        this.door[0].position.set(10.5 * TILE_W, -900, (BOARD_D + TILE_D) / 2);
+        this.door[1].position.set(900, 10.5 * TILE_W, (BOARD_D + TILE_D) / 2);
+        this.door[2].position.set(-10.5 * TILE_W, 900, (BOARD_D + TILE_D) / 2);
+        this.door[3].position.set(-900, -10.5 * TILE_W, (BOARD_D + TILE_D) / 2);
         const gameResult = JSON.parse(data);
         console.log(gameResult);
         const map = ["x", "y"];
@@ -652,6 +703,9 @@ export default class MahjongGame extends State {
             (this.hand[idx].rotation as any)[map[idx % 2]] = 0;
             this.hand[idx].position.z = (BOARD_D + TILE_D) / 2;
             this.score[idx] = gameResult[i].Score;
+            if (gameResult[i].ScoreLog !== undefined) {
+                this.infoDialog.scoreLog[idx].text = gameResult[i].ScoreLog.Message + " " + gameResult[i].ScoreLog.Score;
+            }
             // this.infoDialog[idx].scoreLog.text.text = tmp;
             // this.infoDialog[idx].scoreLog.visible   = true;
             // this.infoDialog[idx].Redraw();
@@ -730,11 +784,15 @@ export default class MahjongGame extends State {
         const tiles = tile.split(",");
         const v     = Number(tiles[0].charAt(1));
         this.sea[fromId].RemoveTile(tiles[1]);
-        for (let i = 0; i < 3; i++) {
-            if (id !== 0) {
+        if (id !== 0) {
+            for (let i = 0; i < 2; i++) {
                 this.hand[id].RemoveTile("None");
-            } else if (v + i !== Number(tiles[1].charAt(1))) {
-                this.hand[id].RemoveTile(tiles[0].charAt(0) + (v + i));
+            }
+        } else {
+            for (let i = 0; i < 3; i++) {
+                if (v + i !== Number(tiles[1].charAt(1))) {
+                    this.hand[id].RemoveTile(tiles[0].charAt(0) + (v + i));
+                }
             }
         }
         this.door[id].Eat(tiles[0]);

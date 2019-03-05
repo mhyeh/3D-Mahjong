@@ -7,7 +7,7 @@ export default class DoorTileList extends CommonTileList {
     private gonTiles: ImageTile[] = [];
 
     constructor(game: Game, tileW: number, tileH: number, tileD: number, maxLen = 12, sortable = true) {
-        super(game, 0, tileW, tileH, tileD, false, maxLen, true);
+        super(game, 0, tileW, tileH, tileD, false, maxLen, sortable);
     }
 
     public AddTile(ID: string) {
