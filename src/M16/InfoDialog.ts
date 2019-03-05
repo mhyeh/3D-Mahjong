@@ -5,7 +5,7 @@ import ScrollTextArea from "mahjongh5/ui/ScrollTextArea";
 import Text from "mahjongh5/ui/Text";
 
 export default class InfoDialog extends Dialog {
-    public scoreLog: ScrollTextArea;
+    // public scoreLog: ScrollTextArea;
     public X:        number;
     public Y:        number;
     public anchorX:  number = 0;
@@ -16,6 +16,7 @@ export default class InfoDialog extends Dialog {
 
     public score:     number[];
     public scoreText: Text[];
+    public scoreLog:  Text[];
 
     public windAndRoundText: Text;
     public windText:         Text[];
@@ -32,6 +33,7 @@ export default class InfoDialog extends Dialog {
         this.add(this.backgroundGraphics);
         this.add(...this.nameText);
         this.add(...this.scoreText);
+        this.add(...this.scoreLog);
         this.add(...this.windText);
         this.add(...this.bankerText);
         this.add(...this.seasonText);

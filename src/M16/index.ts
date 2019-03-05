@@ -370,12 +370,14 @@ export default function MahjongStart() {
                 dialog.nameText   = [];
                 dialog.score      = [];
                 dialog.scoreText  = [];
+                dialog.scoreLog   = [];
                 dialog.windText   = [];
                 dialog.bankerText = [];
                 dialog.seasonText = [];
                 for (let i = 0; i < 4; i++) {
                     dialog.nameText.push(new   Text(game, "ID: ",    Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, false));
                     dialog.scoreText.push(new  Text(game, "score: ", Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, false));
+                    dialog.scoreLog.push(new   Text(game, "",        Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, false));
                     dialog.windText.push(new   Text(game, "",        Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, false));
                     dialog.bankerText.push(new Text(game, "",        Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFF0000 }), 0, 0, 0, false));
                     dialog.seasonText.push(new Text(game, "",        Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, false));
@@ -384,7 +386,7 @@ export default function MahjongStart() {
 
                 // name
                 dialog.nameText[0].PosX = -50;
-                dialog.nameText[0].PoxY = -h / 2 + 120;
+                dialog.nameText[0].PoxY = -h / 2 + 130;
 
                 dialog.nameText[1].AnchorX = 1;
                 dialog.nameText[1].PosX    = w / 2 - 80;
@@ -398,7 +400,7 @@ export default function MahjongStart() {
 
                 // score
                 dialog.scoreText[0].PosX = -50;
-                dialog.scoreText[0].PoxY = -h / 2 + 90;
+                dialog.scoreText[0].PoxY = -h / 2 + 100;
 
                 dialog.scoreText[1].AnchorX = 1;
                 dialog.scoreText[1].PosX    = w / 2 - 80;
@@ -410,9 +412,23 @@ export default function MahjongStart() {
                 dialog.scoreText[3].PosX = -w / 2 + 80;
                 dialog.scoreText[3].PoxY = 40;
 
+                // scoreLog
+                dialog.scoreLog[0].PosX = -50;
+                dialog.scoreLog[0].PoxY = -h / 2 + 40;
+
+                dialog.scoreLog[1].AnchorX = 1;
+                dialog.scoreLog[1].PosX    = w / 2 - 80;
+                dialog.scoreLog[1].PoxY    = -20;
+
+                dialog.scoreLog[2].PosX = -50;
+                dialog.scoreLog[2].PoxY = h / 2 - 160;
+
+                dialog.scoreLog[3].PosX = -w / 2 + 80;
+                dialog.scoreLog[3].PoxY = -20;
+
                 // wind
                 dialog.windText[0].PosX = -50;
-                dialog.windText[0].PoxY = -h / 2 + 60;
+                dialog.windText[0].PoxY = -h / 2 + 70;
 
                 dialog.windText[1].AnchorX = 1;
                 dialog.windText[1].PosX = w / 2 - 180;
@@ -426,7 +442,7 @@ export default function MahjongStart() {
 
                 // banker
                 dialog.bankerText[0].PosX = 50;
-                dialog.bankerText[0].PoxY = -h / 2 + 60;
+                dialog.bankerText[0].PoxY = -h / 2 + 70;
 
                 dialog.bankerText[1].AnchorX = 1;
                 dialog.bankerText[1].PosX = w / 2 - 80;
@@ -439,7 +455,7 @@ export default function MahjongStart() {
                 dialog.bankerText[3].PoxY = 10;
 
                 // season
-                dialog.seasonText[0].PoxY = -h / 2 + 60;
+                dialog.seasonText[0].PoxY = -h / 2 + 70;
 
                 dialog.seasonText[1].AnchorX = 1;
                 dialog.seasonText[1].PosX = w / 2 - 130;
