@@ -2,6 +2,8 @@
 declare var BUILD_DATE: string;
 declare var DEBUG: boolean;
 
+declare var SERVER_URL: string;
+
 declare var TILE_W: number;
 declare var TILE_H: number;
 declare var TILE_D: number;

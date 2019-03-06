@@ -11,7 +11,8 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
 	<script>
-		const socket = io("http://140.118.127.157:3000", {
+		var SERVER_URL = "http://140.118.127.157:3000";
+		const socket = io(SERVER_URL, {
 			transports: ["websocket"]
 		});
 		window.onload = () => {
@@ -55,9 +56,9 @@
 		socket.on("auth", () => {
 			const uuid = localStorage.getItem("uuid");
 			const room = localStorage.getItem("room");
+			$("#login").show();
+			$("#waiting").hide();
 			if (uuid === undefined) {
-				$("#login").show();
-				$("#waiting").hide();
 				return;
 			}
 			if (room === undefined) {

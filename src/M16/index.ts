@@ -23,7 +23,7 @@ import InfoDialog from "./InfoDialog";
 export default function MahjongStart() {
     let isPlaying = false;
 
-    const socket = io.connect("http://140.118.127.157:3000", { transports: ["websocket"] });
+    const socket = io.connect(SERVER_URL, { transports: ["websocket"] });
     socket.on("auth", () => {
         const uuid = localStorage.getItem("uuid");
         const room = localStorage.getItem("room");

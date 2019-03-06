@@ -94,6 +94,10 @@ export default class JoinState extends State {
             });
         }
 
+        this.socket.on("stopWaiting", () => {
+            window.location.href = "./index.html";
+        });
+
         this.socket.on("broadcastReady", (name: string) => {
             let index = 0;
             for (let i = 0; i < 4; i++) {

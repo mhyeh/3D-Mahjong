@@ -274,6 +274,7 @@ export default class MahjongGame extends State {
                 this.door[i].ClearDoor();
                 this.flower[i].ClearTileList();
                 this.sea[i].ClearTileList();
+                this.infoDialog.scoreLog[i].text = "";
 
                 for (let j = 0; j < 16; j++) {
                     if (this.hand[i].tileCount < j) {
@@ -704,7 +705,7 @@ export default class MahjongGame extends State {
             this.hand[idx].position.z = (BOARD_D + TILE_D) / 2;
             this.score[idx] = gameResult[i].Score;
             if (gameResult[i].ScoreLog !== undefined) {
-                this.infoDialog.scoreLog[idx].text = gameResult[i].ScoreLog.Message + " " + gameResult[i].ScoreLog.Score;
+                this.infoDialog.scoreLog[idx].text = (gameResult[i].ScoreLog.Score > 0 ? gameResult[i].ScoreLog.Message + " " : "") + gameResult[i].ScoreLog.Score;
             }
             // this.infoDialog[idx].scoreLog.text.text = tmp;
             // this.infoDialog[idx].scoreLog.visible   = true;
