@@ -1,7 +1,5 @@
-import ChangeTileEffect from "./effect/ChangeTileEffect";
-import LackEffect from "./effect/LackEffect";
+import DiceEffect from "./effect/DiceEffect";
 
 export default class EffectController {
-    public changeTileEffect: ChangeTileEffect;
-    public lackEffect:       LackEffect[];
+    public diceEffect: DiceEffect;
 }

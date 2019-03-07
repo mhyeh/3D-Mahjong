@@ -16,7 +16,7 @@ import Text from "mahjongh5/ui/Text";
 import Timer from "mahjongh5/component/Timer";
 import NumberDisplayer from "mahjongh5/ui/NumberDisplayer";
 import Cube from "mahjongh5/ui/Cube";
-import ChangeTileEffect from "./effect/ChangeTileEffect";
+import DiceEffect from "./effect/DiceEffect";
 import RoundRetangleGeometry from "mahjongh5/Util/RoundRectangleGeometry";
 import InfoDialog from "./InfoDialog";
 
@@ -113,6 +113,9 @@ export default function MahjongStart() {
             const h = w / ASPECT;
             const orthoScene  = new Three.Scene();
             const orthoCamera = new Three.OrthographicCamera(-w / 2, w / 2, h / 2, -h / 2, -1000, 1000);
+
+            const diceScene  = new Three.Scene();
+            const diceCamera = new Three.OrthographicCamera(-w / 2, w / 2, h / 2, -h / 2, -1000, 1000);
 
             scene.background = new Three.Color(0xAAAAAA);
 
@@ -218,10 +221,6 @@ export default function MahjongStart() {
             hand[3].position.x = -900;
             hand[3].position.z = (BOARD_D + TILE_D) / 2;
 
-            // draw
-            draw.rotateX(Math.PI  * 80 / 180);
-            draw.position.set(9 * TILE_W, -900, (BOARD_D + TILE_H) / 2);
-
             // flower
             flower[0].position.set(-6 * TILE_W, -750, (BOARD_D + TILE_D) / 2);
 
@@ -288,6 +287,9 @@ export default function MahjongStart() {
 
             const timer = new Timer(new NumberDisplayer(new Text(game, "0", Assets.font.jhengHei.key, 80 , 20, new Three.MeshLambertMaterial({ color: 0xFFFFFF }), 0, 0, 50, true)), undefined, DISABLE_TINT);
             scene.add(timer);
+
+            const diceEffect = new DiceEffect(game);
+            diceScene.add(diceEffect);
 
             const commandDialog = new CommandDialog(game, (dialog: CommandDialog) => {
                 const buttonGeometry = new Three.CircleGeometry(50, 30);
@@ -356,15 +358,12 @@ export default function MahjongStart() {
 
             scene.add(group);
 
-            const changeTileEffect = new ChangeTileEffect(game);
-            CommonTileList.intersectsScene.add(changeTileEffect);
-
-            CommonTileList.update();
             const instanceTlies = new Three.Mesh(CommonTileList.instancedGeometry, CommonTileList.rawShaderMaterial);
             scene.add(instanceTlies);
 
             const infoDialog = new InfoDialog(game, (dialog: InfoDialog) => {
-                const texture = new Three.Texture(game.cache[Assets.button.char.key]);
+                const texture  = new Three.Texture(game.cache[Assets.button.hu.key]);
+                const circleGeometry = new Three.CircleGeometry(15, 30);
                 texture.needsUpdate = true;
                 dialog.nameList   = [];
                 dialog.nameText   = [];
@@ -374,6 +373,7 @@ export default function MahjongStart() {
                 dialog.windText   = [];
                 dialog.bankerText = [];
                 dialog.seasonText = [];
+                dialog.huIcon     = [];
                 for (let i = 0; i < 4; i++) {
                     dialog.nameText.push(new   Text(game, "ID: ",    Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, false));
                     dialog.scoreText.push(new  Text(game, "score: ", Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, false));
@@ -381,92 +381,109 @@ export default function MahjongStart() {
                     dialog.windText.push(new   Text(game, "",        Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, false));
                     dialog.bankerText.push(new Text(game, "",        Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFF0000 }), 0, 0, 0, false));
                     dialog.seasonText.push(new Text(game, "",        Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, false));
+                    dialog.huIcon.push(new Three.Mesh(circleGeometry, new Three.MeshBasicMaterial({ map: texture })));
+                    dialog.huIcon[i].position.z = 2;
+                    dialog.huIcon[i].visible    = false;
                 }
                 dialog.windAndRoundText = new Text(game, "", Assets.font.jhengHei.key, 45, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, true);
 
                 // name
                 dialog.nameText[0].PosX = -50;
-                dialog.nameText[0].PoxY = -h / 2 + 130;
+                dialog.nameText[0].PoxY = -h / 2 + 140;
 
                 dialog.nameText[1].AnchorX = 1;
                 dialog.nameText[1].PosX    = w / 2 - 80;
                 dialog.nameText[1].PoxY    = 70;
 
                 dialog.nameText[2].PosX = -50;
-                dialog.nameText[2].PoxY = h / 2 - 70;
+                dialog.nameText[2].PoxY = h / 2 - 100;
 
                 dialog.nameText[3].PosX = -w / 2 + 80;
                 dialog.nameText[3].PoxY = 70;
 
                 // score
                 dialog.scoreText[0].PosX = -50;
-                dialog.scoreText[0].PoxY = -h / 2 + 100;
+                dialog.scoreText[0].PoxY = -h / 2 + 110;
 
                 dialog.scoreText[1].AnchorX = 1;
                 dialog.scoreText[1].PosX    = w / 2 - 80;
                 dialog.scoreText[1].PoxY    = 40;
 
                 dialog.scoreText[2].PosX = -50;
-                dialog.scoreText[2].PoxY = h / 2 - 100;
+                dialog.scoreText[2].PoxY = h / 2 - 130;
 
                 dialog.scoreText[3].PosX = -w / 2 + 80;
                 dialog.scoreText[3].PoxY = 40;
 
                 // scoreLog
                 dialog.scoreLog[0].PosX = -50;
-                dialog.scoreLog[0].PoxY = -h / 2 + 40;
+                dialog.scoreLog[0].PoxY = -h / 2 + 50;
 
                 dialog.scoreLog[1].AnchorX = 1;
                 dialog.scoreLog[1].PosX    = w / 2 - 80;
                 dialog.scoreLog[1].PoxY    = -20;
 
                 dialog.scoreLog[2].PosX = -50;
-                dialog.scoreLog[2].PoxY = h / 2 - 160;
+                dialog.scoreLog[2].PoxY = h / 2 - 190;
 
                 dialog.scoreLog[3].PosX = -w / 2 + 80;
                 dialog.scoreLog[3].PoxY = -20;
 
                 // wind
                 dialog.windText[0].PosX = -50;
-                dialog.windText[0].PoxY = -h / 2 + 70;
+                dialog.windText[0].PoxY = -h / 2 + 170;
 
                 dialog.windText[1].AnchorX = 1;
-                dialog.windText[1].PosX = w / 2 - 180;
-                dialog.windText[1].PoxY = 10;
+                dialog.windText[1].PosX = w / 2 - 80;
+                dialog.windText[1].PoxY = 100;
 
                 dialog.windText[2].PosX = -50;
-                dialog.windText[2].PoxY = h / 2 - 130;
+                dialog.windText[2].PoxY = h / 2 - 70;
 
                 dialog.windText[3].PosX = -w / 2 + 80;
-                dialog.windText[3].PoxY = 10;
+                dialog.windText[3].PoxY = 100;
 
                 // banker
-                dialog.bankerText[0].PosX = 50;
-                dialog.bankerText[0].PoxY = -h / 2 + 70;
+                dialog.bankerText[0].PoxY = -h / 2 + 80;
 
                 dialog.bankerText[1].AnchorX = 1;
-                dialog.bankerText[1].PosX = w / 2 - 80;
+                dialog.bankerText[1].PosX = w / 2 - 130;
                 dialog.bankerText[1].PoxY = 10;
 
-                dialog.bankerText[2].PosX = 50;
-                dialog.bankerText[2].PoxY = h / 2 - 130;
+                dialog.bankerText[2].PoxY = h / 2 - 160;
 
-                dialog.bankerText[3].PosX = -w / 2 + 180;
+                dialog.bankerText[3].PosX = -w / 2 + 130;
                 dialog.bankerText[3].PoxY = 10;
 
                 // season
-                dialog.seasonText[0].PoxY = -h / 2 + 70;
+                dialog.seasonText[0].PosX = -50;
+                dialog.seasonText[0].PoxY = -h / 2 + 80;
 
                 dialog.seasonText[1].AnchorX = 1;
-                dialog.seasonText[1].PosX = w / 2 - 130;
+                dialog.seasonText[1].PosX = w / 2 - 80;
                 dialog.seasonText[1].PoxY = 10;
 
-                dialog.seasonText[2].PoxY = h / 2 - 130;
+                dialog.seasonText[2].PosX = -50;
+                dialog.seasonText[2].PoxY = h / 2 - 160;
 
-                dialog.seasonText[3].PosX = -w / 2 + 130;
+                dialog.seasonText[3].PosX = -w / 2 + 80;
                 dialog.seasonText[3].PoxY = 10;
+
+                // huIcon
+                dialog.huIcon[0].position.x = 50;
+                dialog.huIcon[0].position.y = -h / 2 + 180;
+
+                dialog.huIcon[1].position.x = w / 2 - 180;
+                dialog.huIcon[1].position.y = 110;
+
+                dialog.huIcon[2].position.x = 50;
+                dialog.huIcon[2].position.y = h / 2 - 60;
+
+                dialog.huIcon[3].position.x = -w / 2 + 180;
+                dialog.huIcon[3].position.y = 110;
             });
-            infoDialog.visible = false;
+            infoDialog.visible    = false;
+            infoDialog.position.z = 10;
 
             orthoScene.add(infoDialog);
 
@@ -482,6 +499,8 @@ export default function MahjongStart() {
             mahjong.hand   = hand;
             mahjong.draw   = draw;
 
+            mahjong.effect.diceEffect = diceEffect;
+
             mahjong.timer = timer;
 
             mahjong.commandDialog = commandDialog;
@@ -489,6 +508,8 @@ export default function MahjongStart() {
 
             mahjong.scene.push(scene);
             mahjong.camera.push(camera);
+            mahjong.scene.push(diceScene);
+            mahjong.camera.push(diceCamera);
             mahjong.scene.push(orthoScene);
             mahjong.camera.push(orthoCamera);
         });
