@@ -120,6 +120,15 @@ export default class CommonTileList extends TileList<ImageTile> {
 
     public static update() {
         CommonTileList.intersectsScene.updateMatrixWorld(true);
+        const mat4ArraySize = CommonTileList.maxNum * 4;
+        CommonTileList.transformArray = [
+            new Float32Array(mat4ArraySize),
+            new Float32Array(mat4ArraySize),
+            new Float32Array(mat4ArraySize),
+            new Float32Array(mat4ArraySize),
+        ];
+        CommonTileList.tintArray = new Float32Array(mat4ArraySize);
+        CommonTileList.uvArray   = new Float32Array(mat4ArraySize);
         let count = 0;
         for (let i = 0; i < CommonTileList.avaliableIndex.length && count < CommonTileList.tileCount; i++) {
             if (!CommonTileList.avaliableIndex[i] && CommonTileList.tiles[i].visible) {

@@ -51,7 +51,6 @@ export default class DoorTileList extends CommonTileList {
     }
 
     public Eat(ID: string) {
-        console.log(ID);
         const v = Number(ID.charAt(1));
         for (let i = 0; i < 3; i++) {
             this.AddTile(ID.charAt(0) + (v + i));
