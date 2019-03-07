@@ -178,6 +178,8 @@ export default class MahjongGame extends State {
                             }
                         }
                     }
+                    this.draw.rotateX(Math.PI * 80 / 180);
+                    this.draw.position.set(9 * TILE_W, -900, (BOARD_D + TILE_H) / 2);
                     this.setDrawPosition();
                     CommonTileList.update();
                 }
@@ -323,6 +325,7 @@ export default class MahjongGame extends State {
 
         this.socket.on("draw", (tile: string) => {
             this.draw.AddTile(tile);
+            this.draw.DisableAll();
             CommonTileList.update();
         });
         this.socket.on("broadcastDraw", (id: number, remainTile: number) => this.BroadcastDraw(id, remainTile));
