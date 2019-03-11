@@ -11,26 +11,16 @@ export default class DoorTileList extends CommonTileList {
     }
 
     public AddTile(ID: string) {
-        console.log(ID);
-        const newTile   = new ImageTile(this.game, CommonTileList.bufferGeometry, CommonTileList.tileTable);
-        newTile.ID      = ID;
-        newTile.color   = ID.slice(0, 1);
-        newTile.enable  = false;
-        const map: {[key: string]: number} = {c: 0, d: 1, b: 2, o: 3, f: 4};
-        let index = 0;
-        for (index = 0; index < this.tileCount; index++) {
-            const t1 = this.tiles[index].ID;
-            const t2 = ID;
-            if (map[t1.charAt(0)] * 10 + Number(t1.charAt(1)) > map[t2.charAt(0)] * 10 + Number(t2.charAt(1))) {
-                break;
-            }
-        }
+        const newTile  = new ImageTile(this.game, CommonTileList.bufferGeometry, CommonTileList.tileTable);
+        newTile.ID     = ID;
+        newTile.color  = ID.slice(0, 1);
+        newTile.enable = false;
         if (ID === "None") {
             newTile.rotateX(Math.PI);
         }
         this.add(newTile);
         CommonTileList.addTile(newTile);
-        this.tiles.splice(index, 0, newTile);
+        this.tiles.splice(0, 0, newTile);
         this.ArrangeTile();
     }
 
@@ -50,10 +40,21 @@ export default class DoorTileList extends CommonTileList {
         this.ArrangeGonTile();
     }
 
-    public Eat(ID: string) {
-        const v = Number(ID.charAt(1));
-        for (let i = 0; i < 3; i++) {
-            this.AddTile(ID.charAt(0) + (v + i));
+    public Eat(first: string, center: string) {
+        const fv = Number(first.charAt(1));
+        const cv = Number(center.charAt(1));
+        if (fv === cv - 2) {
+            this.AddTile(first.charAt(0) + (fv + 1));
+            this.AddTile(first.charAt(0) + (fv + 2));
+            this.AddTile(first.charAt(0) + (fv));
+        } else if (fv === cv - 1) {
+            for (let i = 2; i >= 0; i--) {
+                this.AddTile(first.charAt(0) + (fv + i));
+            }
+        } else {
+            this.AddTile(first.charAt(0) + (fv + 2));
+            this.AddTile(first.charAt(0) + (fv));
+            this.AddTile(first.charAt(0) + (fv + 1));
         }
         this.ArrangeGonTile();
     }
@@ -93,19 +94,10 @@ export default class DoorTileList extends CommonTileList {
         tile.color      = ID.slice(0, 1);
         tile.position.z = tile.depth + 2;
         tile.enable     = false;
-        const map: {[key: string]: number} = {c: 0, d: 1, b: 2, o: 3, f: 4};
-        let index = 0;
-        for (index = 0; index < this.gonTiles.length; index++) {
-            const t1 = this.gonTiles[index].ID;
-            const t2 = ID;
-            if (map[t1.charAt(0)] * 10 + Number(t1.charAt(1)) > map[t2.charAt(0)] * 10 + Number(t2.charAt(1))) {
-                break;
-            }
-        }
         if (ID === "None") {
             tile.rotateX(Math.PI);
         }
-        this.gonTiles.splice(index, 0, tile);
+        this.gonTiles.splice(0, 0, tile);
         this.add(tile);
         CommonTileList.addTile(tile);
     }

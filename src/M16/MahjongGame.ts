@@ -168,7 +168,6 @@ export default class MahjongGame extends State {
                 localStorage.setItem("players", JSON.stringify(players));
             });
             this.socket.emit("getHandCount", room, (handCount: number[]) => {
-                console.log(handCount);
                 if (typeof handCount[0] !== "undefined") {
                     for (let i = 0; i < 4; i++) {
                         if (this.getID(i) !== 0) {
@@ -194,7 +193,8 @@ export default class MahjongGame extends State {
                         const idx = this.getID(i);
                         if (door[i][0] !== null) {
                             for (const tile of door[i][0]) {
-                                this.door[idx].Eat(tile);
+                                const tiles = tile.split(",");
+                                this.door[idx].Eat(tiles[0], tiles[1]);
                                 this.moveDoor(idx, 3);
                             }
                         }
@@ -269,6 +269,7 @@ export default class MahjongGame extends State {
             this.infoDialog.windAndRoundText.text = map[wind] + "風" + map[round];
         });
         this.socket.on("broadcastOpenDoor", (idx: number, dice: number) => {
+            this.remainTile.visible = false;
             this.infoDialog.Hide();
             this.door[0].position.set(10.5 * TILE_W, -900, (BOARD_D + TILE_D) / 2);
             this.door[1].position.set(900, 10.5 * TILE_W, (BOARD_D + TILE_D) / 2);
@@ -350,6 +351,10 @@ export default class MahjongGame extends State {
         });
 
         this.socket.on("end", (data: string) => this.End(data));
+        this.socket.on("gameEnd", async () => {
+            await System.Delay(10000);
+            window.location.href = "./index.html";
+        });
     }
 
     private getID(id: number) {
@@ -407,6 +412,7 @@ export default class MahjongGame extends State {
         if (idx !== 0) {
             this.hand[idx].AddTile("None");
         }
+        this.sea.forEach((sea) => sea.tiles.forEach((discard) => discard.tint = 0xFFFFFF));
         CommonTileList.update();
     }
 
@@ -447,7 +453,6 @@ export default class MahjongGame extends State {
             this.hand[idx].RemoveTile("None");
         }
         this.sea[idx].AddTile(tile);
-        this.sea.forEach((sea) => sea.tiles.forEach((discard) => discard.tint = 0xFFFFFF));
         this.sea[idx].tiles[this.sea[idx].tileCount - 1].tint = 0xFFFF77;
         CommonTileList.update();
     }
@@ -490,8 +495,10 @@ export default class MahjongGame extends State {
         this.onResetEvent.removeAll();
         this.hand[0].tiles.forEach((tile) => tile.position.y = 0);
 
-        if (result.cmd !== COMMAND_TYPE.COMMAND_ZIMO) {
+        if (result.cmd !== COMMAND_TYPE.COMMAND_ZIMO && result.cmd !== COMMAND_TYPE.NONE) {
             this.clearDraw();
+        } else {
+            this.draw.DisableAll();
         }
         this.hand[0].DisableAll();
         this.commandDialog.Hide();
@@ -529,7 +536,6 @@ export default class MahjongGame extends State {
                 resultTile = tiles[resultCommand][1];
             } else {
                 const eatTile = tiles[COMMAND_TYPE.COMMAND_EAT];
-                console.log(eatTile);
                 for (let i = 1; i < eatTile.length; i++) {
                     for (let j = 0; j < 3; j++) {
                         if (eatTile[i].charAt(0) + (Number(eatTile[i].charAt(1)) + j) !== eatTile[0]) {
@@ -623,6 +629,66 @@ export default class MahjongGame extends State {
             }
 
             if (tiles[resultCommand].length > 1) {
+                let over: () => void;
+                let out:  () => void;
+                for (const tile of this.hand[0].tiles) {
+                    over = () => {
+                        for (const t of this.hand[0].tiles) {
+                            if (t.ID === tile.ID) {
+                                t.position.y += 50;
+                            }
+                        }
+                        if (this.draw.tiles[0].ID === tile.ID) {
+                            this.draw.tiles[0].position.y += 50;
+                        }
+                        CommonTileList.update();
+                    };
+                    out = () => {
+                        for (const t of this.hand[0].tiles) {
+                            if (t.ID === tile.ID) {
+                                t.position.y -= 50;
+                            }
+                        }
+                        if (this.draw.tiles[0].ID === tile.ID) {
+                            this.draw.tiles[0].position.y -= 50;
+                        }
+                        CommonTileList.update();
+                    };
+                    tile.onInputOver.add(over);
+                    tile.onInputOut.add(out);
+                    this.onResetEvent.add(() => {
+                        tile.onInputOver.remove(over);
+                        tile.onInputOut.remove(out);
+                        tile.onInputDown.remove(out);
+                        CommonTileList.update();
+                    });
+                }
+                over = () => {
+                    for (const t of this.hand[0].tiles) {
+                        if (t.ID === this.draw.tiles[0].ID) {
+                            t.position.y += 50;
+                        }
+                    }
+                    this.draw.tiles[0].position.y += 50;
+                    CommonTileList.update();
+                };
+                out = () => {
+                    for (const t of this.hand[0].tiles) {
+                        if (t.ID === this.draw.tiles[0].ID) {
+                            t.position.y -= 50;
+                        }
+                    }
+                    this.draw.tiles[0].position.y -= 50;
+                    CommonTileList.update();
+                };
+                this.draw.tiles[0].onInputOver.add(over);
+                this.draw.tiles[0].onInputOut.add(out);
+                this.onResetEvent.add(() => {
+                    this.draw.tiles[0].onInputOver.remove(over);
+                    this.draw.tiles[0].onInputOut.remove(out);
+                    this.draw.tiles[0].onInputDown.remove(out);
+                    CommonTileList.update();
+                });
                 resultTile = await Promise.race([this.hand[0].getClickTileID(), this.draw.getClickTileID()]);
             } else {
                 resultTile = tiles[resultCommand][0];
@@ -678,13 +744,15 @@ export default class MahjongGame extends State {
     }
 
     private async End(data: string) {
+        for (let i = 0; i < 4; i++) {
+            this.arrow[i].tint = DISABLE_TINT;
+        }
         this.infoDialog.Show();
         this.door[0].position.set(10.5 * TILE_W, -900, (BOARD_D + TILE_D) / 2);
         this.door[1].position.set(900, 10.5 * TILE_W, (BOARD_D + TILE_D) / 2);
         this.door[2].position.set(-10.5 * TILE_W, 900, (BOARD_D + TILE_D) / 2);
         this.door[3].position.set(-900, -10.5 * TILE_W, (BOARD_D + TILE_D) / 2);
         const gameResult = JSON.parse(data);
-        console.log(gameResult);
         const map = ["x", "y"];
         for (let i = 0; i < 4; i++) {
             const idx = this.getID(i);
@@ -692,7 +760,8 @@ export default class MahjongGame extends State {
             if (gameResult[i].Door !== null) {
                 if (gameResult[i].Door[0] !== null) {
                     for (const tile of gameResult[i].Door[0]) {
-                        this.door[idx].Eat(tile);
+                        const tiles = tile.split(",");
+                        this.door[idx].Eat(tiles[0], tiles[1]);
                         this.moveDoor(idx, 3);
                     }
                 }
@@ -724,7 +793,32 @@ export default class MahjongGame extends State {
             this.draw.position.z = (BOARD_D + TILE_D) / 2;
             this.score[idx] = gameResult[i].Score;
             if (gameResult[i].ScoreLog !== undefined) {
-                this.infoDialog.scoreLog[idx].text  = (gameResult[i].ScoreLog.Score > 0 ? gameResult[i].ScoreLog.Message + " " : "") + gameResult[i].ScoreLog.Score;
+                if (gameResult[i].ScoreLog.Score > 0) {
+                    let tileMap = ["一", "二", "三", "四", "五", "六", "七", "八", "九"];
+                    let tmp     = tileMap[Number(gameResult[i].ScoreLog.Tile.charAt(1)) - 1];
+                    switch (gameResult[i].ScoreLog.Tile.charAt(0)) {
+                        case "c":
+                            tmp += "萬";
+                            break;
+                        case "d":
+                            tmp += "筒";
+                            break;
+                        case "b":
+                            tmp += "條";
+                            break;
+                        case "o":
+                            tileMap = ["東", "南", "西", "北", "中", "發", "白"];
+                            tmp     = tileMap[Number(gameResult[i].ScoreLog.Tile.charAt(1)) - 1];
+                            break;
+                        case "f":
+                            tileMap = ["春", "夏", "秋", "冬", "梅", "蘭", "竹", "菊"];
+                            tmp     = tileMap[Number(gameResult[i].ScoreLog.Tile.charAt(1)) - 1];
+                            break;
+                    }
+                    this.infoDialog.scoreLog[idx].text = "胡: " + tmp + ", " + gameResult[i].ScoreLog.Message + " " + gameResult[i].ScoreLog.Score;
+                } else if (gameResult[i].ScoreLog.Score !== 0) {
+                    this.infoDialog.scoreLog[idx].text = "" + gameResult[i].ScoreLog.Score;
+                }
                 this.infoDialog.huIcon[idx].visible = gameResult[i].ScoreLog.Score > 0;
             }
             // this.infoDialog[idx].scoreLog.text.text = tmp;
@@ -733,8 +827,6 @@ export default class MahjongGame extends State {
         }
         this.updateScore();
         CommonTileList.update();
-        await System.Delay(5000);
-        // window.location.href = "./index.html";
     }
 
     private updateScore() {
@@ -816,12 +908,12 @@ export default class MahjongGame extends State {
                 }
             }
         }
-        this.door[id].Eat(tiles[0]);
+        this.door[id].Eat(tiles[0], tiles[1]);
         this.moveDoor(id, 3);
     }
 
     private moveDoor(id: number, n: number) {
-        const len = this.door[id].tileW * n;
+        const len = (this.door[id].tileW + 5) * n;
         const map = ["x", "y"];
         (this.door[id].position as any)[map[id % 2]] += len * (id < 2 ? -1 : 1);
     }
