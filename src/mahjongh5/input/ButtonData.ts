@@ -34,7 +34,7 @@ export default class ButtonData {
         }
     }
 
-    public SetButtonDown(data ?: string | number): void {
+    public SetButtonDown(data ?: string | number | boolean): void {
         if (this.enable) {
             this.pressCount++;
             if (this.pressCount === 1) {
@@ -48,7 +48,7 @@ export default class ButtonData {
         }
     }
 
-    public SetButtonUp(data ?: string | number): void {
+    public SetButtonUp(data ?: string | number | boolean): void {
         if (this.enable) {
             this.pressCount--;
             if (this.pressCount === 0) {

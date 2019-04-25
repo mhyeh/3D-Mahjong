@@ -34,6 +34,7 @@ export const button = {
     ongon: { type: "Image", key: "", args: [require("assets/Mahjong/OnGon.png")] },
     hu: { type: "Image", key: "", args: [require("assets/Mahjong/Hu.png")] },
     none: { type: "Image", key: "", args: [require("assets/Mahjong/None.png")] },
+    ting: { type: "Image", key: "", args: [require("assets/Mahjong/Ting.png")] },
 };
 
 export const tiles = {

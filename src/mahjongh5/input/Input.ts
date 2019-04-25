@@ -87,11 +87,11 @@ export default class Input {
      * @param type 對應的按鈕功
      * @param holdDuration 按鈕要長按多久才算按下，單位為毫秒
      */
-    public AddButton(button: ButtonEvent, type: ButtonKey, holdDuration: number = 0, data ?: string | number): void {
+    public AddButton(button: ButtonEvent, type: ButtonKey, holdDuration: number = 0, data ?: string | number | boolean): void {
         this.AddSignal(button.onInputDown, button.onInputUp, button.onInputOut, type, holdDuration, data);
     }
 
-    public AddSignal(onDown: Signal, onUp: Signal, onOut: Signal, type: ButtonKey, holdDuration: number = 0, data ?: string | number): void {
+    public AddSignal(onDown: Signal, onUp: Signal, onOut: Signal, type: ButtonKey, holdDuration: number = 0, data ?: string | number | boolean): void {
         let isPressed = false;
         const buttonDownCallBack = () => {
             if (isPressed) {

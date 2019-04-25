@@ -102,6 +102,7 @@ export default class MahjongGame extends State {
         this.ui.Input.AddButton(this.commandDialog.hu,   Input.key.command, undefined, Input.key.Hu);
         this.ui.Input.AddButton(this.commandDialog.none, Input.key.command, undefined, Input.key.None);
         this.ui.Input.AddButton(this.commandDialog.eat,  Input.key.command, undefined, Input.key.Eat);
+        this.ui.Input.AddButton(this.ui.tingButton,      Input.key.Ting,    undefined, true);
 
         this.ui.Input.AddButton(this.commandDialog.pongon, Input.key.Gon, undefined, COMMAND_TYPE.COMMAND_PONGON);
         this.ui.Input.AddButton(this.commandDialog.ongon,  Input.key.Gon, undefined, COMMAND_TYPE.COMMAND_ONGON);
@@ -338,6 +339,12 @@ export default class MahjongGame extends State {
         this.socket.on("command", async (tileMap: {[key: number]: string[]}, command: COMMAND_TYPE, idx: number, time: number) => this.Command(tileMap, command, time));
         this.socket.on("success", (from: number, command: COMMAND_TYPE, tile: string, score: number) => this.Success(from, command, tile, score));
         this.socket.on("broadcastCommand", (from: number, to: number, command: COMMAND_TYPE, tile: string, score: number) => this.BroadcastSuccess(from, to, command, tile, score));
+
+        this.socket.on("ting", async (time: number) => this.Ting(time));
+        this.socket.on("broadcastTing", (id: number) => {
+            console.log(id);
+        });
+
         this.socket.on("robGon", (id: number, tile: string) => {
             for (let i = 0; i < 4; i++) {
                 if (this.getID(id) === i) {
@@ -455,6 +462,14 @@ export default class MahjongGame extends State {
         this.sea[idx].AddTile(tile);
         this.sea[idx].tiles[this.sea[idx].tileCount - 1].tint = 0xFFFF77;
         CommonTileList.update();
+    }
+
+    private async Ting(time: number) {
+        this.ui.tingButton.visible = true;
+        this.timer.Play(time);
+        const result = await Promise.race([this.ui.Input.WaitKeyUp(Input.key.Ting), false]);
+        this.timer.ForceStop();
+        this.socket.emit("sendTing", result);
     }
 
     private async Command(tileMap: {[key: number]: string[]}, command: COMMAND_TYPE, time: number) {

@@ -4,6 +4,7 @@ import Button from "mahjongh5/ui/Button";
 export default class MahjongUI extends UIController {
     public checkButton: Button;
     public readyButton: Button;
+    public tingButton:  Button;
 
     public avatar: Button[];
 

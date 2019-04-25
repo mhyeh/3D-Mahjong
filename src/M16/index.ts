@@ -291,6 +291,9 @@ export default function MahjongStart() {
             const diceEffect = new DiceEffect(game);
             diceScene.add(diceEffect);
 
+            const tingButton = new Button(game, new Three.CircleGeometry(50, 100), new Three.MeshLambertMaterial({ map: new Three.Texture(game.cache[Assets.button.ting.key])}));
+            tingButton.visible = false;
+
             const commandDialog = new CommandDialog(game, (dialog: CommandDialog) => {
                 const buttonGeometry = new Three.CircleGeometry(50, 30);
 
@@ -352,8 +355,10 @@ export default function MahjongStart() {
 
             const group = new Three.Group();
             group.rotation.setFromVector3(camera.rotation.toVector3());
+            group.add(tingButton);
             group.add(commandDialog);
             group.add(remainTile);
+            tingButton.position.set(600, -700, 850);
             commandDialog.position.set(600, -700, 850);
 
             scene.add(group);
@@ -502,6 +507,8 @@ export default function MahjongStart() {
             mahjong.effect.diceEffect = diceEffect;
 
             mahjong.timer = timer;
+
+            mahjong.ui.tingButton = tingButton;
 
             mahjong.commandDialog = commandDialog;
             mahjong.infoDialog    = infoDialog;
