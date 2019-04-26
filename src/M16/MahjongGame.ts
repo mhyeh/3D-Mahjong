@@ -467,7 +467,7 @@ export default class MahjongGame extends State {
     private async Ting(time: number) {
         this.ui.tingButton.visible = true;
         this.timer.Play(time);
-        const result = await Promise.race([this.ui.Input.WaitKeyUp(Input.key.Ting), false]);
+        const result = await Promise.race([this.ui.Input.WaitKeyUp(Input.key.Ting), System.DelayValue(time, false)]);
         this.timer.ForceStop();
         this.socket.emit("sendTing", result);
     }

@@ -291,8 +291,10 @@ export default function MahjongStart() {
             const diceEffect = new DiceEffect(game);
             diceScene.add(diceEffect);
 
-            const tingButton = new Button(game, new Three.CircleGeometry(50, 100), new Three.MeshLambertMaterial({ map: new Three.Texture(game.cache[Assets.button.ting.key])}));
-            tingButton.visible = false;
+            const tingTex       = new Three.Texture(game.cache[Assets.button.ting.key]);
+            tingTex.needsUpdate = true;
+            const tingButton    = new Button(game, new Three.CircleGeometry(50, 100), new Three.MeshLambertMaterial({ map: tingTex}));
+            tingButton.visible  = false;
 
             const commandDialog = new CommandDialog(game, (dialog: CommandDialog) => {
                 const buttonGeometry = new Three.CircleGeometry(50, 30);
