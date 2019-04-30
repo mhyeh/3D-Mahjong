@@ -103,7 +103,6 @@ export default class MahjongGame extends State {
         this.ui.Input.AddButton(this.commandDialog.ting, Input.key.command, undefined, Input.key.Ting);
         this.ui.Input.AddButton(this.commandDialog.none, Input.key.command, undefined, Input.key.None);
         this.ui.Input.AddButton(this.commandDialog.eat,  Input.key.command, undefined, Input.key.Eat);
-        this.ui.Input.AddButton(this.ui.tingButton,      Input.key.Ting,    undefined, true);
 
         this.ui.Input.AddButton(this.commandDialog.pongon, Input.key.Gon, undefined, COMMAND_TYPE.COMMAND_PONGON);
         this.ui.Input.AddButton(this.commandDialog.ongon,  Input.key.Gon, undefined, COMMAND_TYPE.COMMAND_ONGON);

@@ -394,7 +394,7 @@ export default function MahjongStart() {
                     dialog.bankerText.push(new Text(game, "",        Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFF0000 }), 0, 0, 0, false));
                     dialog.seasonText.push(new Text(game, "",        Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, false));
                     dialog.huIcon.push(new Three.Mesh(circleGeometry, new Three.MeshBasicMaterial({ map: huTex })));
-                    dialog.huIcon.push(new Three.Mesh(circleGeometry, new Three.MeshBasicMaterial({ map: tingTex })));
+                    dialog.tingIcon.push(new Three.Mesh(circleGeometry, new Three.MeshBasicMaterial({ map: tingTex })));
                     dialog.huIcon[i].position.z = 2;
                     dialog.huIcon[i].visible    = false;
                     dialog.tingIcon[i].position.z = 2;
