@@ -291,11 +291,6 @@ export default function MahjongStart() {
             const diceEffect = new DiceEffect(game);
             diceScene.add(diceEffect);
 
-            const tingTex       = new Three.Texture(game.cache[Assets.button.ting.key]);
-            tingTex.needsUpdate = true;
-            const tingButton    = new Button(game, new Three.CircleGeometry(50, 100), new Three.MeshLambertMaterial({ map: tingTex}));
-            tingButton.visible  = false;
-
             const commandDialog = new CommandDialog(game, (dialog: CommandDialog) => {
                 const buttonGeometry = new Three.CircleGeometry(50, 30);
 
@@ -303,6 +298,7 @@ export default function MahjongStart() {
                 const ponTex    = new Three.Texture(game.cache[Assets.button.pon.key]);
                 const gonTex    = new Three.Texture(game.cache[Assets.button.gon.key]);
                 const huTex     = new Three.Texture(game.cache[Assets.button.hu.key]);
+                const tingTex   = new Three.Texture(game.cache[Assets.button.ting.key]);
                 const ongonTex  = new Three.Texture(game.cache[Assets.button.ongon.key]);
                 const pongonTex = new Three.Texture(game.cache[Assets.button.pongon.key]);
                 const noneTex   = new Three.Texture(game.cache[Assets.button.none.key]);
@@ -310,6 +306,7 @@ export default function MahjongStart() {
                 ponTex.needsUpdate    = true;
                 gonTex.needsUpdate    = true;
                 huTex.needsUpdate     = true;
+                tingTex.needsUpdate   = true;
                 ongonTex.needsUpdate  = true;
                 pongonTex.needsUpdate = true;
                 noneTex.needsUpdate   = true;
@@ -318,35 +315,40 @@ export default function MahjongStart() {
                 dialog.pon    = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ map: ponTex }));
                 dialog.gon    = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ map: gonTex }));
                 dialog.hu     = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ map: huTex }));
+                dialog.ting   = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ map: tingTex }));
                 dialog.ongon  = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ map: ongonTex }));
                 dialog.pongon = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ map: pongonTex }));
                 dialog.none   = new Button(game, buttonGeometry, new Three.MeshLambertMaterial({ map: noneTex }));
 
-                dialog.eat.position.x = -330;
+                dialog.eat.position.x = -385;
                 dialog.eat.position.z = 2;
                 dialog.eat.stateTint.down    = DOWN_TINT;
                 dialog.eat.stateTint.disable = DISABLE_TINT;
-                dialog.pon.position.x = -220;
+                dialog.pon.position.x = -275;
                 dialog.pon.position.z = 2;
                 dialog.pon.stateTint.down    = DOWN_TINT;
                 dialog.pon.stateTint.disable = DISABLE_TINT;
-                dialog.gon.position.x = -110;
+                dialog.gon.position.x = -165;
                 dialog.gon.position.z = 2;
                 dialog.gon.stateTint.down    = DOWN_TINT;
                 dialog.gon.stateTint.disable = DISABLE_TINT;
-                dialog.hu.position.x = 0;
+                dialog.hu.position.x = -55;
                 dialog.hu.position.z = 2;
                 dialog.hu.stateTint.down    = DOWN_TINT;
                 dialog.hu.stateTint.disable = DISABLE_TINT;
-                dialog.ongon.position.x = 110;
+                dialog.ting.position.x = 55;
+                dialog.ting.position.z = 2;
+                dialog.ting.stateTint.down    = DOWN_TINT;
+                dialog.ting.stateTint.disable = DISABLE_TINT;
+                dialog.ongon.position.x = 165;
                 dialog.ongon.position.z = 2;
                 dialog.ongon.stateTint.down    = DOWN_TINT;
                 dialog.ongon.stateTint.disable = DISABLE_TINT;
-                dialog.pongon.position.x = 220;
+                dialog.pongon.position.x = 275;
                 dialog.pongon.position.z = 2;
                 dialog.pongon.stateTint.down    = DOWN_TINT;
                 dialog.pongon.stateTint.disable = DISABLE_TINT;
-                dialog.none.position.x = 330;
+                dialog.none.position.x = 385;
                 dialog.none.position.z = 2;
                 dialog.none.stateTint.down    = DOWN_TINT;
                 dialog.none.stateTint.disable = DISABLE_TINT;
@@ -357,10 +359,8 @@ export default function MahjongStart() {
 
             const group = new Three.Group();
             group.rotation.setFromVector3(camera.rotation.toVector3());
-            group.add(tingButton);
             group.add(commandDialog);
             group.add(remainTile);
-            tingButton.position.set(600, -700, 850);
             commandDialog.position.set(600, -700, 850);
 
             scene.add(group);
@@ -369,9 +369,12 @@ export default function MahjongStart() {
             scene.add(instanceTlies);
 
             const infoDialog = new InfoDialog(game, (dialog: InfoDialog) => {
-                const texture  = new Three.Texture(game.cache[Assets.button.hu.key]);
+                const huTex          = new Three.Texture(game.cache[Assets.button.hu.key]);
+                const tingTex        = new Three.Texture(game.cache[Assets.button.ting.key]);
                 const circleGeometry = new Three.CircleGeometry(15, 30);
-                texture.needsUpdate = true;
+                huTex.needsUpdate    = true;
+                tingTex.needsUpdate  = true;
+
                 dialog.nameList   = [];
                 dialog.nameText   = [];
                 dialog.score      = [];
@@ -381,6 +384,8 @@ export default function MahjongStart() {
                 dialog.bankerText = [];
                 dialog.seasonText = [];
                 dialog.huIcon     = [];
+                dialog.tingIcon   = [];
+
                 for (let i = 0; i < 4; i++) {
                     dialog.nameText.push(new   Text(game, "ID: ",    Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, false));
                     dialog.scoreText.push(new  Text(game, "score: ", Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, false));
@@ -388,9 +393,12 @@ export default function MahjongStart() {
                     dialog.windText.push(new   Text(game, "",        Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, false));
                     dialog.bankerText.push(new Text(game, "",        Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFF0000 }), 0, 0, 0, false));
                     dialog.seasonText.push(new Text(game, "",        Assets.font.jhengHei.key, 15, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, false));
-                    dialog.huIcon.push(new Three.Mesh(circleGeometry, new Three.MeshBasicMaterial({ map: texture })));
+                    dialog.huIcon.push(new Three.Mesh(circleGeometry, new Three.MeshBasicMaterial({ map: huTex })));
+                    dialog.huIcon.push(new Three.Mesh(circleGeometry, new Three.MeshBasicMaterial({ map: tingTex })));
                     dialog.huIcon[i].position.z = 2;
                     dialog.huIcon[i].visible    = false;
+                    dialog.tingIcon[i].position.z = 2;
+                    dialog.tingIcon[i].visible    = false;
                 }
                 dialog.windAndRoundText = new Text(game, "", Assets.font.jhengHei.key, 45, 1, new Three.MeshBasicMaterial({ color: 0xFFFFFF }), 0, 0, 0, true);
 
@@ -477,17 +485,30 @@ export default function MahjongStart() {
                 dialog.seasonText[3].PoxY = 10;
 
                 // huIcon
-                dialog.huIcon[0].position.x = 50;
+                dialog.huIcon[0].position.x = 35;
                 dialog.huIcon[0].position.y = -h / 2 + 180;
 
-                dialog.huIcon[1].position.x = w / 2 - 180;
+                dialog.huIcon[1].position.x = w / 2 - 210;
                 dialog.huIcon[1].position.y = 110;
 
-                dialog.huIcon[2].position.x = 50;
+                dialog.huIcon[2].position.x = 35;
                 dialog.huIcon[2].position.y = h / 2 - 60;
 
                 dialog.huIcon[3].position.x = -w / 2 + 180;
                 dialog.huIcon[3].position.y = 110;
+
+                // tingIcon
+                dialog.tingIcon[0].position.x = 65;
+                dialog.tingIcon[0].position.y = -h / 2 + 180;
+
+                dialog.tingIcon[1].position.x = w / 2 - 180;
+                dialog.tingIcon[1].position.y = 110;
+
+                dialog.tingIcon[2].position.x = 65;
+                dialog.tingIcon[2].position.y = h / 2 - 60;
+
+                dialog.tingIcon[3].position.x = -w / 2 + 210;
+                dialog.tingIcon[3].position.y = 110;
             });
             infoDialog.visible    = false;
             infoDialog.position.z = 10;
@@ -509,8 +530,6 @@ export default function MahjongStart() {
             mahjong.effect.diceEffect = diceEffect;
 
             mahjong.timer = timer;
-
-            mahjong.ui.tingButton = tingButton;
 
             mahjong.commandDialog = commandDialog;
             mahjong.infoDialog    = infoDialog;

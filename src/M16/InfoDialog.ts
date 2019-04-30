@@ -18,7 +18,8 @@ export default class InfoDialog extends Dialog {
     public scoreText: Text[];
     public scoreLog:  Text[];
 
-    public huIcon: Three.Mesh[];
+    public huIcon:   Three.Mesh[];
+    public tingIcon: Three.Mesh[];
 
     public windAndRoundText: Text;
     public windText:         Text[];
@@ -40,6 +41,7 @@ export default class InfoDialog extends Dialog {
         this.add(...this.bankerText);
         this.add(...this.seasonText);
         this.add(...this.huIcon);
+        this.add(...this.tingIcon);
         this.add(this.windAndRoundText);
     }
 
