@@ -475,11 +475,12 @@ export default class MahjongGame extends State {
         this.commandDialog.ting.enable = true;
 
         this.timer.Play(time);
-        const result = await Promise.race([this.ui.Input.WaitKeyUp(Input.key.Ting), System.DelayValue(time, Input.key.None)]);
+        const result = await Promise.race([this.ui.Input.WaitKeyUp(Input.key.command), System.DelayValue(time, ButtonKey.None)]);
         this.timer.ForceStop();
 
         this.commandDialog.Hide();
-        this.socket.emit("sendTing", result === Input.key.Ting);
+        console.log(result);
+        this.socket.emit("sendTing", result === ButtonKey.Ting);
     }
 
     private async Command(tileMap: {[key: number]: string[]}, command: COMMAND_TYPE, time: number) {
